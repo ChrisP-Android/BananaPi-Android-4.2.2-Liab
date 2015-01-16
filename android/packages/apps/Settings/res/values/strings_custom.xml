@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="smart_brightness_title">Smart backlight</string>
+    <string name="smart_brightness_summary">Auto adjust the backlight.</string>
+    <string name="smart_brightness_preview">Preview mode</string>
+    <string name="hdmi_output_mode">HDMI output mode</string>
+    <string name="hdmi_output_mode_summary">Set the default output mode of HDMI</string>
+    
+    <!-- Media scanner -->
+    <string name="media_scan_category">Media scan</string>
+    <string name="media_scan_title">Enable media scanning on %1$s</string>
+    <string name="usb_storage_usage">USB large storage</string>
+    
+    <!-- ++++++++++++++++++++++++++++++++++++++++++ -->
+    <!--           new strings for crane            -->
+    <string name="tscalibration_title">Calibrating the touch screen</string>
+      
+    <!-- Screen Adaption -->
+    <string name="screen_adaption_title">Enable screen adaption</string>
+    <string name="screen_adaption_summary">Used to adjust size of some games display screen .</string>
+    <string name="screen_adaption_summary_off">The current resolution:</string>
+    <string name="screen_adaption_summary_on">Works after restart</string>
+    <string name="display_mode_selector_title">Display mode</string>
+    <string name="screen_adaption_setting">screen adaption</string>
+    
+    <string name="google_market_is_not_found">Application market is not found.</string>
+    <string name="default_tts_speech_is_not_found">Please choice a default tts speech engine and choice a default language.</string>
+     
+      
+    <!-- system update  -->
+    <string name="system_update_section_title" msgid="7815209034443782061">"System upgrade"</string>
+    <string name="system_recovery_title" msgid="7815209034443782061">"Recovery Mode"</string>
+    <string name="system_recovery_summary" msgid="7815209034443782061">"Reboot into the system in Recovery Mode.Can clear the data or system upgrade"</string>
+    <string name="system_recovery_dialog_massage" msgid="7815209034443782061">"Now reboot into System Recovery Mode, you can partition to remove data or system upgrade?"</string>
+
+	<string name="accelerometer_coordinate_title">Accelerometer coordinate system</string>
+
+
+	<!-- Begin ethernet configure add by shugeLinux@gmail.com @@@@@ -->
+	<string name="eth_settings_title">Ethernet</string>
+	<string name="eth_toggle_title">Use Ethernet</string>
+	<string name="eth_settings">Ethernet Settings</string>
+	<string name="eth_devices">Ethernet Devices</string>
+	<string name="eth_conf">Ethernet Configure</string>
+	<string name="eth_ip_address">IP Address</string>
+	<string name="eth_ip_string">0.0.0.0</string>
+	<string name="eth_mac_address">MAC Address</string>
+	<string name="eth_mac_string">00:00:00:00:00:00</string>
+	<string name="eth_advanced_configure">Advanced Configure</string>
+	<string name="eth_mask_address">Mask Address</string>
+	<string name="eth_dns_address">DNS Server</string>
+	<string name="eth_gw_address">GateWay</string>
+	<string name="eth_dhcp_choice">DHCP</string>
+	<string name="eth_dev_more">None Device</string>
+	<string name="eth_dev_summaryoff">DISCONNECTED</string>
+	<string name="eth_dev_summaryon">CONNECTED -- USED DEVICE: </string>
+	
+	<string name="eth_link_status">Link Status</string>
+	<string name="eth_link_mode">Link Mode</string>
+	<string name="eth_ip_mode">IP Mode: </string>
+	<string name="eth_dhcp_mode">DHCP</string>
+	<string name="eth_manual_mode">MANUAL</string>
+	<string name="eth_ok">Ok</string>
+	<string name="eth_cancel">Cancel</string>
+	<string name="eth_advand">Advand</string>
+	<string name="eth_message">Are you apply this device?</string>
+	<!-- End ethernet configure add by shugeLinux@gmail.com @@@@@ -->
+
+	<!-- begin system work mode -->
+
+	<string name="cpu_type">SOC Chip</string>
+	<string name="cpu">Super Dualcore A20</string>
+
+	<!-- End system work mode -->
+       
+</resources>

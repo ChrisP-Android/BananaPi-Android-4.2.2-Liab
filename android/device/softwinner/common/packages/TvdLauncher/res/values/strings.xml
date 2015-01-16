@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="hello">Hello World, Launcher!</string>
+    <string name="application_name">TvdLauncher</string>
+	<string name="activity_not_found">Activity not found!</string>
+	<string name="permlab_read_settings">read Home settings and shortcuts</string>
+	<string name="permdesc_read_settings">Allows an application to read the settings and shortcuts in Home.</string>
+	<string name="permlab_write_settings">write Home settings and shortcuts</string>
+	<string name="permdesc_write_settings">Allows an application to change the settings and shortcuts in Home.</string>
+	<string name="gadget_error_text">Problem loading widget</string>
+	<string name="out_of_space">No more room on this Home screen.</string>
+	<string name="wallpaper_instructions">Set wallpaper</string>
+	<string name="pick_wallpaper">Wallpapers</string>
+	<string name="chooser_wallpaper">Select wallpaper from</string>
+	<string name="startup_bar_title_1">Applications</string>
+	<string name="startup_bar_title_2">Settings</string>
+    <string name="startup_bar_title_3">File browser</string>
+	<string name="startup_bar_title_4">Favorites</string>
+	<string name="startup_bar_title_5">Web browser</string>
+	<string name="add_favorites_app_success">add application to favorites list sucessfully</string>
+	<string name="add_favorites_app">Add to favorites app list</string>
+	<string name="del_favorites_app_success">delete application from favorites list sucessfully</string>
+	<string name="delete_favorites_app">Delete from favorites app list</string>
+	<string name="uninstall_app">Uninstall this application</string>
+	<string name="add_widgets">Add widgets to workspace</string>
+	<string name="del_widget">Delete widget from workspace</string>
+	<string name="del_widget_dialog_instruct">Press up or down to select,press ok to delete widget.</string>
+	<string name="set_the_wallpaper">Set the wallpaper</string>
+	<string name="widget_picker_title">Choose widget</string>
+	<string name="workspace_is_empty">Current workspace is empty</string>
+	<string name="main_option_menu_title">Launcher menu</string>
+	<string name="unknown">unknown</string>
+    
+    <string name="disconnected">Disconnected</string>
+    <string name="connecting">Connecting...</string>
+    <string name="connected">Connected</string>
+    <string name="disconnecting">Disconnecting...</string>
+    <string name="wifi_disabling">Wifi disabling...</string>
+    <string name="wifi_enabling">Wifi enabling...</string>
+    <string name="wifi_disabled">Wifi disabled</string>
+    <string name="wifi_enabled">Wifi enabled</string>
+    <string name="wifi_state_unknown">Wifi state unknown</string>
+    <string name="wifi_ap_disabling">Disabling portable hotspot...</string>
+    <string name="wifi_ap_enabling">Enabling portable hotspot...</string>
+    <string name="wifi_ap_disabled">Portable hotspot disabled</string>
+    <string name="wifi_ap_enabled">Portable hotspot enabled</string>
+    <string name="wifi_ap_state_failed">Fail to enable portable hotspot</string>
+    <string name="device_title">Device name: </string>
+    <string name="wlan_title">WLAN: </string>
+    <string name="wlan_none">None</string>
+	<string name="wlan_passwd_title">PASSWORD:	</string>
+</resources>

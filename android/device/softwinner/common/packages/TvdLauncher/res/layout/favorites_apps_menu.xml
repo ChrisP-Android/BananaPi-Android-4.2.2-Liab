@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_gravity="bottom"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content" >
+	<View 
+	    android:background="#FFdadbdb"
+	    android:layout_width="fill_parent"
+	    android:layout_height="3dp"
+	    android:focusable="false"/>
+	<LinearLayout 
+	    android:orientation="horizontal" 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content">
+	    <com.softwinner.launcher.ui.MenuItem
+	        android:id="@+id/del_from_favorites"
+	        android:text="@string/delete_favorites_app"	
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"		
+			style="@style/menu_item"
+			android:background="#00000000" 
+			android:textSize = "18sp"
+			android:focusable="true"
+			/>
+	    <com.softwinner.launcher.ui.MenuItem
+	        android:id="@+id/uninstall_app"
+	        android:text="@string/uninstall_app"
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"		
+			style="@style/menu_item"
+			android:background="#00000000" 
+			android:textSize = "18sp"
+			android:focusable="true"/>
+	</LinearLayout>
+		
+</LinearLayout>

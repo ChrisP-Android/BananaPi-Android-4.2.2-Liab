@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.softwinner.launcher.ui.DeviceInfoPanel xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/device_info_layout_padding_top"
+    android:layout_marginLeft="@dimen/device_info_layout_padding_left"
+    android:background="@drawable/device_info_bg" >
+    
+    <ImageView android:id="@+id/device_info_iv"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/device_info_icon"
+        android:layout_margin="16dip"
+        android:contentDescription="@string/application_name"
+        />
+    
+    <LinearLayout android:id="@+id/device_info_tvs"
+        android:layout_width="wrap_content" android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="16dip" >
+		<TextView android:id="@+id/device_name_tv"
+		    android:layout_width="wrap_content" android:layout_height="0dip"
+		    android:layout_weight="1"
+		    android:textSize="32sp"
+		    android:singleLine="true"
+		    android:gravity="center_vertical"
+		    android:text="@string/device_title"
+		    />	    
+		<TextView android:id="@+id/wlan_tv"
+		    android:layout_width="wrap_content" android:layout_height="0dip"
+		    android:layout_weight="1"
+		    android:textSize="32sp"
+		    android:singleLine="true"
+		    android:gravity="center_vertical"
+		    android:text="@string/wlan_title"
+		    />   
+		<TextView android:id="@+id/wlan_passwd_tv"
+		    android:layout_width="wrap_content" android:layout_height="0dip"
+		    android:layout_weight="1"
+		    android:textSize="32sp"
+		    android:singleLine="true"
+		    android:gravity="center_vertical"
+		    android:text="@string/wlan_passwd_title"
+		    /> 
+    </LinearLayout>
+    
+</com.softwinner.launcher.ui.DeviceInfoPanel>

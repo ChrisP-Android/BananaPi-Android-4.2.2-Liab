@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="window_background">#FF191919</color>
+	<color name="widgetBgColor">#20000000</color>
+	<color name="widgetFontColor">#13aaf1</color>
+	<color name="tempCColor">#fdb814</color>
+	<color name="zoneTempColor">#a9a7a6</color>
+	<color name="whiteColor">#ffffff</color>
+	<color name="blackColor">#ff000000</color>
+	<color name="grayColor">#88231715</color>
+	<color name="appwidget_error_color">#FCCC</color>
+	<color name="bubble_dark_background">#B2191919</color>
+	<color name="transparency">#00000000</color>
+</resources>

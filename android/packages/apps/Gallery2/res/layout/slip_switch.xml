@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:background="#80000001"
+	android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+	
+	    <TextView android:id="@+id/switch_title"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+	        android:paddingTop="10dip"
+	        android:paddingBottom="10dip"
+	        android:text="@string/gate_title"
+			android:textSize="20sp"/>
+  	</LinearLayout>
+  	
+    <LinearLayout android:id="@+id/slip_gate" android:layout_height="wrap_content" android:layout_width="match_parent"
+    	android:layout_marginLeft="100dip" android:layout_marginTop="20dip" android:layout_marginRight="100dip"/>
+    	
+    <LinearLayout android:id="@+id/linearLayout1" android:layout_height="wrap_content" android:layout_width="match_parent" 
+    	android:orientation="horizontal" android:gravity="center" android:paddingTop="30.0dip">
+    	
+        <Button android:layout_gravity="left" android:id="@+id/button1" android:layout_width="0.0px" android:layout_height="wrap_content" 
+        	android:layout_weight="1.0" android:text="@string/confirm_button"/>
+        
+        <Button android:layout_gravity="right" android:id="@+id/button2" android:layout_width="0.0px" android:layout_height="wrap_content"
+        	android:layout_weight="1.0" android:text="@string/cancel"/>
+    
+    </LinearLayout>
+	
+</LinearLayout>

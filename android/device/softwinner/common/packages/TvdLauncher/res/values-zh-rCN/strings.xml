@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, Launcher!</string>
+    <string name="application_name">TvdLauncher</string>
+    <string name="activity_not_found">没有找到该应用程序</string>     
+    <string name="permlab_read_settings">阅读首页的设置和快捷键</string>   
+    <string name="permdesc_read_settings">允许应用程序读取首页的设置和快捷键。</string>   
+    <string name="permlab_write_settings">写首页的设置和快捷键</string>
+    <string name="permdesc_write_settings">允许应用程序来改变首页的设置和快捷键。</string>         
+    <string name="gadget_error_text">载入小部件失败</string>    
+    <string name="out_of_space">屏幕上没有足够的空间</string>    
+    <string name="wallpaper_instructions">设置壁纸</string>
+    <string name="pick_wallpaper">壁纸</string>
+    <string name="chooser_wallpaper">选择壁纸</string>  
+      
+    <string name="startup_bar_title_1">应用</string>
+    <string name="startup_bar_title_2">设置</string>
+    <string name="startup_bar_title_3">文件浏览</string>
+    <string name="startup_bar_title_4">我的最爱</string>
+    <string name="startup_bar_title_5">网页浏览</string>            
+    <string name="add_favorites_app_success">添加该应用到“喜爱应用”成功</string>   
+    <string name="add_favorites_app">添加该应用到“喜爱应用”中</string>
+    <string name="del_favorites_app_success">从“喜爱应用”列表中删除该应用成功</string>
+    <string name="delete_favorites_app">从“喜爱应用”列表中删除该应用</string>    
+    <string name="uninstall_app">卸载该应用程序</string>
+    <string name="add_widgets">添加小部件</string>
+    <string name="del_widget">删除小部件</string>
+    <string name="del_widget_dialog_instruct">上下键选择条目，OK键确定删除</string>
+    <string name="set_the_wallpaper">设置桌面壁纸</string>
+    <string name="widget_picker_title">选择小部件</string>
+    <string name="workspace_is_empty">当前工作区为空</string>
+    <string name="main_option_menu_title">桌面设置</string>
+    <string name="unknown">未知</string>
+    
+    <string name="disconnected">未连接</string>
+    <string name="connecting">正在连接...</string>
+    <string name="connected">已连接</string>
+    <string name="disconnecting">正在断开...</string>
+    <string name="wifi_disabling">正在关闭Wifi...</string>
+    <string name="wifi_enabling">正在打开Wifi...</string>
+    <string name="wifi_disabled">Wifi已关闭</string>
+    <string name="wifi_enabled">Wifi已开启</string>
+    <string name="wifi_state_unknown">未知</string>
+    <string name="wifi_ap_disabling">正在关闭便携式热点...</string>
+    <string name="wifi_ap_enabling">正在打开便携式热点...</string>
+    <string name="wifi_ap_disabled">已关闭便携式热点</string>
+    <string name="wifi_ap_enabled">已开启便携式热点</string>
+    <string name="wifi_ap_state_failed">打开便携式热点失败</string>
+    <string name="device_title">设备名: </string>
+    <string name="wlan_none">无</string>
+    <string name="wlan_passwd_title">密码:	</string>
+</resources>

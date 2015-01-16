@@ -1,0 +1,48 @@
+/*******************************************************************************
+--                                                                            --
+--                    CedarX Multimedia Framework                             --
+--                                                                            --
+--          the Multimedia Framework for Linux/Android System                 --
+--                                                                            --
+--       This software is confidential and proprietary and may be used        --
+--        only as expressly authorized by a licensing agreement from          --
+--                         Softwinner Products.                               --
+--                                                                            --
+--                   (C) COPYRIGHT 2011 SOFTWINNER PRODUCTS                   --
+--                            ALL RIGHTS RESERVED                             --
+--                                                                            --
+--                 The entire notice above must be reproduced                 --
+--                  on all copies and should not be removed.                  --
+--                                                                            --
+*******************************************************************************/
+
+[v1.3.9]:
+   1. fix seek cpu-consume bug
+   2. make netstream play more influte
+
+
+[v1.4.0]:
+   1. enhance android stream media processing
+
+
+[v1.4.5]:
+   release for android-crane 1.0
+   
+   
+[v1.4.9]:   
+   add basic text-subtitle decoder and render
+   
+[v1.5.0]
+   1. 加入3D视频播放支持及菜单选择控制
+   2. 加入HE-AAC/AAC-SBR支持，高保真还原部分在线视频音效。
+   3. 修复部分在线视频客户端断点续播画面偶尔卡住的问题
+   4. 修复PPTV-HTML5无法播放的问题
+   5. 支持外挂字幕切换，增强字幕解码稳定性。
+   
+[v1.5.3]
+   1. 修改控制为异步消息控制方式，减少程序无响应的几率。
+   2. 修改网络播放缓冲暂停机制
+   3. 修复腾讯视频客户端suspend/resume无法播放的问题
+   4. 修复部分视频被裁切的问题
+   5. 修复部分视频边界扩展被显示出来的问题
+   6. 支持外挂IDX+SUB字幕

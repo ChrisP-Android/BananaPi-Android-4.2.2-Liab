@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="title_texture_width">120px</dimen>
+	
+	<dimen name="button_bar_height">56dip</dimen>
+	
+	<dimen name="button_bar_height_portrait">56dip</dimen>
+	
+	<dimen name="workspace_cell_width">134dip</dimen>
+	
+    <dimen name="workspace_cell_height">74dip</dimen>
+    
+    <dimen name="device_info_layout_padding_top">96dip</dimen>
+    
+    <dimen name="device_info_layout_padding_left">96dip</dimen>
+    
+    <dimen name="quickly_start_bar_padding_bottom">48dip</dimen>
+    
+    <dimen name="widgets_layout_longaxis_start_padding">240px</dimen>
+    
+    <dimen name="widgets_layout_longaxis_end_padding">240px</dimen>
+    
+    <dimen name="widgets_layout_shortaxis_start_padding">50px</dimen>
+    
+    <dimen name="widgets_layout_shortaxis_end_padding">280px</dimen>    
+    
+    <dimen name="quickly_start_bar_title_sel">36px</dimen>
+    <dimen name="quickly_start_bar_title_normal">24px</dimen>
+    <dimen name="quickly_start_bar_title_sel_width">320px</dimen>
+    <dimen name="quickly_start_bar_title_normal_width">240px</dimen>
+    <dimen name="app_icon_size">96dip</dimen>
+</resources>

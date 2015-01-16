@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="smart_brightness_title">智能背光</string>
+    <string name="smart_brightness_summary">自动调整背光亮度</string>
+    <string name="smart_brightness_preview">演示模式</string>
+    <string name="hdmi_output_mode">HDMI输出模式</string>
+    <string name="hdmi_output_mode_summary">设置默认的HDMI输出制式</string>
+    <!-- Audio output mode -->
+    <string name="audio_output_mode_title">音频输出模式</string>
+
+    <!-- Display output mode -->
+    <string name="display_output_mode_title">显示输出模式</string>
+    <string name="display_output_mode_summary">设置显示输出模式</string>
+    <string name="display_mode_time_out_title">修改确认</string>
+    <string name="display_mode_time_out_desc">在 %1$s 秒之后 ，将会恢复到原来的设置.\n请问是否保存当前的修改?</string>
+    <string name="display_mode_auto_detect">自动</string>
+
+    <!-- Constrast and saturation -->
+    <string name="contrast_title">对比度</string>
+    <string name="saturation_title">饱和度</string>
+    
+    <!-- Pass through -->
+    <string name="enable_pass_through_summary">输出原始音频流</string>
+    <string name="sound_pass_through_title">透传</string>
+    <string name="enable_pass_through">启用音频透传</string>
+
+    <!-- PPPoE -->
+    <string name="pppoe_setting_title">PPPOE设置</string>
+    <string name="pppoe_setting_device">网卡</string>
+    <string name="pppoe_setting_user">用户名</string>
+    <string name="pppoe_setting_password">密码</string>
+    <string name="pppoe_setting_auto_connect">自动连接</string>
+    <string name="pppoe_setting_toggle">开启PPPOE</string>
+
+    <!-- Media Scan -->
+    <string name="mutil_media_category">多媒体</string>
+    <string name="media_scan_title">启用 %1$s 上的媒体扫描</string>
+    <string name="usb_storage_usage">USB 大容量存储</string>
+    <string name="tscalibration_title">"校准触摸屏"</string>
+    <string name="accelerometer_coordinate_title">重力感应坐标系</string>
+    <string name="screen_adaption_title">启用屏幕适配</string>
+    <string name="screen_adaption_summary">用于调整部分游戏的屏幕显示尺寸.</string>
+    <string name="screen_adaption_summary_off">当前分辨率：</string>
+    <string name="screen_adaption_summary_on">点击确认后重启生效</string>
+    <string name="display_mode_selector_title">显示模式</string>
+    <string name="screen_adaption_setting">屏幕适配</string>
+    <string name="google_market_is_not_found">没有找到应用市场.</string>
+    <string name="default_tts_speech_is_not_found">请选择一个默认的TTS语音引擎并设置一种默认语言.</string>
+   <!-- display trimming -->
+    <string name="tv_screen_trimming_title">屏幕切边</string>
+    <string name="tv_screen_trimming_summary">调整屏幕大小</string>
+    <string name="enable_blu_ray_directory_play_title">开启蓝光目录播放模式</string>
+    <string name="enable_blu_ray_directory_play_summary">当你在文件管理器中点击一个蓝光目录时，系统会自动播放其中的内容.</string>
+    <string name="system_update_section_title" msgid="7815209034443782061">"系统升级"</string>
+    <string name="system_recovery_title" msgid="7815209034443782061">"Recovery模式"</string>
+    <string name="system_recovery_summary" msgid="7815209034443782061">"重启进入系统Recovery模式,可以清除分区数据或系统升级"</string>
+    <string name="system_recovery_dialog_massage" msgid="7815209034443782061">"立即重启进入系统Recovery模式,可以清除分区数据或系统升级？"</string>
+
+    <!-- Begin ethernet configure add by shugeLinux@gmail.com @@@@@ -->
+    <string name="eth_settings_title">以太网</string>
+    <string name="eth_toggle_title">使用以太网</string>
+    <string name="eth_settings">以太网设置</string>
+    <string name="eth_devices">以太网设备</string>
+    <string name="eth_conf">以太网配置</string>
+    <string name="eth_ip_address">IP地址</string>
+    <string name="eth_ip_string">0.0.0.0</string>
+    <string name="eth_mac_address">物理地址</string>
+    <string name="eth_mac_string">00:00:00:00:00:00</string>
+    <string name="eth_advanced_configure">高级配置</string>
+    <string name="eth_mask_address">子网掩码</string>
+    <string name="eth_dns_address">DNS服务器</string>
+    <string name="eth_gw_address">默认网关</string>
+    <string name="eth_dhcp_choice">动态分配</string>
+    <string name="eth_dev_more">没有可用设备</string>
+    <string name="eth_dev_summaryoff">未连接</string>
+    <string name="eth_dev_summaryon">已连接 -- 使用设备: </string>
+    <string name="eth_link_status">Link Status</string>
+    <string name="eth_link_mode">Link Mode</string>
+    <string name="eth_ip_mode">IP模式: </string>
+    <string name="eth_dhcp_mode">动态</string>
+    <string name="eth_manual_mode">静态</string>
+    <string name="eth_ok">确定</string>
+    <string name="eth_cancel">取消</string>
+    <string name="eth_advand">高级</string>
+    <string name="eth_message">确定应用此配置到设备?</string>
+    <!-- End ethernet configure add by shugeLinux@gmail.com @@@@@ -->
+
+
+    <!-- Device info -->
+    <string name="custom_about_device">关于设备</string>
+    
+    <!-- Recovery from USB -->
+    <string name="recovery_package">系统恢复/升级</string>
+    <string name="recovery_package_des">使用外部的升级包，来恢复和升级您的系统。</string>
+</resources>

@@ -1,0 +1,65 @@
+diff --git a/libbt/Android.mk b/libbt/Android.mk
+old mode 100644
+new mode 100755
+index 4b5ce4d..778611c
+--- a/libbt/Android.mk
++++ b/libbt/Android.mk
+@@ -43,4 +43,8 @@ ifeq ($(TARGET_PRODUCT), full_wingray)
+     include $(LOCAL_PATH)/conf/moto/wingray/Android.mk
+ endif
+ 
++ifeq ($(TARGET_PRODUCT), wing_evb_v10)
++    include $(LOCAL_PATH)/conf/AP6330/Android.mk
++endif
++
+ endif # BOARD_HAVE_BLUETOOTH_BCM
+diff --git a/libbt/src/bt_vendor_brcm.c b/libbt/src/bt_vendor_brcm.c
+old mode 100644
+new mode 100755
+index 9bd8922..91a91d9
+--- a/libbt/src/bt_vendor_brcm.c
++++ b/libbt/src/bt_vendor_brcm.c
+@@ -136,9 +136,15 @@ static int op(bt_vendor_opcode_t opcode, void *param)
+             {
+                 int *state = (int *) param;
+                 if (*state == BT_VND_PWR_OFF)
++                {
+                     upio_set_bluetooth_power(UPIO_BT_POWER_OFF);
++                    usleep(200000);
++                }
+                 else if (*state == BT_VND_PWR_ON)
++                {
+                     upio_set_bluetooth_power(UPIO_BT_POWER_ON);
++                    usleep(500000);
++                }
+             }
+             break;
+ 
+diff --git a/libbt/src/hardware.c b/libbt/src/hardware.c
+old mode 100644
+new mode 100755
+index 45008ef..f292f07
+--- a/libbt/src/hardware.c
++++ b/libbt/src/hardware.c
+@@ -326,6 +326,8 @@ uint8_t line_speed_to_userial_baud(uint32_t line_speed)
+         baud = USERIAL_BAUD_3M;
+     else if (line_speed == 2000000)
+         baud = USERIAL_BAUD_2M;
++    else if (line_speed == 1500000)
++    	  baud = USERIAL_BAUD_1_5M;
+     else if (line_speed == 1000000)
+         baud = USERIAL_BAUD_1M;
+     else if (line_speed == 921600)
+diff --git a/libbt/src/userial_vendor.c b/libbt/src/userial_vendor.c
+index 1a745b5..10576d7 100755
+--- a/libbt/src/userial_vendor.c
++++ b/libbt/src/userial_vendor.c
+@@ -93,6 +93,8 @@ uint8_t userial_to_tcio_baud(uint8_t cfg_baud, uint32_t *baud)
+         *baud = B3000000;
+     else if (cfg_baud == USERIAL_BAUD_2M)
+         *baud = B2000000;
++    else if (cfg_baud == USERIAL_BAUD_1_5M)
++        *baud = B1500000;
+     else if (cfg_baud == USERIAL_BAUD_1M)
+         *baud = B1000000;
+     else if (cfg_baud == USERIAL_BAUD_921600)

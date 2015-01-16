@@ -1,0 +1,155 @@
+diff --git a/BoardConfig.mk b/BoardConfig.mk
+index 6a9884c..7d34343 100755
+--- a/BoardConfig.mk
++++ b/BoardConfig.mk
+@@ -74,16 +74,19 @@ ifeq ($(BOARD_WIFI_VENDOR), broadcom)
+     #WIFI_DRIVER_FW_PATH_P2P    := "/system/vendor/modules/fw_bcm40183b2_p2p.bin"
+     #WIFI_DRIVER_FW_PATH_AP     := "/system/vendor/modules/fw_bcm40183b2_apsta.bin"
+ 
+-    SW_BOARD_USR_WIFI := AP6210
+-    WIFI_DRIVER_FW_PATH_STA    := "/system/vendor/modules/fw_bcm40181a2.bin"
+-    WIFI_DRIVER_FW_PATH_P2P    := "/system/vendor/modules/fw_bcm40181a2_p2p.bin"
+-    WIFI_DRIVER_FW_PATH_AP     := "/system/vendor/modules/fw_bcm40181a2_apsta.bin"
++    #SW_BOARD_USR_WIFI := AP6210
++    #WIFI_DRIVER_FW_PATH_STA    := "/system/vendor/modules/fw_bcm40181a2.bin"
++    #WIFI_DRIVER_FW_PATH_P2P    := "/system/vendor/modules/fw_bcm40181a2_p2p.bin"
++    #WIFI_DRIVER_FW_PATH_AP     := "/system/vendor/modules/fw_bcm40181a2_apsta.bin"
++    
++    SW_BOARD_USR_WIFI := AP6330
++    WIFI_DRIVER_FW_PATH_STA    := "/system/vendor/modules/fw_bcm40183b2_ag.bin"
++    WIFI_DRIVER_FW_PATH_P2P    := "/system/vendor/modules/fw_bcm40183b2_ag_p2p.bin"
++    WIFI_DRIVER_FW_PATH_AP     := "/system/vendor/modules/fw_bcm40183b2_ag_apsta.bin"
+ endif
+ 
+ # 2. Bluetooth Configuration
+ # make sure BOARD_HAVE_BLUETOOTH is true for every bt vendor
+-#BOARD_HAVE_BLUETOOTH := true
+-#BOARD_HAVE_BLUETOOTH_BCM := true
++BOARD_HAVE_BLUETOOTH := true
++BOARD_HAVE_BLUETOOTH_BCM := true
+ #SW_BOARD_HAVE_BLUETOOTH_RTK := true
+-#SW_BOARD_HAVE_BLUETOOTH_NAME := bcm40183
+-#SW_BOARD_HAVE_BLUETOOTH_NAME := ap6210
+diff --git a/init.sun7i.rc b/init.sun7i.rc
+index da9c77c..21e160a 100755
+--- a/init.sun7i.rc
++++ b/init.sun7i.rc
+@@ -70,7 +70,28 @@ on boot
+     insmod /system/vendor/modules/rtl8150.ko
+     insmod /system/vendor/modules/cdc_ether.ko
+ 
+-
++# bluetooth
++    # UART device
++    chmod 0660 /dev/ttyS1
++    chown bluetooth net_bt_stack /dev/ttyS1
++
++    # power up/down interface
++    chmod 0660 /sys/class/rfkill/rfkill0/state
++    chmod 0660 /sys/class/rfkill/rfkill0/type
++    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
++    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
++
++    # bluetooth MAC address programming
++    chown bluetooth net_bt_stack /system/etc/bluetooth
++    chown bluetooth net_bt_stack /data/misc/bluetooth
++    #chown bluetooth net_bt_stack ro.bt.bdaddr_path
++    #setprop ro.bt.bdaddr_path "/system/etc/firmware/bd_addr.txt"
++
++    # bluetooth LPM
++    #chmod 0220 /proc/bluetooth/sleep/lpm
++    #chmod 0220 /proc/bluetooth/sleep/btwrite
++    #chown bluetooth net_bt_stack /proc/bluetooth/sleep/lpm
++    #chown bluetooth net_bt_stack /proc/bluetooth/sleep/btwrite
+ 
+ # 1. realtek wifi service
+ # 1.1 realtek wifi sta service
+@@ -107,27 +128,4 @@ service p2p_supplicant /system/bin/wpa_supplicant \
+ 	disabled
+ 	oneshot
+ 
+-# 3. realtek rtl8723as bt hciattach
+-#service hciattach /system/bin/logwrapper /system/bin/hciattach -n -s 115200 /dev/ttyS1 rtk_h5 1500000
+-#   user root
+-#   group bluetooth net_bt_admin
+-#   disabled
+-#   oneshot
+-
+-# 4. broadcom bcm40183 bt hciattach
+-#service hciattach /system/bin/hciattach -n -s 115200 /dev/ttyS1 bcm4329 1500000
+-#    user root
+-#    group bluetooth net_bt_admin
+-#    disabled
+-#    oneshot
+-
+-# 5. broadcom ap6210 bt brcm_patchram_plus
+-#service hciattach /system/bin/brcm_patchram_plus --tosleep=200000 --no2bytes --enable_hci \
+-#    --baudrate 1500000 --enable_lpm --patchram system/vendor/modules/bcm20710a1.hcd /dev/ttyS1
+-#    class main
+-#    user bluetooth
+-#    group bluetooth net_bt_admin misc
+-#    disabled
+-#    oneshot
+-
+ 
+diff --git a/overlay/frameworks/base/core/res/res/values/config.xml b/overlay/frameworks/base/core/res/res/values/config.xml
+index dbfc5fc..629286a 100755
+--- a/overlay/frameworks/base/core/res/res/values/config.xml
++++ b/overlay/frameworks/base/core/res/res/values/config.xml
+@@ -19,6 +19,14 @@
+         <item>9</item>
+     </integer-array>
+ 
++
++    <!-- List of regexpressions describing the interface (if any) that represent tetherable
++         bluetooth interfaces.  If the device doesn't want to support tethering over bluetooth this
++         should be empty. -->
++    <string-array translatable="false" name="config_tether_bluetooth_regexs">
++        <item>"bnep\\d"</item>
++    </string-array>
++
+     <!-- Flag indicating whether the current device is "voice capable".
+          If true, this means that the device supports circuit-switched
+          (i.e. voice) phone calls over the telephony network, and is
+diff --git a/wing_evb_v10.mk b/wing_evb_v10.mk
+index b67a585..5d195a7 100755
+--- a/wing_evb_v10.mk
++++ b/wing_evb_v10.mk
+@@ -41,8 +41,8 @@ PRODUCT_PACKAGES += \
+ PRODUCT_COPY_FILES += \
+     frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
+     frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
+-#    frameworks/native/data/etc/android.hardware.bluetooth.xml:system/etc/permissions/android.hardware.bluetooth.xml \
+-#    system/bluetooth/data/main.nonsmartphone.conf:system/etc/bluetooth/main.conf
++    frameworks/native/data/etc/android.hardware.bluetooth.xml:system/etc/permissions/android.hardware.bluetooth.xml \
++    system/bluetooth/data/main.nonsmartphone.conf:system/etc/bluetooth/main.conf
+ 
+ # rtl8723as bt fw and config
+ #PRODUCT_COPY_FILES += \
+@@ -64,12 +64,21 @@ PRODUCT_COPY_FILES += \
+ #	hardware/broadcom/wlan/firmware/bcm40183/bcm40183_nvram.txt:system/vendor/modules/bcm40183_nvram.txt
+ 
+ # ap6210 sdio wifi fw and nvram
++#PRODUCT_COPY_FILES += \
++#	hardware/broadcom/wlan/firmware/ap6210/fw_bcm40181a2.bin:system/vendor/modules/fw_bcm40181a2.bin \
++#	hardware/broadcom/wlan/firmware/ap6210/fw_bcm40181a2_apsta.bin:system/vendor/modules/fw_bcm40181a2_apsta.bin \
++#	hardware/broadcom/wlan/firmware/ap6210/fw_bcm40181a2_p2p.bin:system/vendor/modules/fw_bcm40181a2_p2p.bin \
++#	hardware/broadcom/wlan/firmware/ap6210/nvram_ap6210.txt:system/vendor/modules/nvram_ap6210.txt \
++#	hardware/broadcom/wlan/firmware/ap6210/bcm20710a1.hcd:system/vendor/modules/bcm20710a1.hcd
++	
++# ap6330 sdio wifi fw and nvram
+ PRODUCT_COPY_FILES += \
+-	hardware/broadcom/wlan/firmware/ap6210/fw_bcm40181a2.bin:system/vendor/modules/fw_bcm40181a2.bin \
+-	hardware/broadcom/wlan/firmware/ap6210/fw_bcm40181a2_apsta.bin:system/vendor/modules/fw_bcm40181a2_apsta.bin \
+-	hardware/broadcom/wlan/firmware/ap6210/fw_bcm40181a2_p2p.bin:system/vendor/modules/fw_bcm40181a2_p2p.bin \
+-	hardware/broadcom/wlan/firmware/ap6210/nvram_ap6210.txt:system/vendor/modules/nvram_ap6210.txt \
+-	hardware/broadcom/wlan/firmware/ap6210/bcm20710a1.hcd:system/vendor/modules/bcm20710a1.hcd
++	hardware/broadcom/wlan/firmware/ap6330/fw_bcm40183b2_ag.bin:system/vendor/modules/fw_bcm40183b2_ag.bin \
++	hardware/broadcom/wlan/firmware/ap6330/fw_bcm40183b2_ag_apsta.bin:system/vendor/modules/fw_bcm40183b2_ag_apsta.bin \
++	hardware/broadcom/wlan/firmware/ap6330/fw_bcm40183b2_ag_p2p.bin:system/vendor/modules/fw_bcm40183b2_ag_p2p.bin \
++	hardware/broadcom/wlan/firmware/ap6330/nvram_ap6330.txt:system/vendor/modules/nvram_ap6330.txt \
++	hardware/broadcom/wlan/firmware/ap6330/bcm40183b2.hcd:system/vendor/modules/bcm40183b2.hcd \
++# hardware/broadcom/wlan/firmware/ap6330/bd_addr.txt:system/etc/firmware/bd_addr.txt	
+ 	
+ PRODUCT_PROPERTY_OVERRIDES += \
+   dalvik.vm.heapsize=48m \

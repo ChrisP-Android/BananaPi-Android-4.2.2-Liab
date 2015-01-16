@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="hdmi_mode_values">
+        <item >255</item>
+        <item >2</item>
+        <item >3</item>
+        <item >4</item>
+        <item >5</item>
+        <item >8</item>
+        <item >9</item>
+        <item >10</item>
+    </string-array>
+    <string-array name="hdmi_mode_entries">
+        <item >Auto</item>
+        <item >HDMI 480P</item>
+        <item >HDMI 576P</item>
+        <item >HDMI 720P 50HZ</item>
+        <item >HDMI 720P 60HZ</item>
+        <item >HDMI 1080P 24HZ</item>
+        <item >HDMI 1080P 50HZ</item>
+        <item >HDMI 1080P 60HZ </item>
+    </string-array>    
+    
+        
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++ -->    
+    <!--           new array-string for crane          -->
+    <!-- ListPreference accelerometer coornadite -->
+    <string-array name="accelerometer_entries">
+        <item >Default coordinate system</item>
+        <item >Special coordinate system, to support some other games.</item>
+    </string-array>
+    
+    <string-array name="accelerometer_values">
+        <item >default</item>
+        <item >special</item>
+    </string-array>
+    
+    <string-array name="accelerometer_summaries">
+        <item >Accelerometer uses the default coordinate system.</item>
+        <item >Accelerometer uses a special coordinate system, for some games.</item>
+    </string-array>
+    
+    <string-array name="display_mode_list_entries">
+    <!--<item>full</item> -->
+        <item>center</item>
+    </string-array>
+    
+    <!-- Screen Adaption -->
+    <string-array name="display_mode_list_values">
+        <!-- <item>full</item> -->
+        <item>center</item>
+    </string-array>    
+</resources>

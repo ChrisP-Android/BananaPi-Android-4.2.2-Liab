@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ***********************************************************
+    此处配置您的升级首选OTA服务器url，程序会优先连接该链接，
+    在尝试连接该OTA服务器url失败之后，程序会尝试使用备用OTA服务器url进行连接
+    *********************************************************** -->
+    <string name="first_server_url_in_domain">http://your-url</string>
+    
+    
+    <!-- ***********************************************************
+    此处配置您的升级备用OTA服务器url，程序会在尝试连接该OTA服务器url失败之后
+    ，使用该备用OTA服务器url进行连接
+    *********************************************************** -->
+    <string name="second_server_url_in_domain">http://your-url</string>
+    
+    
+    <!-- ***********************************************************
+        此处配置您的升级包临时目录。
+        recovery和android的设备挂载点会根据不同的方案有不同的变化，
+    当您的recovery升级包文件保存在某一个设备节点中，但recovery和android对于该设备节点所设点的设备
+    挂载点不同时，您的升级将会失败。
+        因此，请配置好您的升级包临时目录，并确保该目录在recovery和android中所指向的都是同一个设备节点,
+    同时，该目录所指向的设备节点拥有足够的存储空间。
+        通常情况下，以下设备节点recovery和android拥有共同的挂载点及其特点：
+        /dev/block/nande -> /data   （推荐，但其主要用于用户数据的存储，因此其可用空间不可控）
+        /dev/block/nandh -> /cache  （推荐，但部分客户将cache分区的大小设得很小，在保证cache分区大小的情况下，该位置最可靠）
+        /dev/block/nandk -> /sdcard （仅在没有插入外部sdcard的情况生效，请谨慎使用）
+    *********************************************************** -->
+    <!-- 以下是一些常用的升级包临时目录
+    <string name="cache_dir">/data/data/com.softwinner.update/cache</string>
+    <string name="cache_dir">/cache</string>
+    <string name="cache_dir">/sdcard/LOST.DIR/.recovery_cache</string>
+    *********************************************************** -->
+    <string name="cache_dir">/cache</string>
+    
+    
+    <!-- ***********************************************************
+    此处配置您的检查周期，单位为天
+    *********************************************************** -->
+    <string name="check_cycle">1</string>
+</resources>

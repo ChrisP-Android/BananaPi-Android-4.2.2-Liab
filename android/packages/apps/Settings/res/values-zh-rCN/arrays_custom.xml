@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="hdmi_mode_entries">
+        <item>自动</item>
+        <item>HDMI 480P</item>
+        <item>HDMI 576P</item>
+        <item>HDMI 720P 50HZ</item>
+        <item>HDMI 720P 60HZ</item>
+        <item>HDMI 1080P 24HZ</item>
+        <item>HDMI 1080P 50HZ</item>
+        <item>HDMI 1080P 60HZ </item>
+    </string-array>
+      
+  <string-array name="display_mode_list_entries">
+    <!-- <item>全屏</item> -->
+    <item>居中</item>
+  </string-array>
+
+</resources>

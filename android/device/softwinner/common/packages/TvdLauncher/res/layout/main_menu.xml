@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_gravity="bottom"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content" >
+	<View 
+	    android:background="#FFdadbdb"
+	    android:layout_width="fill_parent"
+	    android:layout_height="3dp"
+	    android:focusable="false"/>
+	<LinearLayout 
+	    android:orientation="horizontal" 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content">
+	    <com.softwinner.launcher.ui.MenuItem
+	        android:id="@+id/add_widgets"
+	        android:text="@string/add_widgets"	
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"		
+			style="@style/menu_item"
+			android:background="#00000000" 
+			android:textSize = "18sp"
+			android:focusable="true"
+			/>
+	    <com.softwinner.launcher.ui.MenuItem
+	        android:id="@+id/delete_widget"
+	        android:text="@string/del_widget"
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"		
+			style="@style/menu_item"
+			android:background="#00000000" 
+			android:textSize = "18sp"
+			android:focusable="true"/>
+	    <com.softwinner.launcher.ui.MenuItem
+	        android:id="@+id/set_wallpaper" 
+	        android:text="@string/set_the_wallpaper"
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			style="@style/menu_item"
+			android:background="#00000000" 
+			android:textSize = "18sp"
+			android:focusable="true"/>
+	</LinearLayout>
+		
+</LinearLayout>

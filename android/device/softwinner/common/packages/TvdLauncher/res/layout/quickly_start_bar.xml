@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.softwinner.launcher.ui.QuicklyStartupBar 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width ="match_parent"
+    android:layout_height ="match_parent"
+    android:gravity = "bottom|center"
+    android:orientation="vertical" 
+    android:paddingBottom="@dimen/quickly_start_bar_padding_bottom">
+    
+        <LinearLayout
+        android:id="@+id/quickly_start_bar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+        <TextView 
+	        android:layout_width="@dimen/quickly_start_bar_title_normal_width"
+	        android:layout_height="wrap_content"
+	        android:gravity = "top|center"
+	        android:textSize="@dimen/quickly_start_bar_title_normal"/>
+        <TextView 
+	        android:layout_width="@dimen/quickly_start_bar_title_normal_width"
+	        android:layout_height="wrap_content"
+	        android:gravity = "top|center"
+	        android:textSize="@dimen/quickly_start_bar_title_normal"/>
+        <TextView 
+	        android:layout_width="@dimen/quickly_start_bar_title_sel_width"
+	        android:layout_height="wrap_content"
+	        android:gravity = "top|center"
+	        android:textSize="@dimen/quickly_start_bar_title_sel"/>
+        <TextView 
+	        android:layout_width="@dimen/quickly_start_bar_title_normal_width"
+	        android:layout_height="wrap_content"
+	        android:gravity = "top|center"
+	        android:textSize="@dimen/quickly_start_bar_title_normal"/>
+        <TextView 
+	        android:layout_width="@dimen/quickly_start_bar_title_normal_width"
+	        android:layout_height="wrap_content"
+	        android:gravity = "top|center"
+	        android:textSize="@dimen/quickly_start_bar_title_normal"/>
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/quickly_start_bar_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/quickly_start_bar_title"
+        android:paddingTop="2px"
+        android:layout_centerVertical="true">
+        <include 
+            layout = "@layout/quickly_start_bar_image"
+            android:id = "@+id/quickly_start_bar_image_down_1" />
+        <include 
+            layout = "@layout/quickly_start_bar_image"
+            android:id = "@+id/quickly_start_bar_image_down_2" />
+        <include 
+            layout = "@layout/quickly_start_bar_image"
+            android:id = "@+id/quickly_start_bar_image_down_3" 
+            android:focusable = "true"/>
+        <include 
+            layout = "@layout/quickly_start_bar_image"
+            android:id = "@+id/quickly_start_bar_image_down_4" />
+        <include 
+            layout = "@layout/quickly_start_bar_image"
+            android:id = "@+id/quickly_start_bar_image_down_5" />
+    </LinearLayout>
+    
+    <RelativeLayout
+        android:id="@+id/quickly_start_bar_middle"
+        android:background = "@drawable/long_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/quickly_start_bar_down"
+        android:layout_centerHorizontal="true" >
+        <ImageView
+	        android:id="@+id/long_bar"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"/>
+    </RelativeLayout>
+        
+    <LinearLayout
+        android:id="@+id/quickly_start_bar_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/quickly_start_bar_middle"
+        android:gravity = "bottom|center"
+        android:layout_centerHorizontal="true">
+        <include 
+            layout = "@layout/quickly_start_bar_image"
+            android:id = "@+id/quickly_start_bar_image_up_1" />
+        <include 
+            layout = "@layout/quickly_start_bar_image"
+            android:id = "@+id/quickly_start_bar_image_up_2" />
+        <include 
+            layout = "@layout/quickly_start_bar_image"
+            android:id = "@+id/quickly_start_bar_image_up_3" />
+        <include 
+            layout = "@layout/quickly_start_bar_image"
+            android:id = "@+id/quickly_start_bar_image_up_4" />
+        <include 
+            layout = "@layout/quickly_start_bar_image"
+            android:id = "@+id/quickly_start_bar_image_up_5" />
+    </LinearLayout>
+
+</com.softwinner.launcher.ui.QuicklyStartupBar>

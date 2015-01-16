@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.softwinner.launcher.ui.DigitalClock 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">  
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:shadowRadius="1"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowColor="@color/blackColor"
+        android:id="@+id/timeDisplay"
+        android:textColor="@color/whiteColor"
+        android:textSize = "30px"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:shadowRadius="1"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowColor="@color/blackColor"
+        android:id="@+id/am_pm"
+        android:textColor="@color/whiteColor"
+        android:textSize = "30px"/>
+</com.softwinner.launcher.ui.DigitalClock >

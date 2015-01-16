@@ -1,0 +1,8 @@
+<resources>
+    <integer name="config_allAppsFadeInTime">400</integer>
+    <integer name="config_allAppsFadeOutTime">400</integer>
+    <integer name="config_allAppsBatchLoadDelay">0</integer>
+    <integer name="config_allAppsBatchSize">0</integer>
+    <integer name="config_deleteWidgetsDialogFadeInTime">300</integer>
+    <integer name="config_deleteWidgetsDialogFadeOutTime">300</integer>
+</resources>

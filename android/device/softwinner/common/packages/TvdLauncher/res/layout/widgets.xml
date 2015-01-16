@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.softwinner.launcher.ui.CellLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:launcher="http://schemas.android.com/apk/res/com.softwinner.launcher"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:layout_gravity="center"
+    
+    launcher:cellWidth="@dimen/workspace_cell_width"
+    launcher:cellHeight="@dimen/workspace_cell_height"
+    launcher:longAxisStartPadding="@dimen/widgets_layout_longaxis_start_padding"
+    launcher:longAxisEndPadding="@dimen/widgets_layout_longaxis_end_padding"
+    launcher:shortAxisStartPadding="@dimen/widgets_layout_shortaxis_start_padding"
+    launcher:shortAxisEndPadding="@dimen/widgets_layout_shortaxis_end_padding"
+    launcher:shortAxisCells="4"
+    launcher:longAxisCells="6"
+    android:background="#00000000">
+
+    
+
+</com.softwinner.launcher.ui.CellLayout>

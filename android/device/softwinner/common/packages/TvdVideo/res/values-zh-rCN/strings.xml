@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">视频播放器</string>
+    <string name="loading_video">Loading video\u2026</string>
+    <string name="replaying_title">"重播视频"</string>
+    <string name="replaying_message">"从开始位置播放？"</string>
+    <string name="details_jump">"跳播"</string>
+    <string name="details_confirm">"确定"</string>
+    <string name="details_cancel">"取消"</string>
+    <string name="overflow_toast">"时间超过 "</string>
+    <string name="playlist_miss">"无播放列表"</string>
+    <string name="play_finish">"设备拔除，视频退出"</string>
+	<string name="not_support">"显示设备不支持 3D"</string>
+	<string name="not_hdmi">"当前输出不是 HDMI，无法支持3D"</string>
+	<string name="error_memeory">"内存不足"</string>
+</resources>

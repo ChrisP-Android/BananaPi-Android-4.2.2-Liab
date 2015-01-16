@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+**
+** Copyright 2007 The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<resources>
+    <!-- video file filter -->
+    <array name="fileEndingVideo">
+		<item>avi</item>
+		<item>rmvb</item>
+		<item>mkv</item>
+		<item>m2ts</item>
+		<item>ts</item>
+		<item>dat</item>
+		<item>mp4</item>
+		<item>mpeg</item>
+		<item>vob</item>
+		<item>wmv</item>
+		<item>mov</item>
+		<item>mpg</item>
+		<item>m4v</item>
+		<item>rm</item>
+		<item>flv</item>
+		<item>pmp</item>
+		<item>asf</item>
+		<item>psr</item>
+		<item>3gp</item>
+		<item>ram</item>
+		<item>divx</item>
+		<item>m4p</item>
+		<item>m4b</item>
+		<item>f4v</item>
+		<item>3gpp</item>
+		<item>3g2</item>
+		<item>3gpp2</item>
+		<item>webm</item>
+		<item>tp</item>
+		<item>3dv</item>
+		<item>3dm</item>
+    </array>
+    
+    <!-- subtitle setting.  The select subtitle. -->
+    <string-array name="screen_select_values">
+        <item>0</item>
+    </string-array>
+
+    <!-- subtitle setting.  The charset of subtitle to show. -->
+    <string-array name="screen_charset_values">
+    	<item>"UTF-8"</item>
+    	<item>"GBK"</item>
+    	<item>"Big5"</item>
+    	<item>"EUC-KR"</item>
+    	<item>"Shift_JIS"</item>
+    	<item>"TIS-620"</item>
+    	<item>"KOI8-R"</item>
+    	<item>"ISO-8859-5"</item>
+    	<item>"windows-1251"</item>
+    	<item>"UTF-16BE"</item>
+    	<item>"UTF-16LE"</item>
+    	<item>"ISO-8859-1"</item>
+    	<item>"windows-1254"</item>
+    	<item>"ISO-8859-2"</item>
+    	<item>"windows-1250"</item>
+    	<item>"ISO-8859-3"</item>
+    	<item>"ISO-8859-4"</item>
+    	<item>"ISO-8859-6"</item>
+    	<item>"windows-1256"</item>
+    	<item>"ISO-8859-7"</item>
+    	<item>"windows-1253"</item>
+    	<item>"ISO-8859-8"</item>
+    	<item>"windows-1255"</item>
+    	<item>"ISO-8859-9"</item>
+    	<item>"windows-1252"</item>
+    	<item>"windows-1258"</item>
+    </string-array>
+
+    <!-- zoom setting.  set the zoom mode. -->
+    <integer-array name="screen_zoom_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </integer-array>
+    
+    <!-- 3D setting.  set the 3d mode. -->
+    <integer-array name="screen_3d_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+       <!-- <item>7</item> -->
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+    </integer-array>
+    
+    <!-- track setting.  The track select. -->
+    <string-array name="screen_track_values">
+        <item>0</item>
+    </string-array>
+
+    <integer name="min_value_subdelay">-2000</integer>
+    <integer name="max_step_subdelay">4000</integer>
+    <integer name="min_value_suboffset">0</integer>
+    <integer name="max_step_suboffset">100</integer>
+    <integer name="min_value_charsize">16</integer>
+    <integer name="max_step_charsize">16</integer>
+</resources>

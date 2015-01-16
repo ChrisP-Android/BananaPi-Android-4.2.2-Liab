@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/* //device/apps/common/assets/res/any/strings.xml
+**
+** Copyright 2006, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<!-- add by Gary. starttttttttttttttttttttttttttttttttttttttt -->
+<!-- Text for display format -->
+	<string name="disp_format_ntsc">NTSC</string>
+	<string name="disp_format_pal">PAL</string>
+	<string name="disp_format_ypbpr_480i">YPbPr 480I</string>
+	<string name="disp_format_ypbpr_480p">YPbPr 480P</string>
+	<string name="disp_format_ypbpr_576i">YPbPr 576I</string>
+	<string name="disp_format_ypbpr_576p">YPbPr 576P</string>
+	<string name="disp_format_ypbpr_720p_50hz">YPbPr 720P 50HZ</string>
+	<string name="disp_format_ypbpr_720p_60hz">YPbPr 720P 60HZ</string>
+	<string name="disp_format_ypbpr_1080p_50hz">YPbPr 1080P 50HZ</string>
+	<string name="disp_format_ypbpr_1080p_60hz">YPbPr 1080P 60HZ</string>
+	<string name="disp_format_hdmi_480i">HDMI 480I</string>
+	<string name="disp_format_hdmi_480p">HDMI 480P</string>
+	<string name="disp_format_hdmi_576i">HDMI 576I</string>
+	<string name="disp_format_hdmi_576p">HDMI 576P</string>
+	<string name="disp_format_hdmi_720p_50hz">HDMI 720P 50HZ</string>
+	<string name="disp_format_hdmi_720p_60hz">HDMI 720P 60HZ</string>
+	<string name="disp_format_hdmi_1080i_50hz">HDMI 1080I 50HZ</string>
+	<string name="disp_format_hdmi_1080i_60hz">HDMI 1080I 60HZ</string>
+	<string name="disp_format_hdmi_1080p_24hz">HDMI 1080P 24HZ</string>
+	<string name="disp_format_hdmi_1080p_50hz">HDMI 1080P 50HZ</string>
+	<string name="disp_format_hdmi_1080p_60hz">HDMI 1080P 60HZ</string>
+	<string name="disp_format_vga_640_480">VGA 640 x 480</string>
+	<string name="disp_format_vga_800_600">VGA 800 x 600</string>
+	<string name="disp_format_vga_1024_768">VGA 1024 x 768</string>
+	<string name="disp_format_vga_1280_720">VGA 1280 x 720</string>
+	<string name="disp_format_vga_1280_1024">VGA 1280 x 1024 </string>
+	<string name="disp_format_vga_1360_768">VGA 1360 x 768</string>
+	<string name="disp_format_vga_1440_900">VGA 1440 x 900</string>
+	<string name="disp_format_vga_1680_1050">VGA 1680 x 1050</string>
+	<string name="disp_format_vga_1920_1080">VGA 1920 x 1080</string>
+<!-- add by Gary. endddddddddddddddddddddddddddddddd -->
+<!-- support the mouse mode -->
+	<string name="enter_key_mouse_mode">enter the mouse mode</string>
+	<string name="exit_key_mouse_mode">exit the mouse mode</string>
+	<string name="title_key_mouse_mode">mouse mode</string>
+	<string name="detail_key_mouse_mode">Now is the mouse mode</string>
+<!-- add by Gary. enddddddddddddddddddddddddddddddddddddddddd -->    
+
+<!-- add by Gary. startttttttttttttttttttttttttttttt -->
+<!-- 2011-12-19 -->
+<!-- handle the plug in and out of the display cables -->
+	<string name="hdmi_plug_in">HDMI cable is pluged in, and the display will switch to HDMI mode soon</string>
+	<string name="hdmi_plug_out">HDMI cable is pluged out</string>
+	<string name="cvbs_plug_in">CVBS cable is pluged in</string>
+	<string name="cvbs_plug_out">CVBS cable is pluged out</string>
+	<string name="ypbpr_plug_in">YPbPr cable is pluged in</string>
+	<string name="ypbpr_plug_out">YPbPr cable is pluged out</string>
+	<string name="vga_plug_in">VGA cable is pluged in</string>
+	<string name="vga_plug_out">VGA cable is pluged out</string>
+<!-- add by Gary. endddddddddddddddddddddddddddddddd -->    
+
+<!-- add by Gary. startttttttttttttttttttttttttttttt -->
+<!-- 2012-1-8 -->
+<!-- text for display type -->
+	<string name="display_type_hmdi">HDMI</string>
+	<string name="display_type_cvbs">CVBS</string>
+	<string name="display_type_ypbpr">YPbPr</string>
+	<string name="display_type_vga">VGA</string>
+<!-- add by Gary. endddddddddddddddddddddddddddddddd -->    
+    <!-- Add by huanglong , Text for message for wifi password incorrect-->
+    <string name="wifi_password_key_incorrect">Password key maybe incorrect, wifi connecting has been interrupted.</string>
+    
+    <string name="storage_sata">SATA Disk</string>
+</resources>

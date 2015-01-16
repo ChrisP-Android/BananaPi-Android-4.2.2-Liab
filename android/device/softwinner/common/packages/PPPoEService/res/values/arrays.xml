@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="notification_string">
+        <item >PPPoE connect failed</item>
+        <item >PPPoE connect successfully</item>
+    </string-array>
+
+    
+</resources>

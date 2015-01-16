@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme" parent="android:Theme.Wallpaper">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+    
+    <style name="menu_dialog" parent="@android:style/Theme.Dialog" >
+        <item name="android:windowFrame">@null</item>  
+        <item name="android:windowIsFloating">true</item>  
+        <item name="android:windowNoTitle">true</item>  
+        <item name="android:background">#00000000</item>  
+        <item name="android:backgroundDimEnabled">false</item>  
+        <item name="android:windowBackground">@color/grayColor</item> 
+    </style>
+    
+    <style name="menu_item" parent="@android:style/Widget.Button">
+        <item name="android:textColorHighlight">#FFF8B62D</item>
+        <item name="android:paddingBottom">7dp</item>
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingLeft">40dp</item>
+        <item name="android:paddingRight">40dp</item>
+        <item name="android:textColor">@color/whiteColor</item>
+    </style>
+    
+    <style name="optionMenuDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item> 
+        <item name="android:windowNoTitle">true</item> 
+        <item name="android:windowBackground">@drawable/round_radius</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+        
+    <style name="deleteWidgetsDialogWindowAnim" parent="android:Animation" mce_bogus="1">
+        <item name="android:windowEnterAnimation">@anim/delete_widgets_dialog_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/delete_widgets_dialog_fade_out</item>
+    </style>
+    
+    <style name="optionMenuZoomInLeft" parent="android:Animation" mce_bogus="1">
+        <item name="android:windowEnterAnimation">@anim/option_menu_zoom_in_left</item>
+        <item name="android:windowExitAnimation">@anim/option_menu_zoom_out_left</item>
+    </style>
+    
+    <style name="optionMenuZoomInRight" parent="android:Animation" mce_bogus="1">
+        <item name="android:windowEnterAnimation">@anim/option_menu_zoom_in_right</item>
+        <item name="android:windowExitAnimation">@anim/option_menu_zoom_out_right</item>
+    </style>
+    
+    <style name="menuDialogWindowAnim" parent="android:Animation" mce_bogus="1">
+        <item name="android:windowEnterAnimation">@anim/menu_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/menu_fade_out</item>
+    </style>
+        
+    <style name="deleteWidgetsDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@drawable/round_radius</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+    
+</resources>

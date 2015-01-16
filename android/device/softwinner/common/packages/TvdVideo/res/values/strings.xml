@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">TvdVideo</string>
+	<string name="loading_video">Loading video ...</string>
+	<string name="replaying_title">Replay video</string>
+	<string name="replaying_message">Replaying the video ?</string>
+	<string name="details_jump">Jump</string>
+	<string name="details_confirm">Confirm</string>
+	<string name="details_cancel">Cancel</string>
+	<string name="overflow_toast">The time is max than </string>
+	<string name="playlist_miss">No play list</string>
+	<string name="play_finish">Device ejected, video finish</string>
+	<string name="not_support">The display device not support 3D</string>
+	<string name="not_hdmi">Current ouput is not HDMI, do not support 3D</string>
+	<string name="error_memeory">Out of memory</string>
+</resources>

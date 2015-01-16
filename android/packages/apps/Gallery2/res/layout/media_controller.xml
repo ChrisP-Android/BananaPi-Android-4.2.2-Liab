@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#00666666"
+    android:orientation="vertical">
+    <LinearLayout
+	    android:id="@+id/content"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1"
+	    android:orientation="vertical"
+    />
+    <ImageView android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/divider_horizontal_dark" />
+
+    <LinearLayout
+        android:id="@+id/media_control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+	    android:background="#CC666666"
+        android:gravity="center"
+        android:paddingTop="4dip"
+        android:orientation="horizontal">
+        
+        <ImageButton android:id="@+id/vDec" style="@style/MediaButton.VolumeDec" />
+        <ImageButton android:id="@+id/vInc" style="@style/MediaButton.VolumeInc" />
+        <ImageButton android:id="@+id/prev" style="@style/MediaButton.Previous" android:visibility="gone"/>
+        <ImageButton android:id="@+id/rew" style="@style/MediaButton.Rew" android:visibility="gone" />
+        <ImageButton android:id="@+id/pause" style="@style/MediaButton.Pause" />
+        <ImageButton android:id="@+id/ffwd" style="@style/MediaButton.Ffwd" android:visibility="gone" />
+        <ImageButton android:id="@+id/next" style="@style/MediaButton.Next" android:visibility="gone"/>
+        <ImageButton android:id="@+id/set" style="@style/MediaButton.Set" />
+        <ImageButton android:id="@+id/back" style="@style/MediaButton.Back" />
+
+    </LinearLayout>
+<!-- 	
+	<HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+	    android:background="#CC666666"
+	    android:layout_gravity="center"
+		android:scrollbars="none">
+
+	    <LinearLayout
+	        android:id="@+id/settings"
+	        android:layout_width="wrap_content"
+	        android:layout_height="match_parent"
+		    android:background="#CC666666"
+	        android:layout_gravity="center"
+	        android:paddingTop="4dip"
+	        android:orientation="horizontal">
+ -->		
+    <LinearLayout
+        android:id="@+id/settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+	    android:background="#CC666666"
+        android:gravity="center"
+        android:paddingTop="4dip"
+        android:orientation="horizontal">
+
+	        <ImageButton android:id="@+id/gate" style="@style/MediaButton.Gate" />
+	        <ImageButton android:id="@+id/select" style="@style/MediaButton.Select" />
+	        <ImageButton android:id="@+id/charset" style="@style/MediaButton.Charset" />
+	        <ImageButton android:id="@+id/color" style="@style/MediaButton.Color" />
+	        <ImageButton android:id="@+id/charsize" style="@style/MediaButton.Charsize" />
+	        <ImageButton android:id="@+id/offset" style="@style/MediaButton.Offset" android:visibility="gone" />
+	        <ImageButton android:id="@+id/delay" style="@style/MediaButton.Delay" />
+	        <ImageButton android:id="@+id/track" style="@style/MediaButton.Track" />
+	        <ImageButton android:id="@+id/zoom" style="@style/MediaButton.Zoom" />
+	        <ImageButton android:id="@+id/mode3D" style="@style/MediaButton.Mode3D" />
+	        <ImageButton android:id="@+id/repeat" style="@style/MediaButton.Repeat" />
+	        <ImageButton android:id="@+id/up" style="@style/MediaButton.Up" />
+	    </LinearLayout>
+<!-- 	</HorizontalScrollView>  -->
+    
+</LinearLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="toggle_screen_adapt"
+        android:title="@string/screen_adaption_title"
+        android:summaryOn="@string/screen_adaption_summary_on"
+        android:summaryOff="@string/screen_adaption_summary_off"
+        android:disableDependentsState = "false"
+        android:persistent="false" />
+    <ListPreference
+        android:key="display_mode_selector"
+        android:title="@string/display_mode_selector_title"
+        android:persistent="false"
+        android:entries="@array/display_mode_list_entries"
+        android:entryValues="@array/display_mode_list_values"
+        android:dependency = "toggle_screen_adapt"/>  
+</PreferenceScreen>

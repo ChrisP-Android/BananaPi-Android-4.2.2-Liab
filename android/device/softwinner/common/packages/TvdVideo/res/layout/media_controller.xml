@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#00666666"
+    android:orientation="vertical">
+    <LinearLayout
+	    android:id="@+id/content"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1"
+	    android:orientation="vertical"
+    />
+
+						<!-- mediaController layout -->
+	<RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+	    <LinearLayout
+	        android:id="@+id/media_control"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+        	android:background="@drawable/mediacontrol_background"
+		    android:layout_alignParentBottom="true"
+	        android:gravity="center"
+	        android:orientation="horizontal">
+	        
+	        <ImageButton android:id="@+id/jump"
+	        	 style="@style/MediaButton.Jump" 
+	        	 android:nextFocusUp="@id/jump"/>
+	        <ImageButton android:id="@+id/repeat" 
+	        	android:focusableInTouchMode="true"
+	        	style="@style/MediaButton.Repeat" 
+	        	android:nextFocusDown="@+id/list" />
+	        <ImageButton android:id="@+id/track" 
+	        	android:focusableInTouchMode="true"
+	        	style="@style/MediaButton.Track"
+	        	android:nextFocusDown="@+id/list" />
+	        <ImageButton android:id="@+id/prev" 
+	        	style="@style/MediaButton.Previous" 
+	        	android:focusableInTouchMode="true"
+	        	android:nextFocusUp="@id/prev"/>
+	        <ImageButton android:id="@+id/pause" 
+	        	style="@style/MediaButton.Play" 
+	        	android:focusableInTouchMode="true"
+	        	android:nextFocusUp="@id/pause"/>
+	        <ImageButton android:id="@+id/next" 
+	        	style="@style/MediaButton.Next" 
+	        	android:focusableInTouchMode="true"
+	        	android:nextFocusUp="@id/next"/>
+	        <ImageButton android:id="@+id/zoom" 
+	        	style="@style/MediaButton.Zoom" 
+	        	android:focusableInTouchMode="true"
+	        	android:nextFocusDown="@+id/list" />
+	        <ImageButton android:id="@+id/mode3D" 
+	        	android:focusableInTouchMode="true"
+	        	style="@style/MediaButton.Mode3D" 
+	        	android:nextFocusDown="@+id/list"/>
+	        <ImageButton android:id="@+id/subset" 
+	        	android:focusableInTouchMode="true"
+	        	style="@style/MediaButton.SubSet" 
+	        	android:nextFocusDown="@+id/list" />
+	        <ImageButton android:id="@+id/volume_up" 
+	        	android:focusableInTouchMode="true"
+	        	style="@style/MediaButton.VolUp" 
+	        	android:nextFocusDown="@id/volume_up" />
+	        <ImageButton android:id="@+id/volume_down" 
+	        	android:focusableInTouchMode="true"
+	        	style="@style/MediaButton.VolDown" 
+	        	android:nextFocusDown="@id/volume_down" />
+	        	
+	    </LinearLayout>
+	    
+    	<LinearLayout android:id="@+id/list_layout"
+		android:layout_width="fill_parent"
+		android:layout_height="200dip"
+		android:layout_above="@id/media_control"
+		android:orientation="horizontal" >
+	        	<!--  grid view layout -->
+    	<LinearLayout android:id="@+id/grid_layout"
+			android:layout_width="247dip"
+			android:layout_height="fill_parent"
+			android:visibility="gone"
+			android:orientation="vertical" >	        	
+			<GridView
+			    android:id="@+id/gridview"
+			    android:layout_width="wrap_content"   
+			    android:layout_height="wrap_content"
+			    android:verticalSpacing="10dip"  
+    			android:horizontalSpacing="10dip"
+			    android:columnWidth="100dip"
+			    android:background="@drawable/grid_background"
+				android:nextFocusUp="@id/gridview"
+				android:nextFocusDown="@id/gridview"
+				android:nextFocusLeft="@id/gridview"
+				android:nextFocusRight="@id/gridview"
+			    android:numColumns="auto_fit"
+			    android:stretchMode="columnWidth"
+				android:fadingEdge="none" 
+				android:cacheColorHint="#00000000"
+			    android:gravity="center"
+			/>
+		</LinearLayout>		   	
+    			<!-- sublist view layout -->
+    	<LinearLayout android:id="@+id/sublist_layout"
+			android:layout_width="280dip"
+			android:layout_height="fill_parent"
+			android:visibility="gone"
+			android:orientation="vertical" >
+		    <ListView android:id="@+id/sublist"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="@drawable/item_background"
+				android:nextFocusUp="@id/sublist"
+				android:nextFocusDown="@id/sublist"
+				android:nextFocusLeft="@id/sublist"
+				android:nextFocusRight="@+id/list"
+				android:focusable="true"
+				android:choiceMode="singleChoice"
+	    		android:fadingEdge="none" 
+				android:cacheColorHint="#00000000" />
+		</LinearLayout>		
+	    					<!-- list view layout -->
+		<RelativeLayout
+		    android:layout_width="247dip"
+		    android:layout_height="fill_parent"
+		    android:orientation="vertical">
+		    <ListView android:id="@+id/list"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+    			android:background="@drawable/item_background"
+				android:focusable="true"
+				android:nextFocusUp="@id/list"
+				android:nextFocusLeft="@id/list"
+				android:nextFocusRight="@id/list"
+			    android:layout_alignParentBottom="true"
+				android:choiceMode="singleChoice"
+	    		android:fadingEdge="none" 
+				android:cacheColorHint="#00000000" />
+			</RelativeLayout>
+
+		</LinearLayout>
+
+	</RelativeLayout>
+</LinearLayout>

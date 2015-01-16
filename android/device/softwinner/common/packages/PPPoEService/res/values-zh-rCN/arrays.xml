@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="notification_string">
+        <item >PPPoE连接中断</item>
+        <item >PPPoE连接成功</item>
+    </string-array>    
+</resources>
