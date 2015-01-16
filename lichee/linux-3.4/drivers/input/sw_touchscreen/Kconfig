@@ -1,0 +1,66 @@
+#
+# SW Touchscreen driver configuration
+#
+menuconfig INPUT_SW_TOUCHSCREEN
+	bool "sw Touchscreens"
+	help
+	  Say Y here, and a list of supported touchscreens will be displayed.
+	  This option doesn't affect the kernel.
+
+	  If unsure, say Y.
+
+if INPUT_SW_TOUCHSCREEN         
+         
+config SW_TOUCHSCREEN_ZET622X
+       tristate  "zet622x touchscreen driver"
+       default m
+       depends on INPUT && I2C
+       help
+         zet622x touchscreen driver
+
+config  SW_TOUCHSCREEN_GSLX680
+       tristate  "gslX680 touchscreen driver"
+       default m
+       depends on INPUT && I2C
+       help
+         gslX3680,gslX2680,gsl1680 touchscreen driver ,     
+         
+config  SW_TOUCHSCREEN_GT82X
+       tristate  "gt82x touchscreen driver"
+       default m
+       depends on INPUT && I2C
+       help
+         gt813,gt827,gt828 touchscreen driver
+         
+config  SW_TOUCHSCREEN_SUNXI_TS
+       tristate  "sunxi-ts touchscreen driver"
+       help
+           sunxi-ts touchscreen driver of resistance          
+         
+config  SW_TOUCHSCREEN_GT811
+       tristate  "gt811 touchscreen driver"
+       default m
+       depends on INPUT && I2C
+       help
+         gt811 touchscreen driver   
+
+config TOUCHSCREEN_AW5306
+       tristate  "aw5306 touchscreen driver"
+       default m
+       depends on INPUT && I2C
+       help
+         aw5306 touchscreen driver 
+
+config TOUCHSCREEN_ILITEK
+       tristate  "ilitek touchscreen driver"
+       default m
+       depends on INPUT && I2C
+       help
+         ilitek touchscreen driver
+                  
+         
+source "drivers/input/sw_touchscreen/ft5x/Kconfig"
+
+source "drivers/input/sw_touchscreen/gt9xx/Kconfig"
+
+endif

@@ -1,0 +1,8 @@
+
+config SND_SUN7I_SOC_PCM_INTERFACE
+	tristate "SoC pcm interface for the ReuuiMlla SUN7I chips"
+	default n
+	help
+	  Say Y or M if you want to add support for codecs attached to
+	  the SUN7I AC97, I2S or PCM interface. You will also need
+	  to select the audio interfaces to support below.

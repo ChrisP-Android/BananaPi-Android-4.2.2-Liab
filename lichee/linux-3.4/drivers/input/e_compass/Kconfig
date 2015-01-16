@@ -1,0 +1,27 @@
+#
+# Input core configuration
+#
+menuconfig INPUT_E_COMPASS
+	bool "e_compass"
+	default y
+	help
+	  Say Y here, and a list of supported e_compass will be displayed.
+	  This option doesn't affect the kernel.
+
+	  If unsure, say Y.
+
+if INPUT_E_COMPASS
+
+config E_COMPASS_L3M303D
+        tristate "E_COMPASS_L3M303D support"
+        depends on I2C
+        help
+          Say Y here to enable the E_COMPASS_L3M303D.
+
+config E_COMPASS_FXOS8700
+        tristate "E_COMPASS_FXOS8700 support"
+        depends on I2C
+        help
+          Say Y here to enable the E_COMPASS_FXOS8700.
+       
+endif

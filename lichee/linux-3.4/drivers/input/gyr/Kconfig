@@ -1,0 +1,21 @@
+#
+# Input core configuration
+#
+menuconfig INPUT_GYR
+	bool "gyroscope"
+	default y
+	help
+	  Say Y here, and a list of supported gyroscope will be displayed.
+	  This option doesn't affect the kernel.
+
+	  If unsure, say Y.
+
+if INPUT_GYR
+
+config GYR_L3GD20
+        tristate "GYR_L3GD20_GYR support"
+        depends on I2C
+        help
+          Say Y here to enable the gyroscope.
+       
+endif

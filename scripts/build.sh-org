@@ -1,0 +1,3 @@
+./build_kernel.sh
+./build_android.sh
+./build_pack.sh

@@ -1,0 +1,9 @@
+
+config SUN7I_G2D
+	depends on ARCH_SUN7I
+	tristate "SUN7I G2D"
+	default y
+#	depends on HAS_IOMEM
+	help
+
+

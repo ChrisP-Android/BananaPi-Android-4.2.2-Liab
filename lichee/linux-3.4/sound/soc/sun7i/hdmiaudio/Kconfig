@@ -1,0 +1,6 @@
+
+config SND_SUN7I_SOC_HDMIAUDIO
+	tristate "HDMI Audio for the ReuuiMlla SUN7I chips"
+	default n
+	help
+	  Say Y or M if you want to add support for hdmi audio

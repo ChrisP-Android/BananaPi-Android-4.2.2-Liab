@@ -1,0 +1,25 @@
+#
+# Input light_sensor drivers configuration
+#
+menuconfig INPUT_LIGHT_SENSOR
+	bool "light_sensor"
+	default y
+	help
+	  Say Y here, and a list of supported light_sensor will be displayed.
+	  This option doesn't affect the kernel.
+
+	  If unsure, say Y.
+
+if INPUT_LIGHT_SENSOR
+config INPUT_AL3010
+	tristate "al3010 LIGHT SENSOR driver"
+	depends on I2C && INPUT
+	default m
+	help
+	  Say Y here if you want to useal3010
+	  through I2C interface.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called al3010.
+	  
+endif

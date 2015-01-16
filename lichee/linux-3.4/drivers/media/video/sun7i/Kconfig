@@ -1,0 +1,9 @@
+config VIDEO_DECODER_SUN7I
+	tristate "sun7i video decoder support"
+	depends on VIDEO_SUN7I_CEDAR
+	default y
+	---help---
+	  This is the driver for sun7i video decoder, including h264/
+	  mpeg4/mpeg2/vc1/rmvb. 
+	  To compile this driver as a module, choose M here: the
+	  module will be called cedar_dev.

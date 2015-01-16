@@ -1,0 +1,1014 @@
+/*
+ * sound\soc\sun7i\i2s\sun7i-i2s.c
+ * (C) Copyright 2007-2011
+ * Reuuimlla Technology Co., Ltd. <www.reuuimllatech.com>
+ * chenpailin <chenpailin@Reuuimllatech.com>
+ *
+ * some simple description for this code
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ */
+
+#include <linux/init.h>
+#include <linux/module.h>
+#include <linux/device.h>
+#include <linux/delay.h>
+#include <linux/clk.h>
+#include <linux/jiffies.h>
+#include <linux/io.h>
+#include <sound/core.h>
+#include <sound/pcm.h>
+#include <sound/pcm_params.h>
+#include <sound/initval.h>
+#include <sound/soc.h>
+#include <mach/clock.h>
+#include <mach/sys_config.h>
+#include <mach/hardware.h>
+#include <asm/dma.h>
+#include <mach/dma.h>
+#include <mach/gpio.h>
+#include <linux/gpio.h>
+#include "sun7i-pcmdma.h"
+#include "sun7i-pcm.h"
+
+#undef I2S_DBG
+#if (0)
+    #define I2S_DBG(format,args...)  printk("[SWITCH] "format,##args)    
+#else
+    #define I2S_DBG(...)    
+#endif
+
+struct sun7i_pcm_info sun7i_pcm;
+
+static int regsave[8];
+static int pcm_used 			= 0;
+static int pcm_select 			= 0;
+static int over_sample_rate 	= 0;
+static int sample_resolution 	= 0;
+static int word_select_size 	= 0;
+static int pcm_sync_period 		= 0;
+static int msb_lsb_first 		= 0;
+static int sign_extend 			= 0;
+static int slot_index 			= 0;
+static int slot_width 			= 0;
+static int frame_width 			= 0;
+static int tx_data_mode 		= 0;
+static int rx_data_mode 		= 0;
+
+static struct clk *i2s_apbclk 		= NULL;
+static struct clk *i2s_pll2clk 		= NULL;
+static struct clk *i2s_pllx8 		= NULL;
+static struct clk *i2s_moduleclk	= NULL;
+
+static struct sun7i_dma_params sun7i_i2s_pcm_stereo_out = {
+	
+	.name        = "PCM Stereo out",
+	.dma_addr    =	SUN7I_IISBASE + SUN7I_IISTXFIFO,
+	
+};
+
+static struct sun7i_dma_params sun7i_i2s_pcm_stereo_in = {
+	
+	.name       = "PCM Stereo in",
+	.dma_addr 	=	SUN7I_IISBASE + SUN7I_IISRXFIFO,
+
+};
+
+
+//static u32 i2s_handle = 0;
+void sun7i_snd_txctrl_pcm(struct snd_pcm_substream *substream, int on)
+{
+	u32 reg_val;
+	/*pr_info("sun7i-i2s::func:%s(line:%d)\n",__func__,__LINE__);*/
+	reg_val = readl(sun7i_pcm.regs + SUN7I_TXCHSEL);
+	reg_val &= ~0x7;
+	reg_val |= SUN7I_TXCHSEL_CHNUM(substream->runtime->channels);
+	writel(reg_val, sun7i_pcm.regs + SUN7I_TXCHSEL);
+
+	reg_val = readl(sun7i_pcm.regs + SUN7I_TXCHMAP);
+	reg_val = 0;
+	if(substream->runtime->channels == 1) {
+		reg_val = 0x76543200;
+	} else {
+		reg_val = 0x76543210;
+	}
+	writel(reg_val, sun7i_pcm.regs + SUN7I_TXCHMAP);
+
+	reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+	reg_val &= ~SUN7I_IISCTL_SDO3EN;
+	reg_val &= ~SUN7I_IISCTL_SDO2EN;
+	reg_val &= ~SUN7I_IISCTL_SDO1EN;	
+	reg_val &= ~SUN7I_IISCTL_SDO0EN;
+	switch(substream->runtime->channels) {
+		case 1:
+		case 2:
+			reg_val |= SUN7I_IISCTL_SDO0EN;
+			break;
+		case 3:
+		case 4:
+			reg_val |= SUN7I_IISCTL_SDO0EN | SUN7I_IISCTL_SDO1EN;
+			break;
+		case 5:
+		case 6:
+			reg_val |= SUN7I_IISCTL_SDO0EN | SUN7I_IISCTL_SDO1EN | SUN7I_IISCTL_SDO2EN;
+			break;
+		case 7:
+		case 8:
+			reg_val |= SUN7I_IISCTL_SDO0EN | SUN7I_IISCTL_SDO1EN | SUN7I_IISCTL_SDO2EN | SUN7I_IISCTL_SDO3EN;
+			break;
+		default:
+			reg_val |= SUN7I_IISCTL_SDO0EN; break;
+	}
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+	
+	//flush TX FIFO
+	reg_val = readl(sun7i_pcm.regs + SUN7I_IISFCTL);
+	reg_val |= SUN7I_IISFCTL_FTX;	
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISFCTL);
+	
+	//clear TX counter
+	writel(0, sun7i_pcm.regs + SUN7I_IISTXCNT);
+
+	if (on) {
+		/* IIS TX ENABLE */
+		reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+		reg_val |= SUN7I_IISCTL_TXEN;
+		writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+		
+		/* enable DMA DRQ mode for play */
+		reg_val = readl(sun7i_pcm.regs + SUN7I_IISINT);
+		reg_val |= SUN7I_IISINT_TXDRQEN;
+		writel(reg_val, sun7i_pcm.regs + SUN7I_IISINT);
+	} else {
+		/* IIS TX DISABLE */
+		reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+		reg_val &= ~SUN7I_IISCTL_TXEN;
+		writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+			
+		/* DISBALE dma DRQ mode */
+		reg_val = readl(sun7i_pcm.regs + SUN7I_IISINT);
+		reg_val &= ~SUN7I_IISINT_TXDRQEN;
+		writel(reg_val, sun7i_pcm.regs + SUN7I_IISINT);
+	}		
+}
+
+void sun7i_snd_rxctrl_pcm(struct snd_pcm_substream *substream, int on)
+{	
+	/*pr_info("sun7i-i2s::func:%s(line:%d)\n",__func__,__LINE__);*/
+	u32 reg_val;
+	reg_val = readl(sun7i_pcm.regs + SUN7I_RXCHSEL);
+	reg_val &= ~0x1;
+	reg_val |= SUN7I_RXCHSEL_CHNUM(substream->runtime->channels);
+	writel(reg_val, sun7i_pcm.regs + SUN7I_RXCHSEL);
+
+	reg_val = readl(sun7i_pcm.regs + SUN7I_RXCHMAP);
+	reg_val = 0;
+	if(substream->runtime->channels == 1) {
+		reg_val = 0x00000000;
+	} else {
+		reg_val = 0x00000010;
+	}
+	writel(reg_val, sun7i_pcm.regs + SUN7I_RXCHMAP);
+	
+	//flush RX FIFO
+	reg_val = readl(sun7i_pcm.regs + SUN7I_IISFCTL);
+	reg_val |= SUN7I_IISFCTL_FRX;	
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISFCTL);
+
+	//clear RX counter
+	writel(0, sun7i_pcm.regs + SUN7I_IISRXCNT);
+	
+	if (on) {
+		/* IIS RX ENABLE */
+		reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+		reg_val |= SUN7I_IISCTL_RXEN;
+		writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+			
+		/* enable DMA DRQ mode for record */
+		reg_val = readl(sun7i_pcm.regs + SUN7I_IISINT);
+		reg_val |= SUN7I_IISINT_RXDRQEN;
+		writel(reg_val, sun7i_pcm.regs + SUN7I_IISINT);
+			
+		//Global Enable Digital Audio Interface
+			
+	} else {
+		/* IIS RX DISABLE */
+		reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+		reg_val &= ~SUN7I_IISCTL_RXEN;
+		writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+			
+		/* DISBALE dma DRQ mode */
+		reg_val = readl(sun7i_pcm.regs + SUN7I_IISINT);
+		reg_val &= ~SUN7I_IISINT_RXDRQEN;
+		writel(reg_val, sun7i_pcm.regs + SUN7I_IISINT);
+				
+		//Global disable Digital Audio Interface
+	}		
+}
+
+static int sun7i_pcm_set_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
+{
+	u32 reg_val;
+	u32 reg_val1;
+	/*pr_info("sun7i-i2s::func:%s(line:%d)\n",__func__,__LINE__);*/
+	//SDO ON
+	reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+	reg_val |= (SUN7I_IISCTL_SDO0EN); 
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+
+	/* master or slave selection */
+	reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+	switch(fmt & SND_SOC_DAIFMT_MASTER_MASK){
+		case SND_SOC_DAIFMT_CBM_CFM:   /* codec clk & frm master */
+			reg_val |= SUN7I_IISCTL_MS;
+			break;
+		case SND_SOC_DAIFMT_CBS_CFS:   /* codec clk & frm slave */
+			reg_val &= ~SUN7I_IISCTL_MS;
+			break;
+		default:
+			return -EINVAL;
+	}
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+	
+	/* pcm or i2s mode selection */
+	reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+	reg_val1 = readl(sun7i_pcm.regs + SUN7I_IISFAT0);
+	reg_val1 &= ~SUN7I_IISFAT0_FMT_RVD;
+	switch(fmt & SND_SOC_DAIFMT_FORMAT_MASK){
+		case SND_SOC_DAIFMT_I2S:        /* I2S mode */
+			reg_val &= ~SUN7I_IISCTL_PCM;
+			reg_val1 |= SUN7I_IISFAT0_FMT_I2S;
+			break;
+		case SND_SOC_DAIFMT_RIGHT_J:    /* Right Justified mode */
+			reg_val &= ~SUN7I_IISCTL_PCM;
+			reg_val1 |= SUN7I_IISFAT0_FMT_RGT;
+			break;
+		case SND_SOC_DAIFMT_LEFT_J:     /* Left Justified mode */
+			reg_val &= ~SUN7I_IISCTL_PCM;
+			reg_val1 |= SUN7I_IISFAT0_FMT_LFT;
+			break;
+		case SND_SOC_DAIFMT_DSP_A:      /* L data msb after FRM LRC */
+			reg_val |= SUN7I_IISCTL_PCM;
+			reg_val1 &= ~SUN7I_IISFAT0_LRCP;
+			break;
+		case SND_SOC_DAIFMT_DSP_B:      /* L data msb during FRM LRC */
+			reg_val |= SUN7I_IISCTL_PCM;
+			reg_val1 |= SUN7I_IISFAT0_LRCP;
+			break;
+		default:
+			return -EINVAL;
+	}
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+	writel(reg_val1, sun7i_pcm.regs + SUN7I_IISFAT0);
+	
+	/* DAI signal inversions */
+	reg_val1 = readl(sun7i_pcm.regs + SUN7I_IISFAT0);
+	switch(fmt & SND_SOC_DAIFMT_INV_MASK){
+		case SND_SOC_DAIFMT_NB_NF:     /* normal bit clock + frame */
+			reg_val1 &= ~SUN7I_IISFAT0_LRCP;
+			reg_val1 &= ~SUN7I_IISFAT0_BCP;
+			break;
+		case SND_SOC_DAIFMT_NB_IF:     /* normal bclk + inv frm */
+			reg_val1 |= SUN7I_IISFAT0_LRCP;
+			reg_val1 &= ~SUN7I_IISFAT0_BCP;
+			break;
+		case SND_SOC_DAIFMT_IB_NF:     /* invert bclk + nor frm */
+			reg_val1 &= ~SUN7I_IISFAT0_LRCP;
+			reg_val1 |= SUN7I_IISFAT0_BCP;
+			break;
+		case SND_SOC_DAIFMT_IB_IF:     /* invert bclk + frm */
+			reg_val1 |= SUN7I_IISFAT0_LRCP;
+			reg_val1 |= SUN7I_IISFAT0_BCP;
+			break;
+	}
+	writel(reg_val1, sun7i_pcm.regs + SUN7I_IISFAT0);
+	/* set FIFO control register */
+	reg_val = 1 & 0x3;
+	reg_val |= (1 & 0x1)<<2;
+	reg_val |= SUN7I_IISFCTL_RXTL(0xf);				//RX FIFO trigger level
+	reg_val |= SUN7I_IISFCTL_TXTL(0x40);				//TX FIFO empty trigger level
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISFCTL);
+	return 0;
+}
+
+static int sun7i_pcm_hw_params(struct snd_pcm_substream *substream,
+																struct snd_pcm_hw_params *params,
+																struct snd_soc_dai *dai)
+{
+	/*pr_info("sun7i-i2s::func:%s(line:%d)\n",__func__,__LINE__);*/
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct sun7i_dma_params *dma_data;
+	
+	/* play or record */
+	if(substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+		dma_data = &sun7i_i2s_pcm_stereo_out;
+	else
+		dma_data = &sun7i_i2s_pcm_stereo_in;
+	
+	snd_soc_dai_set_dma_data(rtd->cpu_dai, substream, dma_data);
+	return 0;
+}
+
+static int sun7i_pcm_trigger(struct snd_pcm_substream *substream,
+                              int cmd, struct snd_soc_dai *dai)
+{
+	int ret = 0;
+	u32 reg_val;
+	/*pr_info("sun7i-i2s::func:%s(line:%d)\n",__func__,__LINE__);*/
+	switch (cmd) {
+		case SNDRV_PCM_TRIGGER_START:
+		case SNDRV_PCM_TRIGGER_RESUME:
+		case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+			
+			if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
+				sun7i_snd_rxctrl_pcm(substream, 1);
+			} else {
+				sun7i_snd_txctrl_pcm(substream, 1);
+			}
+	/*Global Enable Digital Audio Interface*/
+			reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+			reg_val |= SUN7I_IISCTL_GEN;
+			writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+			
+			break;
+		case SNDRV_PCM_TRIGGER_STOP:
+		case SNDRV_PCM_TRIGGER_SUSPEND:
+		case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+			
+			if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
+				sun7i_snd_rxctrl_pcm(substream, 0);
+				/*printk("[IIS]SPECIAL CLK 0x01c20068 = %#x, line= %d\n", *(volatile int*)0xF1C20068, __LINE__);
+				printk("[IIS]SPECIAL CLK 0x01c200B8 = %#x, line = %d\n", *(volatile int*)0xF1C200B8, __LINE__);*/
+			} else {
+			  sun7i_snd_txctrl_pcm(substream, 0);
+			}
+/*Global disable Digital Audio Interface*/
+			reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+			reg_val &= ~SUN7I_IISCTL_GEN;
+			writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+			break;
+		default:
+			ret = -EINVAL;
+			break;
+	}
+
+	return ret;
+}
+
+//freq:   1: 22.5792MHz   0: 24.576MHz  
+static int sun7i_pcm_set_sysclk(struct snd_soc_dai *cpu_dai, int clk_id, 
+                                 unsigned int freq, int i2s_pcm_select)
+{	/*pr_info("sun7i-i2s::func:%s(line:%d)\n",__func__,__LINE__);*/
+	if (clk_set_rate(i2s_pll2clk, freq)) {
+		printk("try to set the i2s_pll2clk failed!\n");
+	}
+	pcm_select = i2s_pcm_select;
+
+	return 0;
+}
+
+static int sun7i_pcm_set_clkdiv(struct snd_soc_dai *cpu_dai, int div_id, int sample_rate)
+{
+	u32 reg_val;
+	u32 mclk;
+	u32 mclk_div = 0;
+	u32 bclk_div = 0;
+
+	mclk = over_sample_rate;
+	printk("func:%s(line:%d),pcm_select:%d\n",__func__,__LINE__,pcm_select);
+	printk("func:%s(line:%d),pcm_select:%d\n",__func__,__LINE__,pcm_select);
+	if (!pcm_select) {
+		switch(sample_rate)
+		{
+			case 8000:
+			{
+				switch(mclk)
+				{
+					case 128:	mclk_div = 24;
+								break;
+					case 192:	mclk_div = 16;
+								break;
+					case 256:	mclk_div = 12;
+								break;
+					case 384:	mclk_div = 8;
+								break;
+					case 512:	mclk_div = 6;
+								break;
+					case 768:	mclk_div = 4;
+								break;
+				}
+				break;
+			}
+			case 16000:
+			{
+				switch(mclk)
+				{
+					case 128:	mclk_div = 12;
+			break;
+					case 192:	mclk_div = 8;
+								break;
+					case 256:	mclk_div = 6;
+								break;
+					case 384:	mclk_div = 4;
+								break;
+					case 768:	mclk_div = 2;
+								break;
+				}
+				break;
+			}
+			case 32000:
+			{
+				switch(mclk)
+				{
+					case 128:	mclk_div = 6;
+								break;
+					case 192:	mclk_div = 4;
+								break;
+					case 384:	mclk_div = 2;
+								break;
+					case 768:	mclk_div = 1;
+			break;
+				}
+				break;
+	}
+	
+			case 64000:
+			{
+				switch(mclk)
+				{
+					case 192:	mclk_div = 2;
+								break;
+					case 384:	mclk_div = 1;
+								break;
+				}
+				break;
+			}
+			case 128000:
+			{
+				switch(mclk)
+				{
+					case 192:	mclk_div = 1;
+								break;
+				}
+				break;
+			}
+			case 11025:
+			case 12000:
+			{
+				switch(mclk)
+				{
+					case 128:	mclk_div = 16;
+								break;
+					case 256:	mclk_div = 8;
+								break;
+					case 512:	mclk_div = 4;
+								break;
+				}
+				break;
+			}
+			case 22050:
+			case 24000:
+			{
+				switch(mclk)
+				{
+					case 128:	mclk_div = 8;
+								break;
+					case 256:	mclk_div = 4;
+								break;
+					case 512:	mclk_div = 2;
+								break;
+				}
+				break;
+			}
+			case 44100:
+			case 48000:
+			{
+				switch(mclk)
+				{
+					case 128:	mclk_div = 4;
+								break;
+					case 256:	mclk_div = 2;
+								break;
+					case 512:	mclk_div = 1;
+								break;
+				}
+				break;
+			}
+			case 88200:
+			case 96000:
+			{
+				switch(mclk)
+				{
+					case 128:	mclk_div = 2;
+								break;
+					case 256:	mclk_div = 1;
+								break;
+				}
+				break;
+			}
+			case 176400:
+			case 192000:
+			{
+				mclk_div = 1;
+				break;
+			}
+		}
+		bclk_div = mclk/(2*word_select_size);
+	} else {
+		mclk_div = 2;
+		bclk_div = 6;
+	}
+	printk("func:%s(line:%d),mclk_div:%d,bclk_div:%d\n",__func__,__LINE__,mclk_div,bclk_div);
+	switch(mclk_div)
+	{
+		case 1: mclk_div = 0;
+				break;
+		case 2: mclk_div = 1;
+				break;
+		case 4: mclk_div = 2;
+				break;
+		case 6: mclk_div = 3;
+				break;
+		case 8: mclk_div = 4;
+				break;
+		case 12: mclk_div = 5;
+				 break;
+		case 16: mclk_div = 6;
+				 break;
+		case 24: mclk_div = 7;
+				 break;
+		case 32: mclk_div = 8;
+				 break;
+		case 48: mclk_div = 9;
+				 break;
+		case 64: mclk_div = 0xA;
+				 break;
+	}
+	mclk_div &= 0xf;
+	switch(bclk_div)
+	{
+		case 2: bclk_div = 0;
+				break;
+		case 4: bclk_div = 1;
+				break;
+		case 6: bclk_div = 2;
+				break;
+		case 8: bclk_div = 3;
+				break;
+		case 12: bclk_div = 4;
+				 break;
+		case 16: bclk_div = 5;
+				 break;
+		case 32: bclk_div = 6;
+				 break;
+		case 64: bclk_div = 7;
+				 break;
+	}
+	bclk_div &= 0x7;
+	
+	reg_val = mclk_div;
+	reg_val |= (bclk_div<<4);
+	reg_val |= (0x1<<7);
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISCLKD);
+	reg_val = readl(sun7i_pcm.regs + SUN7I_IISFAT0);
+	sun7i_pcm.ws_size = word_select_size;
+	reg_val &= ~SUN7I_IISFAT0_WSS_32BCLK;
+	if(sun7i_pcm.ws_size == 16)
+		reg_val |= SUN7I_IISFAT0_WSS_16BCLK;
+	else if(sun7i_pcm.ws_size == 20) 
+		reg_val |= SUN7I_IISFAT0_WSS_20BCLK;
+	else if(sun7i_pcm.ws_size == 24)
+		reg_val |= SUN7I_IISFAT0_WSS_24BCLK;
+	else
+		reg_val |= SUN7I_IISFAT0_WSS_32BCLK;
+	sun7i_pcm.samp_res = sample_resolution;
+	reg_val &= ~SUN7I_IISFAT0_SR_RVD;
+	if(sun7i_pcm.samp_res == 16)
+		reg_val |= SUN7I_IISFAT0_SR_16BIT;
+	else if(sun7i_pcm.samp_res == 20) 
+		reg_val |= SUN7I_IISFAT0_SR_20BIT;
+	else
+		reg_val |= SUN7I_IISFAT0_SR_24BIT;
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISFAT0);
+	sun7i_pcm.pcm_txtype = tx_data_mode;
+	sun7i_pcm.pcm_rxtype = rx_data_mode;
+	reg_val = sun7i_pcm.pcm_txtype&0x3;
+	reg_val |= sun7i_pcm.pcm_rxtype<<2;
+	sun7i_pcm.pcm_sync_type = frame_width;
+	if(sun7i_pcm.pcm_sync_type)
+		reg_val |= SUN7I_IISFAT1_SSYNC;	
+	sun7i_pcm.pcm_sw = slot_width;
+	if(sun7i_pcm.pcm_sw == 16)
+		reg_val |= SUN7I_IISFAT1_SW;
+	sun7i_pcm.pcm_start_slot = slot_index;
+	reg_val |=(sun7i_pcm.pcm_start_slot & 0x3)<<6;
+	sun7i_pcm.pcm_lsb_first = msb_lsb_first;
+	reg_val |= sun7i_pcm.pcm_lsb_first<<9;			
+	sun7i_pcm.pcm_sync_period = pcm_sync_period;
+	if(sun7i_pcm.pcm_sync_period == 256)
+		reg_val |= 0x4<<12;
+	else if (sun7i_pcm.pcm_sync_period == 128)
+		reg_val |= 0x3<<12;
+	else if (sun7i_pcm.pcm_sync_period == 64)
+		reg_val |= 0x2<<12;
+	else if (sun7i_pcm.pcm_sync_period == 32)
+		reg_val |= 0x1<<12;
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISFAT1);
+I2S_DBG("%s, line:%d, slot_index:%d\n", __func__, __LINE__, slot_index);
+I2S_DBG("%s, line:%d, slot_width:%d\n", __func__, __LINE__, slot_width);
+I2S_DBG("%s, line:%d, i2s_select:%d\n", __func__, __LINE__, pcm_select);
+I2S_DBG("%s, line:%d, frame_width:%d\n", __func__, __LINE__, frame_width);
+I2S_DBG("%s, line:%d, sign_extend:%d\n", __func__, __LINE__, sign_extend);
+I2S_DBG("%s, line:%d, tx_data_mode:%d\n", __func__, __LINE__, tx_data_mode);
+I2S_DBG("%s, line:%d, rx_data_mode:%d\n", __func__, __LINE__, rx_data_mode);
+I2S_DBG("%s, line:%d, msb_lsb_first:%d\n", __func__, __LINE__, msb_lsb_first);
+I2S_DBG("%s, line:%d, pcm_sync_period:%d\n", __func__, __LINE__, pcm_sync_period);
+I2S_DBG("%s, line:%d, word_select_size:%d\n", __func__, __LINE__, word_select_size);
+I2S_DBG("%s, line:%d, over_sample_rate:%d\n", __func__, __LINE__, over_sample_rate);
+I2S_DBG("%s, line:%d, sample_resolution:%d\n", __func__, __LINE__, sample_resolution);
+	return 0;
+}
+
+static int sun7i_pcm_dai_probe(struct snd_soc_dai *dai)
+{			
+	return 0;
+}
+static int sun7i_pcm_dai_remove(struct snd_soc_dai *dai)
+{
+	return 0;
+}
+
+static void iisregsave(void)
+{
+	regsave[0] = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+	regsave[1] = readl(sun7i_pcm.regs + SUN7I_IISFAT0);
+	regsave[2] = readl(sun7i_pcm.regs + SUN7I_IISFAT1);
+	regsave[3] = readl(sun7i_pcm.regs + SUN7I_IISFCTL) | (0x3<<24);
+	regsave[4] = readl(sun7i_pcm.regs + SUN7I_IISINT);
+	regsave[5] = readl(sun7i_pcm.regs + SUN7I_IISCLKD);
+	regsave[6] = readl(sun7i_pcm.regs + SUN7I_TXCHSEL);
+	regsave[7] = readl(sun7i_pcm.regs + SUN7I_TXCHMAP);
+}
+
+static void iisregrestore(void)
+{
+	writel(regsave[0], sun7i_pcm.regs + SUN7I_IISCTL);
+	writel(regsave[1], sun7i_pcm.regs + SUN7I_IISFAT0);
+	writel(regsave[2], sun7i_pcm.regs + SUN7I_IISFAT1);
+	writel(regsave[3], sun7i_pcm.regs + SUN7I_IISFCTL);
+	writel(regsave[4], sun7i_pcm.regs + SUN7I_IISINT);
+	writel(regsave[5], sun7i_pcm.regs + SUN7I_IISCLKD);
+	writel(regsave[6], sun7i_pcm.regs + SUN7I_TXCHSEL);
+	writel(regsave[7], sun7i_pcm.regs + SUN7I_TXCHMAP);
+}
+
+static int sun7i_pcm_suspend(struct snd_soc_dai *cpu_dai)
+{
+	u32 reg_val;
+	printk("[IIS]Entered %s\n", __func__);
+
+	//Global Enable Digital Audio Interface
+	reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+	reg_val &= ~SUN7I_IISCTL_GEN;
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+
+	iisregsave();
+	if ((NULL == i2s_moduleclk) ||(IS_ERR(i2s_moduleclk))) {
+		printk("i2s_moduleclk handle is invalid, just return\n");
+		return -EFAULT;
+	} else {
+	//release the module clock
+	clk_disable(i2s_moduleclk);
+	}
+	if ((NULL == i2s_apbclk) ||(IS_ERR(i2s_apbclk))) {
+		printk("i2s_apbclk handle is invalid, just return\n");
+		return -EFAULT;
+	} else {
+	clk_disable(i2s_apbclk);
+	}
+	//printk("[IIS]PLL2 0x01c20008 = %#x\n", *(volatile int*)0xF1C20008);
+	/*printk("[IIS]SPECIAL CLK 0x01c20068 = %#x, line= %d\n", *(volatile int*)0xF1C20068, __LINE__);
+	printk("[IIS]SPECIAL CLK 0x01c200B8 = %#x, line = %d\n", *(volatile int*)0xF1C200B8, __LINE__);*/
+	
+	return 0;
+}
+static int sun7i_pcm_resume(struct snd_soc_dai *cpu_dai)
+{
+	u32 reg_val;
+	printk("[IIS]Entered %s\n", __func__);
+
+	//release the module clock
+	if (clk_enable(i2s_apbclk)) {
+		printk("try to enable i2s_apbclk output failed!\n");
+	}
+
+	//release the module clock
+	if (clk_enable(i2s_moduleclk)) {
+		printk("try to enable i2s_moduleclk output failed!\n");
+	}
+	iisregrestore();
+	
+	//Global Enable Digital Audio Interface
+	reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+	reg_val |= SUN7I_IISCTL_GEN;
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+	
+	//printk("[IIS]PLL2 0x01c20008 = %#x\n", *(volatile int*)0xF1C20008);
+	printk("[IIS]SPECIAL CLK 0x01c20068 = %#x, line= %d\n", *(volatile int*)0xF1C20068, __LINE__);
+	printk("[IIS]SPECIAL CLK 0x01c200B8 = %#x, line = %d\n", *(volatile int*)0xF1C200B8, __LINE__);
+	
+	return 0;
+}
+
+#define SUN7I_I2S_RATES (SNDRV_PCM_RATE_8000_192000 | SNDRV_PCM_RATE_KNOT)
+static struct snd_soc_dai_ops sun7i_pcm_dai_ops = {
+	.trigger 	= sun7i_pcm_trigger,
+	.hw_params 	= sun7i_pcm_hw_params,
+	.set_fmt 	= sun7i_pcm_set_fmt,
+	.set_clkdiv = sun7i_pcm_set_clkdiv,
+	.set_sysclk = sun7i_pcm_set_sysclk, 
+};
+
+static struct snd_soc_dai_driver sun7i_pcm_dai = {	
+	.probe 		= sun7i_pcm_dai_probe,
+	.suspend 	= sun7i_pcm_suspend,
+	.resume 	= sun7i_pcm_resume,
+	.remove 	= sun7i_pcm_dai_remove,
+	.playback 	= {
+		.channels_min = 1,
+		.channels_max = 2,
+		.rates = SUN7I_I2S_RATES,
+		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE | SNDRV_PCM_FMTBIT_S24_LE,
+	},
+	.capture 	= {
+		.channels_min = 1,
+		.channels_max = 2,
+		.rates = SUN7I_I2S_RATES,
+		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE | SNDRV_PCM_FMTBIT_S24_LE,
+	},
+	
+	.ops 		= &sun7i_pcm_dai_ops,	
+};		
+
+static int __devinit sun7i_pcm_dev_probe(struct platform_device *pdev)
+{
+	int ret = 0;
+	int reg_val = 0;
+	script_item_u val;
+	script_item_value_type_e  type;
+	
+	sun7i_pcm.regs = ioremap(SUN7I_IISBASE, 0x100);
+	if (sun7i_pcm.regs == NULL)
+		return -ENXIO;
+
+	/*i2s apbclk*/
+	i2s_apbclk = clk_get(NULL, CLK_APB_I2S1);
+	if ((!i2s_apbclk)||(IS_ERR(i2s_apbclk))) {
+		printk("try to get i2s_apbclk failed\n");
+	}
+	if (clk_enable(i2s_apbclk)) {
+		printk("i2s_apbclk failed! line = %d\n", __LINE__);
+	}
+	
+	i2s_pllx8 = clk_get(NULL, CLK_SYS_PLL2X8);
+	if ((!i2s_pllx8)||(IS_ERR(i2s_pllx8))) {
+		printk("try to get i2s_pllx8 failed\n");
+	}
+	if (clk_enable(i2s_pllx8)) {
+		printk("enable i2s_pll2clk failed; \n");
+	}
+
+	/*i2s pll2clk*/
+	i2s_pll2clk = clk_get(NULL, CLK_SYS_PLL2);
+	if ((!i2s_pll2clk)||(IS_ERR(i2s_pll2clk))) {
+		printk("try to get i2s_pll2clk failed\n");
+	}
+	if (clk_enable(i2s_pll2clk)) {
+		printk("enable i2s_pll2clk failed; \n");
+	}
+
+	/*i2s module clk*/
+	i2s_moduleclk = clk_get(NULL, CLK_MOD_I2S1);
+	if ((!i2s_moduleclk)||(IS_ERR(i2s_moduleclk))) {
+		printk("try to get i2s_moduleclk failed\n");
+	}
+	
+	if(clk_set_parent(i2s_moduleclk, i2s_pll2clk)){
+		printk("try to set parent of i2s_moduleclk to i2s_pll2ck failed! line = %d\n",__LINE__);
+		goto out1;
+	}
+	
+	if(clk_set_rate(i2s_moduleclk, 24576000/8)){
+		printk("set i2s_moduleclk clock freq to 24576000 failed! line = %d\n", __LINE__);
+		goto out1;
+	}
+	
+	if(-1 == clk_enable(i2s_moduleclk)){
+		printk("open i2s_moduleclk failed! line = %d\n", __LINE__);
+		goto out1;
+	}
+	
+	reg_val = readl(sun7i_pcm.regs + SUN7I_IISCTL);
+	reg_val |= SUN7I_IISCTL_GEN;
+	writel(reg_val, sun7i_pcm.regs + SUN7I_IISCTL);
+	printk("func:%s(line:%d)sun7i-pcm.c\n",__func__,__LINE__);
+	type = script_get_item("pcm_para", "over_sample_rate", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[I2S] over_sample_rate type err!\n");
+    }
+	over_sample_rate = val.val;
+	type = script_get_item("pcm_para", "sample_resolution", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[I2S] sample_resolution type err!\n");
+    }
+	sample_resolution = val.val;
+	type = script_get_item("pcm_para", "word_select_size", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[I2S] word_select_size type err!\n");
+    }
+	word_select_size = val.val;
+	type = script_get_item("pcm_para", "pcm_sync_period", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[I2S] pcm_sync_period type err!\n");
+    }
+	pcm_sync_period = val.val;
+	type = script_get_item("pcm_para", "msb_lsb_first", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[I2S] msb_lsb_first type err!\n");
+    }
+	msb_lsb_first = val.val;
+	type = script_get_item("pcm_para", "sign_extend", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[I2S] sign_extend type err!\n");
+    }
+	sign_extend = val.val;
+	type = script_get_item("pcm_para", "slot_index", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[I2S] slot_index type err!\n");
+    }
+	slot_index = val.val;
+	type = script_get_item("pcm_para", "slot_width", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[I2S] slot_width type err!\n");
+    }
+	slot_width = val.val;
+	type = script_get_item("pcm_para", "frame_width", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[I2S] frame_width type err!\n");
+    }
+	frame_width = val.val;
+	type = script_get_item("pcm_para", "tx_data_mode", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[I2S] tx_data_mode type err!\n");
+    }
+	tx_data_mode = val.val;
+	
+	type = script_get_item("pcm_para", "rx_data_mode", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[I2S] rx_data_mode type err!\n");
+    }
+	rx_data_mode = val.val;
+	printk("func:%s(line:%d)sun7i-pcm.c\n",__func__,__LINE__);
+	ret = snd_soc_register_dai(&pdev->dev, &sun7i_pcm_dai);	
+	if (ret) {
+		dev_err(&pdev->dev, "Failed to register DAI\n");
+		goto out2;
+	}
+	printk("func:%s(line:%d)sun7i-pcm.c\n",__func__,__LINE__);
+	goto out;
+	out2:
+		clk_disable(i2s_moduleclk);
+	out1:
+		clk_disable(i2s_apbclk);
+	out:
+	return 0;
+}
+
+static int __devexit sun7i_pcm_dev_remove(struct platform_device *pdev)
+{
+	if(pcm_used) {
+		pcm_used = 0;
+		if ((NULL == i2s_moduleclk) ||(IS_ERR(i2s_moduleclk))) {
+			printk("i2s_moduleclk handle is invalid, just return\n");
+			return -EFAULT;
+		} else {
+		/*release the module clock*/
+		clk_disable(i2s_moduleclk);
+		}
+		if ((NULL == i2s_pllx8) ||(IS_ERR(i2s_pllx8))) {
+			printk("i2s_pllx8 handle is invalid, just return\n");
+			return -EFAULT;
+		} else {
+		/*release pllx8clk*/
+		clk_put(i2s_pllx8);
+		}
+		if ((NULL == i2s_pll2clk) ||(IS_ERR(i2s_pll2clk))) {
+			printk("i2s_pll2clk handle is invalid, just return\n");
+			return -EFAULT;
+		} else {
+		/*release pll2clk*/
+		clk_put(i2s_pll2clk);
+		}
+		if ((NULL == i2s_apbclk) ||(IS_ERR(i2s_apbclk))) {
+			printk("i2s_apbclk handle is invalid, just return\n");
+			return -EFAULT;
+		} else {		
+		/*release apbclk*/
+		clk_put(i2s_apbclk);
+		
+		/*gpio_release(i2s_handle, 2);*/		
+		snd_soc_unregister_dai(&pdev->dev);
+		platform_set_drvdata(pdev, NULL);
+		}
+	}
+	return 0;
+}
+
+/*data relating*/
+static struct platform_device sun7i_i2s_device = {
+	.name = "sun7i-pcm",
+};
+
+/*method relating*/
+static struct platform_driver sun7i_i2s_driver = {
+	.probe = sun7i_pcm_dev_probe,
+	.remove = __devexit_p(sun7i_pcm_dev_remove),
+	.driver = {
+		.name = "sun7i-pcm",
+		.owner = THIS_MODULE,
+	},
+};
+
+static int __init sun7i_pcm_init(void){	
+	int err = 0;
+	int cnt = 0;
+	int i 	= 0;
+	script_item_u val;
+	script_item_u *list = NULL;
+	script_item_value_type_e  type;
+	printk("func:%s(line:%d)sun7i-pcm.c\n",__func__,__LINE__);
+	type = script_get_item("pcm_para", "pcm_used", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        	printk("[PCM] type err!\n");
+    }
+	pcm_used = val.val;
+	type = script_get_item("pcm_para", "pcm_select", &val);
+	if (SCIRPT_ITEM_VALUE_TYPE_INT != type) {
+        printk("[PCM] i2s_select type err!\n");
+    }
+	pcm_select = val.val;
+	printk("func:%s(line:%d)sun7i-pcm.c,pcm_used:%d\n",__func__,__LINE__,pcm_used);
+ 	if (pcm_used) {
+		/* get gpio list */
+		cnt = script_get_pio_list("pcm_para", &list);
+		if (0 == cnt) {
+			printk("get pcm_para gpio list failed\n");
+			return -EFAULT;
+		}
+		/* req gpio */
+		for (i = 0; i < cnt; i++) {
+		if (0 != gpio_request(list[i].gpio.gpio, NULL)) {
+			printk("[PCM] request some gpio fail\n");
+			goto end;
+			}
+		}
+		/* config gpio list */
+		if (0 != sw_gpio_setall_range(&list[0].gpio, cnt)) {
+		printk("sw_gpio_setall_range failed\n");
+		}
+		if((err = platform_device_register(&sun7i_i2s_device)) < 0)
+		return err;
+
+		if ((err = platform_driver_register(&sun7i_i2s_driver)) < 0)
+			return err;	
+	} else {
+        printk("[PCM]sun7i-i2s cannot find any using configuration for controllers, return directly!\n");
+        return 0;
+    }
+
+end:
+	/* release gpio */
+	while(i--)
+		gpio_free(list[i].gpio.gpio);
+
+	return 0;
+}
+
+module_init(sun7i_pcm_init);
+
+static void __exit sun7i_pcm_exit(void)
+{	
+	platform_driver_unregister(&sun7i_i2s_driver);
+}
+module_exit(sun7i_pcm_exit);
+
+/* Module information */
+MODULE_AUTHOR("REUUIMLLA");
+MODULE_DESCRIPTION("sun7i PCM SoC Interface");
+MODULE_LICENSE("GPL");
+MODULE_ALIAS("platform:sun7i-pcm");
+

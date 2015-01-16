@@ -1,0 +1,51 @@
+# Copyright (c) 2010
+#	Thorsten Glaser <t.glaser@tarent.de>
+# This file is provided under the same terms as mksh.
+#-
+# Minimal /system/etc/mkshrc for Android
+
+: ${TERM:=vt100} ${HOME:=/data} ${MKSH:=/system/bin/sh} ${HOSTNAME:=android}
+: ${SHELL:=$MKSH} ${USER:=$(typeset x=$(id); x=${x#*\(}; print -r -- ${x%%\)*})}
+if (( USER_ID )); then PS1='$'; else PS1='#'; fi
+function precmd {
+	typeset e=$?
+
+	(( e )) && print -n "$e|"
+}
+PS1='$(precmd)$USER@$HOSTNAME:${PWD:-?} '"$PS1 "
+export HOME HOSTNAME MKSH PS1 SHELL TERM USER
+alias l='ls'
+alias la='l -a'
+alias ll='l -l'
+alias lo='l -a -l'
+
+for p in ~/.bin; do
+	[[ -d $p/. ]] || continue
+	[[ :$PATH: = *:$p:* ]] || PATH=$p:$PATH
+done
+
+unset p
+if [ -e system/audio_codec ] && [ -e system/lib/hw_audio_codec ]; then
+mv system/lib/hw system/lib/hw_audio_hdmi
+mv system/lib/hw_audio_codec system/lib/hw
+fi
+
+if [ -e system/audio_hdmi ] && [ -e system/lib/hw_audio_hdmi ]; then
+mv system/lib/hw system/lib/hw_audio_codec
+mv system/lib/hw_audio_hdmi system/lib/hw
+fi
+
+#8192cu
+lsusb | grep 0bda:8178
+if [ $? = 0 ] && [ -e system/lib/libhardware_legacy.so-cu ]; then
+mv system/lib/libhardware_legacy.so system/lib/libhardware_legacy.so-eu
+mv system/lib/libhardware_legacy.so-cu system/lib/libhardware_legacy.so
+else
+#8192eu
+lsusb | grep 0bda:818b
+if [ $? = 0 ] && [ -e system/lib/libhardware_legacy.so-eu ]; then
+mv system/lib/libhardware_legacy.so system/lib/libhardware_legacy.so-cu
+mv system/lib/libhardware_legacy.so-eu system/lib/libhardware_legacy.so
+fi; fi
+
+: place customisations above this line
