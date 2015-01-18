@@ -20,7 +20,7 @@
 #define _RTW_EFUSE_C_
 
 #include <drv_types.h>
-
+#include <hal_data.h>
 
 
 /*------------------------Define local variable------------------------------*/
@@ -120,6 +120,15 @@ Efuse_PowerSwitch(
 	pAdapter->HalFunc.EfusePowerSwitch(pAdapter, bWrite, PwrState);
 }
 
+VOID
+BTEfuse_PowerSwitch(
+	IN	PADAPTER	pAdapter,
+	IN	u8		bWrite,
+	IN	u8		PwrState)
+{
+	if(pAdapter->HalFunc.BTEfusePowerSwitch)
+		pAdapter->HalFunc.BTEfusePowerSwitch(pAdapter, bWrite, PwrState);
+}
 
 /*-----------------------------------------------------------------------------
  * Function:	efuse_GetCurrentSize
@@ -190,7 +199,12 @@ ReadEFuseByte(
 		Efuse_Read1ByteFromFakeContent(Adapter, _offset, pbuf);
 		return;
 	}
-
+	if (IS_HARDWARE_TYPE_8723B(Adapter))
+	{
+		// <20130121, Kordan> For SMIC S55 EFUSE specificatoin.
+		//0x34[11]: SW force PGMEN input of efuse to high. (for the bank selected by 0x34[9:8])
+		PHY_SetMacReg(Adapter, EFUSE_TEST, BIT11, 0);
+	}
 	//Write Address
 	rtw_write8(Adapter, EFUSE_CTRL+1, (_offset & 0xff));  		
 	readbyte = rtw_read8(Adapter, EFUSE_CTRL+2);
@@ -221,7 +235,6 @@ ReadEFuseByte(
 	//DBG_871X("ReadEFuseByte _offset:%08u, in %d ms\n",_offset ,rtw_get_passing_time_ms(start));
 	
 }
-
 
 //
 //	Description:
@@ -419,6 +432,7 @@ efuse_OneByteRead(
 {
 	u8	tmpidx = 0;
 	u8	bResult;
+	u8	readbyte;
 
 	//DBG_871X("===> EFUSE_OneByteRead(), addr = %x\n", addr);
 	//DBG_871X("===> EFUSE_OneByteRead() start, 0x34 = 0x%X\n", rtw_read32(pAdapter, EFUSE_TEST));
@@ -429,30 +443,32 @@ efuse_OneByteRead(
 		return bResult;
 	}
 
-	// <20130227, Kordan> 8192E MP chip A-cut had better not set 0x34[11] until B-Cut.	
-/*
-	if ( IS_HARDWARE_TYPE_8723B(pAdapter))
+	if(	IS_HARDWARE_TYPE_8723B(pAdapter) ||
+		(IS_HARDWARE_TYPE_8192E(pAdapter) && IS_VENDOR_8192E_B_CUT(pAdapter)))
 	{
 		// <20130121, Kordan> For SMIC EFUSE specificatoin.
 		//0x34[11]: SW force PGMEN input of efuse to high. (for the bank selected by 0x34[9:8])	
 		//PHY_SetMacReg(pAdapter, 0x34, BIT11, 0);
 		rtw_write16(pAdapter, 0x34, rtw_read16(pAdapter,0x34)& (~BIT11) ); 
 	}
-*/
+
 	// -----------------e-fuse reg ctrl ---------------------------------
 	//address			
 	rtw_write8(pAdapter, EFUSE_CTRL+1, (u8)(addr&0xff));		
 	rtw_write8(pAdapter, EFUSE_CTRL+2, ((u8)((addr>>8) &0x03) ) |
 	(rtw_read8(pAdapter, EFUSE_CTRL+2)&0xFC ));	
 
-	rtw_write8(pAdapter, EFUSE_CTRL+3,  0x72);//read cmd	
+	//rtw_write8(pAdapter, EFUSE_CTRL+3,  0x72);//read cmd	
+	//Write bit 32 0
+	readbyte = rtw_read8(pAdapter, EFUSE_CTRL+3);		
+	rtw_write8(pAdapter, EFUSE_CTRL+3, (readbyte & 0x7f));
 
 	while(!(0x80 &rtw_read8(pAdapter, EFUSE_CTRL+3))&&(tmpidx<1000))
 	{
 		rtw_mdelay_os(1);
 		tmpidx++;
 	}
-	if(tmpidx<1000)
+	if(tmpidx<100)
 	{			
 		*data=rtw_read8(pAdapter, EFUSE_CTRL);		
 		bResult = _TRUE;
@@ -461,6 +477,8 @@ efuse_OneByteRead(
 	{
 		*data = 0xff;	
 		bResult = _FALSE;
+		DBG_871X("%s: [ERROR] addr=0x%x bResult=%d time out 1s !!!\n", __FUNCTION__, addr, bResult);
+		DBG_871X("%s: [ERROR] EFUSE_CTRL =0x%08x !!!\n", __FUNCTION__, rtw_read32(pAdapter, EFUSE_CTRL));
 	}
 
 	return bResult;
@@ -491,33 +509,23 @@ efuse_OneByteWrite(
 	// -----------------e-fuse reg ctrl ---------------------------------	
 	//address			
 
-	// <20121213, Kordan> 8723BE SMIC TestChip workaround.
-/*
-	if (IS_HARDWARE_TYPE_8723B(pAdapter) && ! pHalData->bIsMPChip)
-	{	
-		//PlatformEFIOWrite1Byte(pAdapter, REG_MULTI_FUNC_CTRL+1, 0x69); // Turn off EFUSE protection.
-		rtw_write16(pAdapter, REG_SYS_ISO_CTRL, rtw_read16(pAdapter, REG_SYS_ISO_CTRL)| BIT14); // Turn on power cut
-		
-		EFUSE_PowerSwitch(pAdapter,TRUE, TRUE); // LDO 2.6V, this must follows after power cut.
-	}
-*/
 	
 	efuseValue = rtw_read32(pAdapter, EFUSE_CTRL);
 	efuseValue |= (BIT21|BIT31);
 	efuseValue &= ~(0x3FFFF);
 	efuseValue |= ((addr<<8 | data) & 0x3FFFF);
 
-/*
+
 	// <20130227, Kordan> 8192E MP chip A-cut had better not set 0x34[11] until B-Cut.
-	if (IS_HARDWARE_TYPE_8723B(pAdapter) && pHalData->bIsMPChip)
+	if (IS_HARDWARE_TYPE_8723B(pAdapter)||(IS_HARDWARE_TYPE_8192E(pAdapter) && IS_VENDOR_8192E_B_CUT(pAdapter)))
 	{
 		// <20130121, Kordan> For SMIC EFUSE specificatoin.
 		//0x34[11]: SW force PGMEN input of efuse to high. (for the bank selected by 0x34[9:8])
-		PHY_SetMacReg(pAdapter, 0x34, BIT11, 1);
-		PlatformEFIOWrite4Byte(pAdapter, EFUSE_CTRL, 0x90600000|((addr<<8 | data)) );
+		//PHY_SetMacReg(pAdapter, 0x34, BIT11, 1);
+		rtw_write16(pAdapter, 0x34, rtw_read16(pAdapter,0x34)| (BIT11) );
+		rtw_write32(pAdapter, EFUSE_CTRL, 0x90600000|((addr<<8 | data)) );
 	}
 	else
-*/	
 	{
 		rtw_write32(pAdapter, EFUSE_CTRL, efuseValue);
 	}
@@ -534,6 +542,15 @@ efuse_OneByteWrite(
 	else
 	{
 		bResult = _FALSE;
+		DBG_871X("%s: [ERROR] addr=0x%x ,efuseValue=0x%x ,bResult=%d time out 1s !!! \n",
+					__FUNCTION__, addr, efuseValue, bResult);
+		DBG_871X("%s: [ERROR] EFUSE_CTRL =0x%08x !!!\n", __FUNCTION__, rtw_read32(pAdapter, EFUSE_CTRL));
+	}
+
+	// disable Efuse program enable
+	if (IS_HARDWARE_TYPE_8723B(pAdapter))
+	{
+		PHY_SetMacReg(pAdapter, EFUSE_TEST, BIT(11), 0);
 	}
 
 	return bResult;
@@ -846,7 +863,7 @@ u8 rtw_BT_efuse_map_write(PADAPTER padapter, u16 addr, u16 cnts, u8 *data)
 	u8	offset, word_en;
 	u8	*map;
 	u8	newdata[PGPKT_DATA_SIZE];
-	s32	i, j, idx;
+	s32	i=0, j=0, idx;
 	u8	ret = _SUCCESS;
 	u16	mapLen=0;
 
@@ -862,7 +879,20 @@ u8 rtw_BT_efuse_map_write(PADAPTER padapter, u16 addr, u16 cnts, u8 *data)
 
 	ret = rtw_BT_efuse_map_read(padapter, 0, mapLen, map);
 	if (ret == _FAIL) goto exit;
-
+	DBG_871X("OFFSET\tVALUE(hex)\n");
+	for (i=0; i<1024; i+=16) // set 512 because the iwpriv's extra size have limit 0x7FF
+	{
+			DBG_871X("0x%03x\t", i);
+			for (j=0; j<8; j++) {
+				DBG_871X("%02X ", map[i+j]);
+			}
+			DBG_871X("\t");
+			for (; j<16; j++) {
+				DBG_871X("%02X ", map[i+j]);
+			}
+			DBG_871X("\n");
+	}
+	DBG_871X("\n");
 	Efuse_PowerSwitch(padapter, _TRUE, _TRUE);
 
 	offset = (addr >> 3);

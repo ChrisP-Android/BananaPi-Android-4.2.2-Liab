@@ -49,17 +49,17 @@
 //---------------------------------------------------------------------
 //		RTL8192E From header
 //---------------------------------------------------------------------
-		#define RTL8192E_FW_IMG					"rtl192E\\rtl8192Efw.bin"
-		#define RTL8192E_FW_WW_IMG				"rtl192E\\rtl8192Efwww.bin"
-		#define RTL8192E_PHY_REG					"rtl192E\\PHY_REG.txt" 
-		#define RTL8192E_PHY_RADIO_A				"rtl192E\\RadioA.txt"
-		#define RTL8192E_PHY_RADIO_B				"rtl192E\\RadioB.txt"
-		#define RTL8192E_TXPWR_TRACK				"rtl192E\\TxPowerTrack.txt"			
-		#define RTL8192E_AGC_TAB					"rtl192E\\AGC_TAB.txt"
-		#define RTL8192E_PHY_MACREG 				"rtl192E\\MAC_REG.txt"
-		#define RTL8192E_PHY_REG_PG				"rtl192E\\PHY_REG_PG.txt"
-		#define RTL8192E_PHY_REG_MP 				"rtl192E\\PHY_REG_MP.txt" 
-		#define RTL8192E_TXPWR_LMT					"rtl192E\\TXPWR_LMT.txt" 
+	#define RTL8192E_FW_IMG					"rtl192E/FW_NIC.bin"
+	#define RTL8192E_FW_WW_IMG				"rtl192E/FW_WoWLAN.bin"
+	#define RTL8192E_PHY_REG					"rtl192E/PHY_REG.txt" 
+	#define RTL8192E_PHY_RADIO_A				"rtl192E/RadioA.txt"
+	#define RTL8192E_PHY_RADIO_B				"rtl192E/RadioB.txt"
+	#define RTL8192E_TXPWR_TRACK				"rtl192E/TxPowerTrack.txt"			
+	#define RTL8192E_AGC_TAB					"rtl192E/AGC_TAB.txt"
+	#define RTL8192E_PHY_MACREG 				"rtl192E/MAC_REG.txt"
+	#define RTL8192E_PHY_REG_PG				"rtl192E/PHY_REG_PG.txt"
+	#define RTL8192E_PHY_REG_MP 				"rtl192E/PHY_REG_MP.txt" 
+	#define RTL8192E_TXPWR_LMT				"rtl192E/TXPWR_LMT.txt" 
 
 //---------------------------------------------------------------------
 //		RTL8192E Power Configuration CMDs for PCIe interface
@@ -210,8 +210,6 @@ typedef struct _RT_FIRMWARE_8192E {
 #define		EFUSE_PROTECT_BYTES_BANK_8192E			16
 #define 	EFUSE_MAX_BANK_8192E					3
 //===========================================================
-
-#define GET_RF_TYPE(priv)			(GET_HAL_DATA(priv)->rf_type)
 
 #define INCLUDE_MULTI_FUNC_BT(_Adapter)	(GET_HAL_DATA(_Adapter)->MultiFunc & RT_MULTI_FUNC_BT)
 #define INCLUDE_MULTI_FUNC_GPS(_Adapter)	(GET_HAL_DATA(_Adapter)->MultiFunc & RT_MULTI_FUNC_GPS)

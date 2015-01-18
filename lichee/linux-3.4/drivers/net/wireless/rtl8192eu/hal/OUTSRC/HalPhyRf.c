@@ -17,9 +17,9 @@
  *
  *
  ******************************************************************************/
- 
- #include "odm_precomp.h"
 
+//#include "Mp_Precomp.h"
+#include "odm_precomp.h"
 
 
 #define 	CALCULATE_SWINGTALBE_OFFSET(_offset, _direction, _size, _deltaThermal) \
@@ -98,7 +98,7 @@ ODM_ClearTxPowerTrackingState(
 		pDM_Odm->RFCalibrateInfo.DeltaPowerIndexLast[p] = 0;
 		pDM_Odm->RFCalibrateInfo.PowerIndexOffset[p] = 0;
 
-		pDM_Odm->Aboslute_OFDMSwingIdx[p] = 0;    // Initial Mix mode power tracking
+		pDM_Odm->Absolute_OFDMSwingIdx[p] = 0;    // Initial Mix mode power tracking
 		pDM_Odm->Remnant_OFDMSwingIdx[p] = 0;			  
 	}
 	
@@ -122,11 +122,11 @@ ODM_TXPowerTrackingCallback_ThermalMeter(
 
 #if !(DM_ODM_SUPPORT_TYPE & ODM_AP)
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
-#if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
+	#if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
 	PDM_ODM_T		pDM_Odm = &pHalData->DM_OutSrc;
-#elif (DM_ODM_SUPPORT_TYPE == ODM_CE)
+	#elif (DM_ODM_SUPPORT_TYPE == ODM_CE)
 	PDM_ODM_T		pDM_Odm = &pHalData->odmpriv;
-#endif
+	#endif
 #endif
 	
 	u1Byte			ThermalValue = 0, delta, delta_LCK, delta_IQK, p = 0, i = 0;
@@ -252,9 +252,9 @@ ODM_TXPowerTrackingCallback_ThermalMeter(
 			pDM_Odm->RFCalibrateInfo.DeltaPowerIndexLast[ODM_RF_PATH_A] = pDM_Odm->RFCalibrateInfo.DeltaPowerIndex[ODM_RF_PATH_A];
 			pDM_Odm->RFCalibrateInfo.DeltaPowerIndex[ODM_RF_PATH_A] = deltaSwingTableIdx_TUP_A[delta];
 
-			pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] =  deltaSwingTableIdx_TUP_A[delta];        // Record delta swing for mix mode power tracking
+			pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] =  deltaSwingTableIdx_TUP_A[delta];        // Record delta swing for mix mode power tracking
 
-			ODM_RT_TRACE(pDM_Odm, ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("******Temp is higher and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n", pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A]));  
+			ODM_RT_TRACE(pDM_Odm, ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("******Temp is higher and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n", pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A]));  
 
 			if(c.RfPathCount > 1)
 			{
@@ -263,22 +263,22 @@ ODM_TXPowerTrackingCallback_ThermalMeter(
 			pDM_Odm->RFCalibrateInfo.DeltaPowerIndexLast[ODM_RF_PATH_B] = pDM_Odm->RFCalibrateInfo.DeltaPowerIndex[ODM_RF_PATH_B];
 			pDM_Odm->RFCalibrateInfo.DeltaPowerIndex[ODM_RF_PATH_B] = deltaSwingTableIdx_TUP_B[delta];
 
-			pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B] =  deltaSwingTableIdx_TUP_B[delta];       // Record delta swing for mix mode power tracking
+			pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B] =  deltaSwingTableIdx_TUP_B[delta];       // Record delta swing for mix mode power tracking
 
-			ODM_RT_TRACE(pDM_Odm, ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("******Temp is higher and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n", pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B]));  
+			ODM_RT_TRACE(pDM_Odm, ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("******Temp is higher and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n", pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B]));  
 			}
 			
         } 
 		else {
-        	ODM_RT_TRACE(pDM_Odm, ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
-                ("deltaSwingTableIdx_TDOWN_A[%d] = %d\n", delta, deltaSwingTableIdx_TDOWN_A[delta]));  
+			ODM_RT_TRACE(pDM_Odm, ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
+				("deltaSwingTableIdx_TDOWN_A[%d] = %d\n", delta, deltaSwingTableIdx_TDOWN_A[delta]));  
 
 			pDM_Odm->RFCalibrateInfo.DeltaPowerIndexLast[ODM_RF_PATH_A] = pDM_Odm->RFCalibrateInfo.DeltaPowerIndex[ODM_RF_PATH_A];
 			pDM_Odm->RFCalibrateInfo.DeltaPowerIndex[ODM_RF_PATH_A] = -1 * deltaSwingTableIdx_TDOWN_A[delta];
 
-			pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] =  -1 * deltaSwingTableIdx_TDOWN_A[delta];        // Record delta swing for mix mode power tracking
+			pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] =  -1 * deltaSwingTableIdx_TDOWN_A[delta];        // Record delta swing for mix mode power tracking
 
-			ODM_RT_TRACE(pDM_Odm, ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("******Temp is lower and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n", pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A]));  
+			ODM_RT_TRACE(pDM_Odm, ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("******Temp is lower and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n", pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A]));  
 
 				if(c.RfPathCount > 1)
 				{
@@ -288,9 +288,9 @@ ODM_TXPowerTrackingCallback_ThermalMeter(
 			pDM_Odm->RFCalibrateInfo.DeltaPowerIndexLast[ODM_RF_PATH_B] = pDM_Odm->RFCalibrateInfo.DeltaPowerIndex[ODM_RF_PATH_B];
 			pDM_Odm->RFCalibrateInfo.DeltaPowerIndex[ODM_RF_PATH_B] = -1 * deltaSwingTableIdx_TDOWN_B[delta];
 
-			pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B] =  -1 * deltaSwingTableIdx_TDOWN_B[delta];       // Record delta swing for mix mode power tracking
+			pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B] =  -1 * deltaSwingTableIdx_TDOWN_B[delta];       // Record delta swing for mix mode power tracking
 
-			ODM_RT_TRACE(pDM_Odm, ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("******Temp is lower and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n", pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B]));  
+			ODM_RT_TRACE(pDM_Odm, ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("******Temp is lower and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n", pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B]));  
         }
         }
 		
@@ -312,9 +312,9 @@ ODM_TXPowerTrackingCallback_ThermalMeter(
 		    pDM_Odm->RFCalibrateInfo.CCK_index = pDM_Odm->BbSwingIdxCckBase + pDM_Odm->RFCalibrateInfo.PowerIndexOffset[p];
 
 		    pDM_Odm->BbSwingIdxCck = pDM_Odm->RFCalibrateInfo.CCK_index;	
-			pDM_Odm->BbSwingIdxOfdm[p] = pDM_Odm->RFCalibrateInfo.OFDM_index[p];	
+			pDM_Odm->BbSwingIdxOfdm[p] = pDM_Odm->RFCalibrateInfo.OFDM_index[p];
 
-	       // *************Print BB Swing Base and Index Offset*************
+			// *************Print BB Swing Base and Index Offset*************
 
 		    ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("The 'CCK' final index(%d) = BaseIndex(%d) + PowerIndexOffset(%d)\n", 
 		    	pDM_Odm->BbSwingIdxCck, pDM_Odm->BbSwingIdxCckBase, pDM_Odm->RFCalibrateInfo.PowerIndexOffset[p]));
@@ -365,93 +365,107 @@ ODM_TXPowerTrackingCallback_ThermalMeter(
 	{
 		//4 7.2 Configure the Swing Table to adjust Tx Power.
 		
-			pDM_Odm->RFCalibrateInfo.bTxPowerChanged = TRUE; // Always TRUE after Tx Power is adjusted by power tracking.			
-			//
-			// 2012/04/23 MH According to Luke's suggestion, we can not write BB digital
-			// to increase TX power. Otherwise, EVM will be bad.
-			//
-			// 2012/04/25 MH Add for tx power tracking to set tx power in tx agc for 88E.
-			if (ThermalValue > pDM_Odm->RFCalibrateInfo.ThermalValue)
-			{
-				ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
-					("Temperature Increasing(A): delta_pi: %d , delta_t: %d, Now_t: %d, EFUSE_t: %d, Last_t: %d\n", 
-					pDM_Odm->RFCalibrateInfo.PowerIndexOffset[ODM_RF_PATH_A], delta, ThermalValue, pHalData->EEPROMThermalMeter, pDM_Odm->RFCalibrateInfo.ThermalValue));	
+		pDM_Odm->RFCalibrateInfo.bTxPowerChanged = TRUE; // Always TRUE after Tx Power is adjusted by power tracking.			
+		//
+		// 2012/04/23 MH According to Luke's suggestion, we can not write BB digital
+		// to increase TX power. Otherwise, EVM will be bad.
+		//
+		// 2012/04/25 MH Add for tx power tracking to set tx power in tx agc for 88E.
+		if (ThermalValue > pDM_Odm->RFCalibrateInfo.ThermalValue)
+		{
+			ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
+				("Temperature Increasing(A): delta_pi: %d , delta_t: %d, Now_t: %d, EFUSE_t: %d, Last_t: %d\n", 
+				pDM_Odm->RFCalibrateInfo.PowerIndexOffset[ODM_RF_PATH_A], delta, ThermalValue, pHalData->EEPROMThermalMeter, pDM_Odm->RFCalibrateInfo.ThermalValue));	
 
-				if(c.RfPathCount > 1)
-				ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
-					("Temperature Increasing(B): delta_pi: %d , delta_t: %d, Now_t: %d, EFUSE_t: %d, Last_t: %d\n", 
-					pDM_Odm->RFCalibrateInfo.PowerIndexOffset[ODM_RF_PATH_B], delta, ThermalValue, pHalData->EEPROMThermalMeter, pDM_Odm->RFCalibrateInfo.ThermalValue));	
+			if(c.RfPathCount > 1)
+			ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
+				("Temperature Increasing(B): delta_pi: %d , delta_t: %d, Now_t: %d, EFUSE_t: %d, Last_t: %d\n", 
+				pDM_Odm->RFCalibrateInfo.PowerIndexOffset[ODM_RF_PATH_B], delta, ThermalValue, pHalData->EEPROMThermalMeter, pDM_Odm->RFCalibrateInfo.ThermalValue));	
 
-			}
-			else if (ThermalValue < pDM_Odm->RFCalibrateInfo.ThermalValue)// Low temperature
-			{
-				ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
-					("Temperature Decreasing(A): delta_pi: %d , delta_t: %d, Now_t: %d, EFUSE_t: %d, Last_t: %d\n",
-					pDM_Odm->RFCalibrateInfo.PowerIndexOffset[ODM_RF_PATH_A], delta, ThermalValue, pHalData->EEPROMThermalMeter, pDM_Odm->RFCalibrateInfo.ThermalValue));				
+		}
+		else if (ThermalValue < pDM_Odm->RFCalibrateInfo.ThermalValue)// Low temperature
+		{
+			ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
+				("Temperature Decreasing(A): delta_pi: %d , delta_t: %d, Now_t: %d, EFUSE_t: %d, Last_t: %d\n",
+				pDM_Odm->RFCalibrateInfo.PowerIndexOffset[ODM_RF_PATH_A], delta, ThermalValue, pHalData->EEPROMThermalMeter, pDM_Odm->RFCalibrateInfo.ThermalValue));				
 
-				if(c.RfPathCount > 1)
-				ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
-					("Temperature Decreasing(B): delta_pi: %d , delta_t: %d, Now_t: %d, EFUSE_t: %d, Last_t: %d\n",
-					pDM_Odm->RFCalibrateInfo.PowerIndexOffset[ODM_RF_PATH_B], delta, ThermalValue, pHalData->EEPROMThermalMeter, pDM_Odm->RFCalibrateInfo.ThermalValue));				
+			if(c.RfPathCount > 1)
+			ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
+				("Temperature Decreasing(B): delta_pi: %d , delta_t: %d, Now_t: %d, EFUSE_t: %d, Last_t: %d\n",
+				pDM_Odm->RFCalibrateInfo.PowerIndexOffset[ODM_RF_PATH_B], delta, ThermalValue, pHalData->EEPROMThermalMeter, pDM_Odm->RFCalibrateInfo.ThermalValue));				
 
-			}
+		}
 #if !(DM_ODM_SUPPORT_TYPE & ODM_AP)
-			if (ThermalValue > pHalData->EEPROMThermalMeter)
+		if (ThermalValue > pHalData->EEPROMThermalMeter)
 #else
-			if (ThermalValue > pDM_Odm->priv->pmib->dot11RFEntry.ther)
+		if (ThermalValue > pDM_Odm->priv->pmib->dot11RFEntry.ther)
 #endif
+		{
+			ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
+				("Temperature(%d) higher than PG value(%d)\n", ThermalValue, pHalData->EEPROMThermalMeter));			
+
+			if (pDM_Odm->SupportICType == ODM_RTL8188E || pDM_Odm->SupportICType == ODM_RTL8192E || 
+				pDM_Odm->SupportICType == ODM_RTL8821  || pDM_Odm->SupportICType == ODM_RTL8812  || pDM_Odm->SupportICType == ODM_RTL8723B)
 			{
-				ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
-					("Temperature(%d) higher than PG value(%d)\n", ThermalValue, pHalData->EEPROMThermalMeter));
-				
-				if (pDM_Odm->SupportICType == ODM_RTL8188E || pDM_Odm->SupportICType == ODM_RTL8192E)
-				{
-					for (p = ODM_RF_PATH_A; p < c.RfPathCount; p++)
-						(*c.ODM_TxPwrTrackSetPwr)(pDM_Odm, TXAGC, p, 0);
-				}
-				else if(pDM_Odm->SupportICType == ODM_RTL8821)
-				{
-					ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("**********Enter POWER Tracking MIX_MODE**********\n"));
-					for (p = ODM_RF_PATH_A; p < c.RfPathCount; p++)
-						(*c.ODM_TxPwrTrackSetPwr)(pDM_Odm, MIX_MODE, p, Indexforchannel);
-				}
-				else 
-				{
-					for (p = ODM_RF_PATH_A; p < c.RfPathCount; p++)
+				ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("**********Enter POWER Tracking MIX_MODE**********\n"));
+				for (p = ODM_RF_PATH_A; p < c.RfPathCount; p++)
+						(*c.ODM_TxPwrTrackSetPwr)(pDM_Odm, MIX_MODE, p, 0);
+			}
+			else 
+			{
+				ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("**********Enter POWER Tracking BBSWING_MODE**********\n"));
+				for (p = ODM_RF_PATH_A; p < c.RfPathCount; p++)
 						(*c.ODM_TxPwrTrackSetPwr)(pDM_Odm, BBSWING, p, Indexforchannel);
-				}
+			}
+		}
+		else
+		{
+			ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
+				("Temperature(%d) lower than PG value(%d)\n", ThermalValue, pHalData->EEPROMThermalMeter));
+
+			if (pDM_Odm->SupportICType == ODM_RTL8188E || pDM_Odm->SupportICType == ODM_RTL8192E || 
+				pDM_Odm->SupportICType == ODM_RTL8821  || pDM_Odm->SupportICType == ODM_RTL8812  || pDM_Odm->SupportICType == ODM_RTL8723B)
+			{
+	            ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("**********Enter POWER Tracking MIX_MODE**********\n"));
+				for (p = ODM_RF_PATH_A; p < c.RfPathCount; p++)
+					(*c.ODM_TxPwrTrackSetPwr)(pDM_Odm, MIX_MODE, p, Indexforchannel);
 			}
 			else
 			{
-				ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
-					("Temperature(%d) lower than PG value(%d)\n", ThermalValue, pHalData->EEPROMThermalMeter));
-
-				if(pDM_Odm->SupportICType == ODM_RTL8821)
-                {
-	                ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("**********Enter POWER Tracking MIX_MODE**********\n"));
-				    for (p = ODM_RF_PATH_A; p < c.RfPathCount; p++)
-					    (*c.ODM_TxPwrTrackSetPwr)(pDM_Odm, MIX_MODE, p, Indexforchannel);
-                }
-				else
-				{
-					for (p = ODM_RF_PATH_A; p < c.RfPathCount; p++)
-						(*c.ODM_TxPwrTrackSetPwr)(pDM_Odm, BBSWING, p, Indexforchannel);
-				}
+				ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("**********Enter POWER Tracking BBSWING_MODE**********\n"));
+				for (p = ODM_RF_PATH_A; p < c.RfPathCount; p++)
+					(*c.ODM_TxPwrTrackSetPwr)(pDM_Odm, BBSWING, p, Indexforchannel);
 			}
+			
+		}
 
-			pDM_Odm->BbSwingIdxCckBase = pDM_Odm->BbSwingIdxCck;   // Record last time Power Tracking result as base.
-			for (p = ODM_RF_PATH_A; p < c.RfPathCount; p++)
+		pDM_Odm->BbSwingIdxCckBase = pDM_Odm->BbSwingIdxCck;   // Record last time Power Tracking result as base.
+		for (p = ODM_RF_PATH_A; p < c.RfPathCount; p++)
 				pDM_Odm->BbSwingIdxOfdmBase[p] = pDM_Odm->BbSwingIdxOfdm[p];
 
-		 	ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
-						("pDM_Odm->RFCalibrateInfo.ThermalValue = %d ThermalValue= %d\n", pDM_Odm->RFCalibrateInfo.ThermalValue, ThermalValue));
-			
-			pDM_Odm->RFCalibrateInfo.ThermalValue = ThermalValue;         //Record last Power Tracking Thermal Value
+	 	ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,
+					("pDM_Odm->RFCalibrateInfo.ThermalValue = %d ThermalValue= %d\n", pDM_Odm->RFCalibrateInfo.ThermalValue, ThermalValue));
+		
+		pDM_Odm->RFCalibrateInfo.ThermalValue = ThermalValue;         //Record last Power Tracking Thermal Value
 
-	}		
+	}
 #if !(DM_ODM_SUPPORT_TYPE & ODM_AP)
-	if ((delta_IQK >= c.Threshold_IQK)) // Delta temperature is equal to or larger than 20 centigrade (When threshold is 8).
-		(*c.DoIQK)(pDM_Odm, delta_IQK, ThermalValue, 8);
+	// Delta temperature is equal to or larger than 20 centigrade (When threshold is 8).
+	if ((delta_IQK >= c.Threshold_IQK)) {
+		
+		if ( ! pDM_Odm->RFCalibrateInfo.bIQKInProgress) {
+			
+			ODM_AcquireSpinLock(pDM_Odm, RT_IQK_SPINLOCK);
+			pDM_Odm->RFCalibrateInfo.bIQKInProgress = TRUE;
+			ODM_ReleaseSpinLock(pDM_Odm, RT_IQK_SPINLOCK);
+			
+			(*c.DoIQK)(pDM_Odm, delta_IQK, ThermalValue, 8);
+			
+			ODM_AcquireSpinLock(pDM_Odm, RT_IQK_SPINLOCK);
+			pDM_Odm->RFCalibrateInfo.bIQKInProgress = FALSE;
+			ODM_ReleaseSpinLock(pDM_Odm, RT_IQK_SPINLOCK);
+		}
+	}
 #endif		
 			
 	ODM_RT_TRACE(pDM_Odm,ODM_COMP_TX_PWR_TRACK, ODM_DBG_LOUD,("<===ODM_TXPowerTrackingCallback_ThermalMeter\n"));
@@ -478,7 +492,7 @@ ODM_ResetIQKResult(
 	if (!IS_HARDWARE_TYPE_8192D(Adapter))
 		return;
 #endif
-	ODM_RT_TRACE(pDM_Odm,ODM_COMP_CALIBRATION, ODM_DBG_LOUD,("PHY_ResetIQKResult:: settings regs %d default regs %d\n", (u32)(sizeof(pDM_Odm->RFCalibrateInfo.IQKMatrixRegSetting)/sizeof(IQK_MATRIX_REGS_SETTING)), IQK_Matrix_Settings_NUM));
+	ODM_RT_TRACE(pDM_Odm,ODM_COMP_CALIBRATION, ODM_DBG_LOUD,("PHY_ResetIQKResult:: settings regs %d default regs %d\n", (u4Byte)(sizeof(pDM_Odm->RFCalibrateInfo.IQKMatrixRegSetting)/sizeof(IQK_MATRIX_REGS_SETTING)), IQK_Matrix_Settings_NUM));
 	//0xe94, 0xe9c, 0xea4, 0xeac, 0xeb4, 0xebc, 0xec4, 0xecc
 
 	for(i = 0; i < IQK_Matrix_Settings_NUM; i++)

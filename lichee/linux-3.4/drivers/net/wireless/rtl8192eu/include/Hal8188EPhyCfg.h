@@ -89,8 +89,6 @@ int	PHY_RFConfig8188E(IN	PADAPTER	Adapter	);
 
 /* RF config */
 int	rtl8188e_PHY_ConfigRFWithParaFile(IN PADAPTER Adapter, IN u8 * pFileName, u8 eRFPath);
-int	rtl8188e_PHY_ConfigRFWithHeaderFile(	IN	PADAPTER		Adapter,
-												IN	u8				eRFPath);
 
 /* Read initi reg value for tx power setting. */
 void	rtl8192c_PHY_GetHWRegOriginalValue(	IN	PADAPTER		Adapter	);
@@ -105,16 +103,28 @@ void	rtl8192c_PHY_GetHWRegOriginalValue(	IN	PADAPTER		Adapter	);
 // BB TX Power R/W
 //
 void	PHY_GetTxPowerLevel8188E(	IN	PADAPTER		Adapter,
-											OUT u32*    		powerlevel	);
+											OUT s32*    		powerlevel	);
 void	PHY_SetTxPowerLevel8188E(	IN	PADAPTER		Adapter,
 											IN	u8			channel	);
 BOOLEAN	PHY_UpdateTxPowerDbm8188E(	IN	PADAPTER	Adapter,
 											IN	int		powerInDbm	);
 
-//
-VOID 
-PHY_ScanOperationBackup8188E(IN	PADAPTER	Adapter,
-										IN	u8		Operation	);
+VOID
+PHY_SetTxPowerIndex_8188E(
+	IN	PADAPTER			Adapter,
+	IN	u32					PowerIndex,
+	IN	u8					RFPath,	
+	IN	u8					Rate
+	);
+
+u8
+PHY_GetTxPowerIndex_8188E(
+	IN	PADAPTER		pAdapter,
+	IN	u8				RFPath,
+	IN	u8				Rate,	
+	IN	CHANNEL_WIDTH	BandWidth,	
+	IN	u8				Channel
+	);
 
 //
 // Switch bandwidth for 8192S
@@ -181,7 +191,6 @@ SetAntennaConfig92C(
 	IN	u8		DefaultAnt	
 	);
 
-#ifdef CONFIG_PHY_SETTING_WITH_ODM
 VOID
 storePwrIndexDiffRateOffset(
 	IN	PADAPTER	Adapter,
@@ -189,7 +198,6 @@ storePwrIndexDiffRateOffset(
 	IN	u32		BitMask,
 	IN	u32		Data
 	);
-#endif //CONFIG_PHY_SETTING_WITH_ODM
 /*--------------------------Exported Function prototype---------------------*/
 
 //

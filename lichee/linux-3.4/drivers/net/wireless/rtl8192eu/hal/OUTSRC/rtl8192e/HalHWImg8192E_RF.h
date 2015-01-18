@@ -22,7 +22,7 @@
 #ifndef __INC_MP_RF_HW_IMG_8192E_H
 #define __INC_MP_RF_HW_IMG_8192E_H
 
-static BOOLEAN CheckCondition(const u4Byte Condition, const u4Byte Hex);
+//static BOOLEAN CheckCondition(const u4Byte Condition, const u4Byte Hex);
 
 /******************************************************************************
 *                           RadioA.TXT
@@ -75,6 +75,15 @@ ODM_ReadAndConfig_MP_8192E_TxPowerTrack_SDIO( // TC: Test Chip, MP: MP Chip
 
 void
 ODM_ReadAndConfig_MP_8192E_TxPowerTrack_USB( // TC: Test Chip, MP: MP Chip
+	IN   PDM_ODM_T  pDM_Odm
+);
+
+/******************************************************************************
+*                           TXPWR_LMT.TXT
+******************************************************************************/
+
+void
+ODM_ReadAndConfig_MP_8192E_TXPWR_LMT( // TC: Test Chip, MP: MP Chip
 	IN   PDM_ODM_T  pDM_Odm
 );
 

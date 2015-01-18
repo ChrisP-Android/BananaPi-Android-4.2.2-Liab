@@ -165,6 +165,7 @@
 #define REG_TXDMA_OFFSET_CHK			0x020C
 #define REG_TXDMA_STATUS				0x0210
 #define REG_RQPN_NPQ					0x0214
+#define REG_AUTO_LLT					0x0224
 
 
 //-----------------------------------------------------
@@ -366,6 +367,7 @@
 #define REG_MAR							0x0620
 #define REG_MBIDCAMCFG					0x0628
 
+#define REG_PNO_STATUS					0x0631
 #define REG_USTIME_EDCA				0x0638
 #define REG_MAC_SPEC_SIFS				0x063A
 // 20100719 Joseph: Hardware register definition change. (HW datasheet v54)
@@ -1347,6 +1349,19 @@ Current IOREG MAP
 
 //2 TXDMA_OFFSET_CHK
 #define DROP_DATA_EN				BIT(9)
+
+//2 AUTO_LLT
+#define BIT_SHIFT_TXPKTNUM 24
+#define BIT_MASK_TXPKTNUM 0xff
+#define BIT_TXPKTNUM(x) (((x) & BIT_MASK_TXPKTNUM) << BIT_SHIFT_TXPKTNUM)
+
+#define BIT_TDE_DBG_SEL BIT(23)
+#define BIT_AUTO_INIT_LLT BIT(16)
+
+#define BIT_SHIFT_Tx_OQT_free_space 8
+#define BIT_MASK_Tx_OQT_free_space 0xff
+#define BIT_Tx_OQT_free_space(x) (((x) & BIT_MASK_Tx_OQT_free_space) << BIT_SHIFT_Tx_OQT_free_space)
+
 
 //-----------------------------------------------------
 //

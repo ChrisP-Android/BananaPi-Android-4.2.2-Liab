@@ -64,8 +64,8 @@
 
 //VHT Operation Information Element
 #define SET_VHT_OPERATION_ELE_CHL_WIDTH(_pEleStart, _val)			SET_BITS_TO_LE_1BYTE(_pEleStart, 0, 8, _val)
-#define SET_VHT_OPERATION_ELE_CHL_CENTER_FREQ1(_pEleStart, _val)			SET_BITS_TO_LE_2BYTE(_pEleStart+1, 0, 8, _val)
-#define SET_VHT_OPERATION_ELE_CHL_CENTER_FREQ2(_pEleStart, _val)			SET_BITS_TO_LE_2BYTE(_pEleStart+2, 0, 8, _val)
+#define SET_VHT_OPERATION_ELE_CHL_CENTER_FREQ1(_pEleStart, _val)			SET_BITS_TO_LE_1BYTE(_pEleStart+1, 0, 8, _val)
+#define SET_VHT_OPERATION_ELE_CHL_CENTER_FREQ2(_pEleStart, _val)			SET_BITS_TO_LE_1BYTE(_pEleStart+2, 0, 8, _val)
 #define SET_VHT_OPERATION_ELE_BASIC_MCS_SET(_pEleStart, _val)			SET_BITS_TO_LE_2BYTE(_pEleStart+3, 0, 16, _val)
 
 #define GET_VHT_OPERATION_ELE_CHL_WIDTH(_pEleStart)		LE_BITS_TO_1BYTE(_pEleStart,0,8)
@@ -83,13 +83,6 @@
 #define SET_EXT_CAPABILITY_ELE_OP_MODE_NOTIF(_pEleStart, _val)			SET_BITS_TO_LE_1BYTE((_pEleStart)+7, 6, 1, _val)
 #define GET_EXT_CAPABILITY_ELE_OP_MODE_NOTIF(_pEleStart)				LE_BITS_TO_1BYTE((_pEleStart)+7, 6, 1)
 
-
-#define TEST_FLAG(__Flag,__testFlag)		(((__Flag) & (__testFlag)) != 0)
-#define SET_FLAG(__Flag, __setFlag)			((__Flag) |= __setFlag)
-#define CLEAR_FLAG(__Flag, __clearFlag)		((__Flag) &= ~(__clearFlag))
-#define CLEAR_FLAGS(__Flag)					((__Flag) = 0)
-#define TEST_FLAGS(__Flag, __testFlags)		(((__Flag) & (__testFlags)) == (__testFlags))
-
 struct vht_priv
 {
 	u8	vht_option;
@@ -98,10 +91,10 @@ struct vht_priv
 	u8	stbc_cap;
 	u8	beamform_cap;
 
-	u8	bwmode;
-	u8	sgi;//short GI
+	u8	sgi_80m;//short GI
 	u8	ampdu_len;
 
+	u8	vht_op_mode_notify;
 	u8	vht_highest_rate;
 	u8	vht_mcs_map[2];
 
@@ -113,7 +106,7 @@ u16	rtw_vht_data_rate(u8 bw, u8 short_GI, u8 vht_mcs_rate);
 u32	rtw_vht_rate_to_bitmap(u8 *pVHTRate);
 void	rtw_vht_use_default_setting(_adapter *padapter);
 u32	rtw_build_vht_operation_ie(_adapter *padapter, u8 *pbuf, u8 channel);
-u32	rtw_build_vht_op_mode_notify_ie(_adapter *padapter, u8 *pbuf);
+u32	rtw_build_vht_op_mode_notify_ie(_adapter *padapter, u8 *pbuf, u8 bw);
 u32	rtw_build_vht_cap_ie(_adapter *padapter, u8 *pbuf);
 void	update_sta_vht_info_apmode(_adapter *padapter, PVOID psta);
 void	update_hw_vht_param(_adapter *padapter);

@@ -329,7 +329,20 @@ static void Init_ODM_ComInfo_8192e(PADAPTER	Adapter)
 	ODM_CmnInfoInit(pDM_Odm,ODM_CMNINFO_IC_TYPE,ODM_RTL8192E);
 
 	ODM_CmnInfoInit(pDM_Odm,ODM_CMNINFO_FAB_VER,pHalData->VersionID.VendorType);		
-	ODM_CmnInfoInit(pDM_Odm,ODM_CMNINFO_CUT_VER,pHalData->VersionID.CUTVersion);
+
+	if(IS_A_CUT(pHalData->VersionID))
+		cut_ver = ODM_CUT_A;
+	else if(IS_B_CUT(pHalData->VersionID))
+		cut_ver = ODM_CUT_B;
+	else if(IS_C_CUT(pHalData->VersionID)) 
+		cut_ver = ODM_CUT_C;
+	else if(IS_D_CUT(pHalData->VersionID))
+		cut_ver = ODM_CUT_D;
+	else if(IS_E_CUT(pHalData->VersionID))
+		cut_ver = ODM_CUT_E;
+	else
+		cut_ver = ODM_CUT_A;
+	ODM_CmnInfoInit(pDM_Odm,ODM_CMNINFO_CUT_VER,cut_ver);
 
 	ODM_CmnInfoInit(pDM_Odm,	ODM_CMNINFO_MP_TEST_CHIP,IS_NORMAL_CHIP(pHalData->VersionID));
 
@@ -401,40 +414,44 @@ static void Update_ODM_ComInfo_8192e(PADAPTER	Adapter)
 {
 	struct mlme_ext_priv	*pmlmeext = &Adapter->mlmeextpriv;
 	struct mlme_priv	*pmlmepriv = &Adapter->mlmepriv;
-	struct pwrctrl_priv *pwrctrlpriv = &Adapter->pwrctrlpriv;
+	struct pwrctrl_priv *pwrctrlpriv = adapter_to_pwrctl(Adapter);
 	PHAL_DATA_TYPE	pHalData = GET_HAL_DATA(Adapter);
 	PDM_ODM_T		pDM_Odm = &(pHalData->odmpriv);
 	struct dm_priv	*pdmpriv = &pHalData->dmpriv;	
-	int i;	
-	#ifdef CONFIG_DISABLE_ODM
-	pdmpriv->InitODMFlag = 0;
-	#else //CONFIG_DISABLE_ODM
-	
-	pdmpriv->InitODMFlag =	ODM_BB_DIG				|
-#ifdef	CONFIG_ODM_REFRESH_RAMASK
-							ODM_BB_RA_MASK			|
-#endif							
-							//ODM_BB_DYNAMIC_TXPWR	|
-							ODM_BB_FA_CNT			|
-							ODM_BB_RSSI_MONITOR	|
-							//ODM_BB_CCK_PD			|							
-							//ODM_BB_PWR_SAVE		|							
-							ODM_MAC_EDCA_TURBO	|
-							ODM_RF_CALIBRATION		|
-							ODM_RF_TX_PWR_TRACK	
-							;	
+	int i;
+
+	pdmpriv->InitODMFlag = 0
+		| ODM_BB_DIG
+		| ODM_BB_RA_MASK
+		//| ODM_BB_DYNAMIC_TXPWR
+		| ODM_BB_FA_CNT
+		| ODM_BB_RSSI_MONITOR
+		//| ODM_BB_CCK_PD
+		//| ODM_BB_PWR_SAVE
+		| ODM_MAC_EDCA_TURBO
+		| ODM_RF_CALIBRATION
+		| ODM_RF_TX_PWR_TRACK
+#ifdef CONFIG_ODM_ADAPTIVITY
+		| ODM_BB_ADAPTIVITY
+#endif
+		;
+
 	if(pHalData->AntDivCfg)
 		pdmpriv->InitODMFlag |= ODM_BB_ANT_DIV;
 
-	#if (MP_DRIVER==1)
-		if (Adapter->registrypriv.mp_mode == 1)
-		{
-			pdmpriv->InitODMFlag = 	ODM_RF_CALIBRATION	|
-									ODM_RF_TX_PWR_TRACK;	
-		}
-	#endif//(MP_DRIVER==1)
-	
-	#endif//CONFIG_DISABLE_ODM	
+#if (MP_DRIVER==1)
+	if (Adapter->registrypriv.mp_mode == 1) {
+		pdmpriv->InitODMFlag = 0
+			| ODM_RF_CALIBRATION
+			| ODM_RF_TX_PWR_TRACK
+			;
+	}
+#endif//(MP_DRIVER==1)
+
+#ifdef CONFIG_DISABLE_ODM
+	pdmpriv->InitODMFlag = 0;
+#endif//CONFIG_DISABLE_ODM
+
 	ODM_CmnInfoUpdate(pDM_Odm,ODM_CMNINFO_ABILITY,pdmpriv->InitODMFlag);
 	
 	ODM_CmnInfoHook(pDM_Odm,ODM_CMNINFO_TX_UNI,&(Adapter->xmitpriv.tx_bytes));
@@ -449,6 +466,7 @@ static void Update_ODM_ComInfo_8192e(PADAPTER	Adapter)
 	ODM_CmnInfoHook(pDM_Odm,ODM_CMNINFO_CHNL,&( pHalData->CurrentChannel));	
 	ODM_CmnInfoHook(pDM_Odm,ODM_CMNINFO_NET_CLOSED,&( Adapter->net_closed));
 	ODM_CmnInfoHook(pDM_Odm,ODM_CMNINFO_MP_MODE,&(Adapter->registrypriv.mp_mode));
+	ODM_CmnInfoHook(pDM_Odm,ODM_CMNINFO_FORCED_IGI_LB,&(pHalData->u1ForcedIgiLb));
 	//================= only for 8192D   =================
 
 
@@ -493,7 +511,7 @@ rtl8192e_InitHalDm(
 	Update_ODM_ComInfo_8192e(Adapter);
 	ODM_DMInit(pDM_Odm);
 
-	Adapter->fix_rate = 0xFF;
+	//Adapter->fix_rate = 0xFF;
 
 }
 
@@ -521,16 +539,8 @@ rtl8192e_HalDmWatchDog(
 		goto skip_dm;
 
 #ifdef CONFIG_LPS
-	#if defined(CONFIG_CONCURRENT_MODE)
-	if (Adapter->iface_type != IFACE_PORT0 && pbuddy_adapter) {
-		bFwCurrentInPSMode = pbuddy_adapter->pwrctrlpriv.bFwCurrentInPSMode;
-		rtw_hal_get_hwreg(pbuddy_adapter, HW_VAR_FWLPS_RF_ON, (u8 *)(&bFwPSAwake));
-	} else
-	#endif
-	{
-		bFwCurrentInPSMode = Adapter->pwrctrlpriv.bFwCurrentInPSMode;
-		rtw_hal_get_hwreg(Adapter, HW_VAR_FWLPS_RF_ON, (u8 *)(&bFwPSAwake));
-	}
+	bFwCurrentInPSMode = adapter_to_pwrctl(Adapter)->bFwCurrentInPSMode;
+	rtw_hal_get_hwreg(Adapter, HW_VAR_FWLPS_RF_ON, (u8 *)(&bFwPSAwake));
 #endif
 
 #ifdef CONFIG_P2P_PS
@@ -569,7 +579,7 @@ rtl8192e_HalDmWatchDog(
 	if (hw_init_completed == _TRUE)
 	{
 		u8	bLinked=_FALSE;
-
+		u8	bsta_state=_FALSE;
 		#ifdef CONFIG_DISABLE_ODM
 		pHalData->odmpriv.SupportAbility = 0;
 		#endif
@@ -583,6 +593,16 @@ rtl8192e_HalDmWatchDog(
 #endif //CONFIG_CONCURRENT_MODE
 
 		ODM_CmnInfoUpdate(&pHalData->odmpriv ,ODM_CMNINFO_LINK, bLinked);
+
+		if (check_fwstate(&Adapter->mlmepriv, WIFI_STATION_STATE))
+			bsta_state = _TRUE;
+#ifdef CONFIG_CONCURRENT_MODE
+		if(pbuddy_adapter && check_fwstate(&pbuddy_adapter->mlmepriv, WIFI_STATION_STATE))
+			bsta_state = _TRUE;
+#endif //CONFIG_CONCURRENT_MODE	
+		ODM_CmnInfoUpdate(&pHalData->odmpriv ,ODM_CMNINFO_STATION_STATE, bsta_state);
+
+
 		ODM_DMWatchdog(&pHalData->odmpriv);
 			
 	}
@@ -613,9 +633,6 @@ void rtl8192e_init_dm_priv(IN PADAPTER Adapter)
 	ODM_InitAllTimers(podmpriv );	
 	ODM_InitDebugSetting(podmpriv);
 
-	Adapter->registrypriv.RegEnableTxPowerLimit = 0;
-	Adapter->registrypriv.RegPowerBase = 14;
-	Adapter->registrypriv.RegTxPwrLimit = 0xFFFFFFFF;
 	pHalData->RegRFPathS1 = 0;
 }
 

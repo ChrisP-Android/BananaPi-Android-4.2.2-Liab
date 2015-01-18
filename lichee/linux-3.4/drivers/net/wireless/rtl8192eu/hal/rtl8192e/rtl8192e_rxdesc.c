@@ -260,7 +260,11 @@ void rtl8192e_query_rx_phy_status(
 			}
 			#endif
 		}
-		//to do Ad-hoc
+		else
+		{
+			//to do Ad-hoc
+			sa = NULL;
+		}
 	}
 	else{
 		sa = get_sa(wlanhdr);

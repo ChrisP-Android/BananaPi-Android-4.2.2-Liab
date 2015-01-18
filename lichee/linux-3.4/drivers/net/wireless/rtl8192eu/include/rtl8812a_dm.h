@@ -20,6 +20,8 @@
 #ifndef __RTL8812A_DM_H__
 #define __RTL8812A_DM_H__
 
+#define DYNAMIC_FUNC_BT BIT(0)
+
 void rtl8812_init_dm_priv(IN PADAPTER Adapter);
 void rtl8812_deinit_dm_priv(IN PADAPTER Adapter);
 void rtl8812_InitHalDm(IN PADAPTER Adapter);

@@ -21,8 +21,6 @@
 #define CONFIG_SINGLE_IMG
 
 //#define CONFIG_DISABLE_ODM
-#define CONFIG_ODM_REFRESH_RAMASK
-#define CONFIG_PHY_SETTING_WITH_ODM
 //for FPGA VERIFICATION config
 #define RTL8188E_FPGA_TRUE_PHY_VERIFICATION 0
 
@@ -38,16 +36,10 @@
 
 #define PLATFORM_LINUX	
 
-//#define CONFIG_IOCTL_CFG80211 
-
-#ifdef CONFIG_PLATFORM_ARM_SUNxI
-	#ifndef CONFIG_IOCTL_CFG80211 
-		#define CONFIG_IOCTL_CFG80211 
-	#endif
-#endif
+#define CONFIG_IOCTL_CFG80211 
 
 #ifdef CONFIG_IOCTL_CFG80211
-	//#define RTW_USE_CFG80211_STA_EVENT /* Indecate new sta asoc through cfg80211_new_sta */
+	#define RTW_USE_CFG80211_STA_EVENT /* Indecate new sta asoc through cfg80211_new_sta */
 	#define CONFIG_CFG80211_FORCE_COMPATIBLE_2_6_37_UNDER
 	//#define CONFIG_DEBUG_CFG80211 
 	//#define CONFIG_DRV_ISSUE_PROV_REQ // IOT FOR S2
@@ -64,7 +56,7 @@
 #define CONFIG_EMBEDDED_FWIMG	
 //#define CONFIG_FILE_FWIMG
 
-//#define CONFIG_XMIT_ACK
+#define CONFIG_XMIT_ACK
 #ifdef CONFIG_XMIT_ACK
 	#define CONFIG_ACTIVE_KEEP_ALIVE_CHECK
 #endif
@@ -115,9 +107,13 @@
 #endif
 
 
-//#define CONFIG_CONCURRENT_MODE 
+#define CONFIG_CONCURRENT_MODE 
 #ifdef CONFIG_CONCURRENT_MODE
 	//#define CONFIG_HWPORT_SWAP				//Port0->Sec , Port1 -> Pri
+	#define CONFIG_RUNTIME_PORT_SWITCH
+	//#define DBG_RUNTIME_PORT_SWITCH
+	//#define CONFIG_STA_MODE_SCAN_UNDER_AP_MODE
+	//#define CONFIG_ATMEL_RC_PATCH
 	//#define CONFIG_TSF_RESET_OFFLOAD 			// For 2 PORT TSF SYNC.
 #endif
 
@@ -157,6 +153,8 @@
 
 	#define CONFIG_P2P_PS
 	//#define CONFIG_P2P_IPS
+	#define CONFIG_P2P_OP_CHK_SOCIAL_CH
+	#define CONFIG_P2P_CHK_INVITE_CH_LIST
 #endif
 
 //	Added by Kurt 20110511
@@ -203,6 +201,7 @@
 #define CONFIG_NEW_SIGNAL_STAT_PROCESS
 //#define CONFIG_SIGNAL_DISPLAY_DBM //display RX signal with dbm
 #define RTW_NOTCH_FILTER 0 /* 0:Disable, 1:Enable, */
+#define CONFIG_DEAUTH_BEFORE_CONNECT
 
 #define CONFIG_BR_EXT	1	// Enable NAT2.5 support for STA mode interface with a L2 Bridge
 #ifdef CONFIG_BR_EXT
@@ -231,12 +230,6 @@
  */
 //#define CONFIG_USE_USB_BUFFER_ALLOC_TX 	// Trade-off: For TX path, improve stability on some platforms, but may cause performance degrade on other platforms.
 //#define CONFIG_USE_USB_BUFFER_ALLOC_RX 	// For RX path
-
-#ifdef CONFIG_PLATFORM_ARM_SUNxI
-	#ifndef 	CONFIG_USE_USB_BUFFER_ALLOC_TX 
-		#define CONFIG_USE_USB_BUFFER_ALLOC_TX
-	#endif
-#endif
 
 #ifdef CONFIG_USE_USB_BUFFER_ALLOC_RX
 #undef CONFIG_PREALLOC_RECV_SKB
@@ -271,7 +264,7 @@
 
 #define CONFIG_OUT_EP_WIFI_MODE	0
 
-#define ENABLE_USB_DROP_INCORRECT_OUT	0
+#define ENABLE_USB_DROP_INCORRECT_OUT
 
 
 //#define RTL8192CU_ADHOC_WORKAROUND_SETTING	
@@ -339,7 +332,7 @@
 #define RTL8188EU_SUPPORT				0
 #define RTL8188ES_SUPPORT				0
 #define RTL8188E_SUPPORT				(RTL8188EE_SUPPORT|RTL8188EU_SUPPORT|RTL8188ES_SUPPORT)
-#define TEST_CHIP_SUPPORT				0
+#define TESTCHIP_SUPPORT				0
 
 #define RTL8812E_SUPPORT				0
 #define RTL8812AU_SUPPORT				0
@@ -350,6 +343,8 @@
 #define RTL8723B_SUPPORT				0
 
 #define RTL8192E_SUPPORT				1
+
+#define RTL8813A_SUPPORT				0
 
 //#if (RTL8188E_SUPPORT==1)
 #define RATE_ADAPTIVE_SUPPORT 			0
@@ -370,9 +365,9 @@
 /*
  * Debug Related Config
  */
-#define DBG	1
+#define DBG	0
 
-#define CONFIG_DEBUG /* DBG_871X, etc... */
+//#define CONFIG_DEBUG /* DBG_871X, etc... */
 //#define CONFIG_DEBUG_RTL871X /* RT_TRACE, RT_PRINT_DATA, _func_enter_, _func_exit_ */
 
 #define CONFIG_PROC_DEBUG

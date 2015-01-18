@@ -209,7 +209,7 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz ,u8 bag
 	if (padapter->registrypriv.mp_mode == 0)
 	{
 		//if((!bagg_pkt) &&(urb_zero_packet_chk(padapter, sz)==0))//(sz %512) != 0
-		if((!bagg_pkt) &&(rtw_usb_bulk_size_boundary(padapter,TXDESC_SIZE+sz)==_FALSE))	
+		if((PACKET_OFFSET_SZ != 0) && (!bagg_pkt) && (rtw_usb_bulk_size_boundary(padapter,TXDESC_SIZE+sz)==_FALSE))	
 		{
 			ptxdesc = (pmem+PACKET_OFFSET_SZ);
 			//DBG_8192C("==> non-agg-pkt,shift pointer...\n");
@@ -242,7 +242,7 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz ,u8 bag
 #ifndef CONFIG_USE_USB_BUFFER_ALLOC_TX
 	if (padapter->registrypriv.mp_mode == 0)
 	{
-		if(!bagg_pkt){
+		if((PACKET_OFFSET_SZ != 0) && (!bagg_pkt)){
 			if((pull) && (pxmitframe->pkt_offset>0)) {	
 				pxmitframe->pkt_offset = pxmitframe->pkt_offset -1;		
 			}
@@ -332,7 +332,7 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz ,u8 bag
 						SET_TX_DESC_DATA_SHORT_92E(ptxdesc, 1);
 				}
 				SET_TX_DESC_TX_RATE_92E(ptxdesc, (padapter->fix_rate & 0x7F));
-				
+				SET_TX_DESC_DISABLE_FB_92E(ptxdesc,1);
 				//ptxdesc->datarate = padapter->fix_rate;
 			}
 			#endif
@@ -382,6 +382,15 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz ,u8 bag
 		{
 			SET_TX_DESC_TX_RATE_92E(ptxdesc, MRateToHwRate(pmlmeext->tx_rate));
 		}
+#ifdef CONFIG_XMIT_ACK
+		//CCX-TXRPT ack for xmit mgmt frames.
+		if (pxmitframe->ack_report) {
+			SET_TX_DESC_SPE_RPT_92E(ptxdesc, 1);
+			#ifdef DBG_CCX
+			DBG_871X("%s set tx report\n", __func__);
+			#endif
+		}
+#endif //CONFIG_XMIT_ACK
 	}
 	else if((pxmitframe->frame_tag&0x0f) == TXAGG_FRAMETAG)
 	{
@@ -660,9 +669,9 @@ s32 rtl8192eu_xmitframe_complete(_adapter *padapter, struct xmit_priv *pxmitpriv
 
 		pxmitframe->agg_num = 1; // alloc xmitframe should assign to 1.
 		#ifdef CONFIG_TX_EARLY_MODE
-		pxmitframe->pkt_offset = 2; // first frame of aggregation, reserve one offset for EM info ,another for usb bulk-out block check
+		pxmitframe->pkt_offset = (PACKET_OFFSET_SZ/8)+1; // 2; // first frame of aggregation, reserve one offset for EM info ,another for usb bulk-out block check
 		#else
-		pxmitframe->pkt_offset = 1; // first frame of aggregation, reserve offset
+		pxmitframe->pkt_offset = (PACKET_OFFSET_SZ/8); // 1; // first frame of aggregation, reserve offset
 		#endif
 
 		if (rtw_xmitframe_coalesce(padapter, pxmitframe->pkt, pxmitframe) == _FALSE) {
@@ -835,7 +844,7 @@ s32 rtl8192eu_xmitframe_complete(_adapter *padapter, struct xmit_priv *pxmitpriv
 #endif //CONFIG_80211N_HT
 #ifndef CONFIG_USE_USB_BUFFER_ALLOC_TX
 	//3 3. update first frame txdesc
-	if ((pbuf_tail % bulkSize) == 0) {
+	if ((PACKET_OFFSET_SZ != 0) && ((pbuf_tail % bulkSize) == 0)) {
 		// remove pkt_offset
 		pbuf_tail -= PACKET_OFFSET_SZ;
 		pfirstframe->buf_addr += PACKET_OFFSET_SZ;
@@ -1028,8 +1037,6 @@ enqueue:
 		RT_TRACE(_module_xmit_osdep_c_, _drv_err_, ("pre_xmitframe: enqueue xmitframe fail\n"));
 		rtw_free_xmitframe(pxmitpriv, pxmitframe);
 
-		// Trick, make the statistics correct
-		pxmitpriv->tx_pkts--;
 		pxmitpriv->tx_drop++;
 		return _TRUE;
 	}
@@ -1061,8 +1068,6 @@ s32	rtl8192eu_hal_xmitframe_enqueue(_adapter *padapter, struct xmit_frame *pxmit
 	{
 		rtw_free_xmitframe(pxmitpriv, pxmitframe);
 
-		// Trick, make the statistics correct
-		pxmitpriv->tx_pkts--;
 		pxmitpriv->tx_drop++;					
 	}
 	else
@@ -1085,7 +1090,7 @@ static void rtl8192eu_hostap_mgnt_xmit_cb(struct urb *urb)
 
 	//DBG_8192C("%s\n", __FUNCTION__);
 
-	dev_kfree_skb_any(skb);
+	rtw_skb_free(skb);
 #endif	
 }
 
@@ -1119,11 +1124,7 @@ s32 rtl8192eu_hostap_mgnt_xmit_entry(_adapter *padapter, _pkt *pkt)
 	if ((fc & RTW_IEEE80211_FCTL_FTYPE) != RTW_IEEE80211_FTYPE_MGMT)
 		goto _exit;
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18)) // http://www.mail-archive.com/netdev@vger.kernel.org/msg17214.html
-	pxmit_skb = dev_alloc_skb(len + TXDESC_SIZE);			
-#else			
-	pxmit_skb = netdev_alloc_skb(pnetdev, len + TXDESC_SIZE);
-#endif		
+	pxmit_skb = rtw_skb_alloc(len + TXDESC_SIZE);
 
 	if(!pxmit_skb)
 		goto _exit;
@@ -1204,7 +1205,7 @@ s32 rtl8192eu_hostap_mgnt_xmit_entry(_adapter *padapter, _pkt *pkt)
 	
 _exit:	
 	
-	dev_kfree_skb_any(skb);
+	rtw_skb_free(skb);
 
 #endif
 

@@ -95,20 +95,11 @@ PHY_SwitchWirelessBand8812(
 //
 // BB TX Power R/W
 //
-VOID
-PHY_StoreTxPowerByRateBase_8812A(	
-	IN	PADAPTER	pAdapter
-	);
-
-VOID
-PHY_ConvertTxPowerByRateInDbmToRelativeValues_8812A(
-	IN	PADAPTER	pAdapter
-	);
-
-void	PHY_GetTxPowerLevel8812(	IN PADAPTER	Adapter, OUT u32*	powerlevel	);
+void	PHY_GetTxPowerLevel8812(	IN PADAPTER	Adapter, OUT s32*	powerlevel	);
 void	PHY_SetTxPowerLevel8812(	IN PADAPTER	Adapter, IN u8	Channel	);
+
 BOOLEAN	PHY_UpdateTxPowerDbm8812( IN PADAPTER	Adapter, IN int	powerInDbm	);
-u32 PHY_GetTxPowerIndex_8812A(
+u8 PHY_GetTxPowerIndex_8812A(
 	IN	PADAPTER			pAdapter,
 	IN	u8					RFPath,
 	IN	u8					Rate,	

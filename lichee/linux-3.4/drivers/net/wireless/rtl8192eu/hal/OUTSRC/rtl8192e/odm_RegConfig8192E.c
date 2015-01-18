@@ -31,7 +31,7 @@ odm_ConfigRFReg_8192E(
 	IN	u4Byte				    RegAddr
 	)
 {
-    if(Addr == 0xfe || Addr == 0xffe)
+	if(Addr == 0xfe || Addr == 0xffe)
 	{ 					  
 		#ifdef CONFIG_LONG_DELAY_ISSUE
 		ODM_sleep_ms(50);
@@ -44,51 +44,51 @@ odm_ConfigRFReg_8192E(
 		ODM_SetRFReg(pDM_Odm, RF_PATH, RegAddr, bRFRegOffsetMask, Data);
 		// Add 1us delay between BB/RF register setting.
 		ODM_delay_us(1);
-		
 
-	       //For disable/enable test in high temperature, the B6 value will fail to fill. Suggestion by Ed 20130.
-     	       if(Addr == 0xb6)
-	       {
-		    u4Byte getvalue=0;
-		    u1Byte	count =0;
-		    getvalue = ODM_GetRFReg(pDM_Odm, RF_PATH, Addr, bMaskDWord);	
 
-		    ODM_delay_us(1);
-		
-		    while((getvalue>>8)!=(Data>>8))
-		    {
-			 count++;
-			ODM_SetRFReg(pDM_Odm, RF_PATH, RegAddr, bRFRegOffsetMask, Data);
-			ODM_delay_us(1);
-			getvalue = ODM_GetRFReg(pDM_Odm, RF_PATH, Addr, bMaskDWord);
-			ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [B6] getvalue 0x%x, Data 0x%x, count %d\n", getvalue, Data,count));			
-			if(count>5)
-				break;
-		    }
-	        }
-
-  	     if(Addr == 0xb2)
-	{
-		u4Byte getvalue=0;
-		u1Byte	count =0;
-		getvalue = ODM_GetRFReg(pDM_Odm, RF_PATH, Addr, bMaskDWord);	
-
-		ODM_delay_us(1);
-			
-		while(getvalue!=Data)
+		//For disable/enable test in high temperature, the B6 value will fail to fill. Suggestion by Ed 20130.
+		if(Addr == 0xb6)
 		{
-			count++;
-			ODM_SetRFReg(pDM_Odm, RF_PATH, RegAddr, bRFRegOffsetMask, Data);
+			u4Byte getvalue=0;
+			u1Byte	count =0;
+			getvalue = ODM_GetRFReg(pDM_Odm, RF_PATH, Addr, bMaskDWord);	
+
 			ODM_delay_us(1);
+
+			while((getvalue>>8)!=(Data>>8))
+			{
+				count++;
+				ODM_SetRFReg(pDM_Odm, RF_PATH, RegAddr, bRFRegOffsetMask, Data);
+				ODM_delay_us(1);
+				getvalue = ODM_GetRFReg(pDM_Odm, RF_PATH, Addr, bMaskDWord);
+				ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [B6] getvalue 0x%x, Data 0x%x, count %d\n", getvalue, Data,count));			
+				if(count>5)
+					break;
+			}
+		}
+
+		if(Addr == 0xb2)
+		{
+			u4Byte getvalue=0;
+			u1Byte	count =0;
+			getvalue = ODM_GetRFReg(pDM_Odm, RF_PATH, Addr, bMaskDWord);	
+
+			ODM_delay_us(1);
+			
+			while(getvalue!=Data)
+			{
+				count++;
+				ODM_SetRFReg(pDM_Odm, RF_PATH, RegAddr, bRFRegOffsetMask, Data);
+				ODM_delay_us(1);
 				//Do LCK againg 
 				ODM_SetRFReg(pDM_Odm, RF_PATH, 0x18, bRFRegOffsetMask, 0x0fc07);
 				ODM_delay_us(1);
-			getvalue = ODM_GetRFReg(pDM_Odm, RF_PATH, Addr, bMaskDWord);
-			ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [B2] getvalue 0x%x, Data 0x%x, count %d\n", getvalue, Data,count));			
-			if(count>5)
-				break;
-		}
-	}	
+				getvalue = ODM_GetRFReg(pDM_Odm, RF_PATH, Addr, bMaskDWord);
+				ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [B2] getvalue 0x%x, Data 0x%x, count %d\n", getvalue, Data,count));			
+				if(count>5)
+					break;
+			}
+		}	
 	}	
 }
 
@@ -209,5 +209,27 @@ odm_ConfigBB_PHY_8192E(
 	ODM_delay_us(1);
     ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigBBWithHeaderFile: [PHY_REG] %08X %08X\n", Addr, Data));
 }
+
+void
+odm_ConfigBB_TXPWR_LMT_8192E(
+	IN 	PDM_ODM_T 	pDM_Odm,
+	IN	pu1Byte		Regulation,
+	IN	pu1Byte		Band,
+	IN	pu1Byte		Bandwidth,
+	IN	pu1Byte		RateSection,
+	IN	pu1Byte		RfPath,
+	IN	pu1Byte 	Channel,
+	IN	pu1Byte		PowerLimit
+    )
+{   
+#if (DM_ODM_SUPPORT_TYPE & (ODM_WIN))
+	PHY_SetTxPowerLimit(pDM_Odm, Regulation, Band,
+		Bandwidth, RateSection, RfPath, Channel, PowerLimit);
+#elif (DM_ODM_SUPPORT_TYPE & (ODM_CE))
+	PHY_SetTxPowerLimit(pDM_Odm->Adapter, Regulation, Band,
+		Bandwidth, RateSection, RfPath, Channel, PowerLimit);
+#endif
+}
+
 #endif
 

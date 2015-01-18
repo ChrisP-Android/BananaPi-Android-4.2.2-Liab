@@ -48,7 +48,8 @@ enum _EFUSE_DEF_TYPE {
 	TYPE_EFUSE_CONTENT_LEN_BANK			= 6,
 };
 
-#define		EFUSE_MAX_MAP_LEN		256
+#define		EFUSE_MAX_MAP_LEN		512
+
 #define		EFUSE_MAX_HW_SIZE		512
 #define		EFUSE_MAX_SECTION_BASE	16
 
@@ -130,6 +131,7 @@ void	EFUSE_GetEfuseDefinition(PADAPTER pAdapter, u8 efuseType, u8 type, void *pO
 u8	efuse_OneByteRead(PADAPTER pAdapter, u16 addr, u8 *data, BOOLEAN	 bPseudoTest);
 u8	efuse_OneByteWrite(PADAPTER pAdapter, u16 addr, u8 data, BOOLEAN	 bPseudoTest);
 
+void	BTEfuse_PowerSwitch(PADAPTER pAdapter,u8	bWrite,u8	 PwrState);
 void	Efuse_PowerSwitch(PADAPTER pAdapter,u8	bWrite,u8	 PwrState);
 int 	Efuse_PgPacketRead(PADAPTER pAdapter, u8 offset, u8 *data, BOOLEAN bPseudoTest);
 int 	Efuse_PgPacketWrite(PADAPTER pAdapter, u8 offset, u8 word_en, u8 *data, BOOLEAN bPseudoTest);

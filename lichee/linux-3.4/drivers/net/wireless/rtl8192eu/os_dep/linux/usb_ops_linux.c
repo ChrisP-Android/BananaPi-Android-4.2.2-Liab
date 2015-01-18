@@ -26,6 +26,7 @@ int usbctrl_vendorreq(struct intf_hdl *pintfhdl, u8 request, u16 value, u16 inde
 {
 	_adapter	*padapter = pintfhdl->padapter;
 	struct dvobj_priv  *pdvobjpriv = adapter_to_dvobj(padapter);
+	struct pwrctrl_priv *pwrctl = dvobj_to_pwrctl(pdvobjpriv);
 	struct usb_device *udev=pdvobjpriv->pusbdev;
 
 	unsigned int pipe;
@@ -52,8 +53,8 @@ int usbctrl_vendorreq(struct intf_hdl *pintfhdl, u8 request, u16 value, u16 inde
 
 	//DBG_871X("%s %s:%d\n",__FUNCTION__, current->comm, current->pid);
 
-	if((padapter->bSurpriseRemoved) ||(padapter->pwrctrlpriv.pnp_bstop_trx)){
-		RT_TRACE(_module_hci_ops_os_c_,_drv_err_,("usbctrl_vendorreq:(padapter->bSurpriseRemoved ||adapter->pwrctrlpriv.pnp_bstop_trx)!!!\n"));
+	if((padapter->bSurpriseRemoved) ||(pwrctl->pnp_bstop_trx)){
+		RT_TRACE(_module_hci_ops_os_c_,_drv_err_,("usbctrl_vendorreq:(padapter->bSurpriseRemoved ||pwrctl->pnp_bstop_trx)!!!\n"));
 		status = -EPERM; 
 		goto exit;
 	}	
@@ -112,7 +113,7 @@ int usbctrl_vendorreq(struct intf_hdl *pintfhdl, u8 request, u16 value, u16 inde
 		
 		if ( status == len)   // Success this control transfer.
 		{
-			rtw_reset_continual_urb_error(pdvobjpriv);
+			rtw_reset_continual_io_error(pdvobjpriv);
 			if ( requesttype == 0x01 )
 			{   // For Control read transfer, we have to copy the read data from pIo_buf to pdata.
 				_rtw_memcpy( pdata, pIo_buf,  len );
@@ -145,7 +146,7 @@ int usbctrl_vendorreq(struct intf_hdl *pintfhdl, u8 request, u16 value, u16 inde
 				}
 			}
 
-			if(rtw_inc_and_chk_continual_urb_error(pdvobjpriv) == _TRUE ){
+			if(rtw_inc_and_chk_continual_io_error(pdvobjpriv) == _TRUE ){
 				padapter->bSurpriseRemoved = _TRUE;
 				break;
 			}
@@ -177,7 +178,7 @@ static void _usbctrl_vendorreq_async_callback(struct urb *urb, struct pt_regs *r
 {
 	if (urb) {
 		if (urb->context) {
-			kfree(urb->context);
+			rtw_mfree(urb->context);
 		}
 		usb_free_urb(urb);
 	}
@@ -367,13 +368,14 @@ static u32 usb_bulkout_zero(struct intf_hdl *pintfhdl, u32 addr)
 	struct zero_bulkout_context *pcontext;
 	PURB	purb = NULL;	
 	_adapter *padapter = (_adapter *)pintfhdl->padapter;
-	struct dvobj_priv *pdvobj = adapter_to_dvobj(padapter);	
+	struct dvobj_priv *pdvobj = adapter_to_dvobj(padapter);
+	struct pwrctrl_priv *pwrctl = dvobj_to_pwrctl(pdvobj);
 	struct usb_device *pusbd = pdvobj->pusbdev;
 
 	//DBG_871X("%s\n", __func__);
 	
 		
-	if((padapter->bDriverStopped) || (padapter->bSurpriseRemoved) ||(padapter->pwrctrlpriv.pnp_bstop_trx))
+	if((padapter->bDriverStopped) || (padapter->bSurpriseRemoved) ||(pwrctl->pnp_bstop_trx))
 	{		
 		return _FAIL;
 	}
@@ -383,7 +385,10 @@ static u32 usb_bulkout_zero(struct intf_hdl *pintfhdl, u32 addr)
 
 	pbuf = (unsigned char *)rtw_zmalloc(sizeof(int));	
     	purb = usb_alloc_urb(0, GFP_ATOMIC);
-      	
+
+	//translate DMA FIFO addr to pipehandle
+	pipe = ffaddr2pipehdl(pdvobj, addr);
+
 	len = 0;
 	pcontext->pbuf = pbuf;
 	pcontext->purb = purb;
@@ -614,7 +619,8 @@ u32 usb_write_port(struct intf_hdl *pintfhdl, u32 addr, u32 cnt, u8 *wmem)
 	u32 ret = _FAIL, bwritezero = _FALSE;
 	PURB	purb = NULL;
 	_adapter *padapter = (_adapter *)pintfhdl->padapter;
-	struct dvobj_priv	*pdvobj = adapter_to_dvobj(padapter);	
+	struct dvobj_priv	*pdvobj = adapter_to_dvobj(padapter);
+	struct pwrctrl_priv *pwrctl = dvobj_to_pwrctl(pdvobj);
 	struct xmit_priv	*pxmitpriv = &padapter->xmitpriv;
 	struct xmit_buf *pxmitbuf = (struct xmit_buf *)wmem;
 	struct xmit_frame *pxmitframe = (struct xmit_frame *)pxmitbuf->priv_data;
@@ -625,12 +631,12 @@ _func_enter_;
 	
 	RT_TRACE(_module_hci_ops_os_c_,_drv_err_,("+usb_write_port\n"));
 	
-	if ((padapter->bDriverStopped) || (padapter->bSurpriseRemoved) ||(padapter->pwrctrlpriv.pnp_bstop_trx)) {
+	if ((padapter->bDriverStopped) || (padapter->bSurpriseRemoved) ||(pwrctl->pnp_bstop_trx)) {
 		#ifdef DBG_TX
 		DBG_871X(" DBG_TX %s:%d bDriverStopped%d, bSurpriseRemoved:%d, pnp_bstop_trx:%d\n",__FUNCTION__, __LINE__
-			,padapter->bDriverStopped, padapter->bSurpriseRemoved, padapter->pwrctrlpriv.pnp_bstop_trx );
+			,padapter->bDriverStopped, padapter->bSurpriseRemoved, pwrctl->pnp_bstop_trx );
 		#endif
-		RT_TRACE(_module_hci_ops_os_c_,_drv_err_,("usb_write_port:( padapter->bDriverStopped ||padapter->bSurpriseRemoved ||adapter->pwrctrlpriv.pnp_bstop_trx)!!!\n"));
+		RT_TRACE(_module_hci_ops_os_c_,_drv_err_,("usb_write_port:( padapter->bDriverStopped ||padapter->bSurpriseRemoved ||pwrctl->pnp_bstop_trx)!!!\n"));
 		rtw_sctx_done_err(&pxmitbuf->sctx, RTW_SCTX_DONE_TX_DENY);
 		goto exit;
 	}
@@ -693,7 +699,13 @@ _func_enter_;
 	purb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
 	purb->transfer_flags |= URB_ZERO_PACKET;
 #endif	// CONFIG_USE_USB_BUFFER_ALLOC_TX
-              			
+
+#ifdef USB_PACKET_OFFSET_SZ
+#if (USB_PACKET_OFFSET_SZ == 0)
+	purb->transfer_flags |= URB_ZERO_PACKET;
+#endif
+#endif
+
 #if 0
 	if (bwritezero)
         {

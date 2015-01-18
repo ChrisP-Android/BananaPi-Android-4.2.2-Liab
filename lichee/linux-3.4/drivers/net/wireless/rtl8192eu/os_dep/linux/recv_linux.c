@@ -59,11 +59,7 @@ int rtw_os_alloc_recvframe(_adapter *padapter, union recv_frame *precvframe, u8 
 		alloc_sz += 14;
 	}	
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18)) // http://www.mail-archive.com/netdev@vger.kernel.org/msg17214.html
-	pkt_copy = dev_alloc_skb(alloc_sz);
-#else			
-	pkt_copy = netdev_alloc_skb(padapter->pnetdev, alloc_sz);
-#endif	
+	pkt_copy = rtw_skb_alloc(alloc_sz);
 
 	if(pkt_copy)
 	{
@@ -102,7 +98,7 @@ int rtw_os_alloc_recvframe(_adapter *padapter, union recv_frame *precvframe, u8 
 			goto exit_rtw_os_recv_resource_alloc;
 		}
 			
-		precvframe->u.hdr.pkt = skb_clone(pskb, GFP_ATOMIC);
+		precvframe->u.hdr.pkt = rtw_skb_clone(pskb);
 		if(precvframe->u.hdr.pkt)
 		{
 			precvframe->u.hdr.rx_head = precvframe->u.hdr.rx_data = precvframe->u.hdr.rx_tail = pdata;
@@ -110,7 +106,7 @@ int rtw_os_alloc_recvframe(_adapter *padapter, union recv_frame *precvframe, u8 
 		}
 		else
 		{
-			DBG_871X("%s: skb_clone fail\n", __FUNCTION__);
+			DBG_871X("%s: rtw_skb_clone fail\n", __FUNCTION__);
 			//rtw_free_recvframe(precvframe, pfree_recv_queue);
 			//goto _exit_recvbuf2recvframe;
 			res = _FAIL;
@@ -128,7 +124,7 @@ void rtw_os_free_recvframe(union recv_frame *precvframe)
 {
 	if(precvframe->u.hdr.pkt)
 	{
-		dev_kfree_skb_any(precvframe->u.hdr.pkt);//free skb by driver
+		rtw_skb_free(precvframe->u.hdr.pkt);//free skb by driver
 
 		precvframe->u.hdr.pkt = NULL;
 	}
@@ -155,7 +151,19 @@ int rtw_os_recv_resource_alloc(_adapter *padapter, union recv_frame *precvframe)
 //free os related resource in union recv_frame
 void rtw_os_recv_resource_free(struct recv_priv *precvpriv)
 {
+	sint i;
+	union recv_frame *precvframe;
+	precvframe = (union recv_frame*) precvpriv->precv_frame_buf;
 
+	for(i=0; i < NR_RECVFRAME; i++)
+	{
+		if(precvframe->u.hdr.pkt)
+		{
+			rtw_skb_free(precvframe->u.hdr.pkt);//free skb by driver
+			precvframe->u.hdr.pkt = NULL;
+		}
+		precvframe++;
+	}
 }
 
 //alloc os related resource in struct recv_buf
@@ -225,7 +233,7 @@ int rtw_os_recvbuf_resource_free(_adapter *padapter, struct recv_buf *precvbuf)
 
 
 	if(precvbuf->pskb)
-		dev_kfree_skb_any(precvbuf->pskb);
+		rtw_skb_free(precvbuf->pskb);
 
 
 	return ret;
@@ -242,7 +250,7 @@ _pkt *rtw_os_alloc_msdu_pkt(union recv_frame *prframe, u16 nSubframe_Length, u8 
 	pattrib = &prframe->u.hdr.attrib;
 
 #ifdef CONFIG_SKB_COPY
-	sub_skb = dev_alloc_skb(nSubframe_Length + 12);
+	sub_skb = rtw_skb_alloc(nSubframe_Length + 12);
 	if(sub_skb)
 	{
 		skb_reserve(sub_skb, 12);
@@ -252,7 +260,7 @@ _pkt *rtw_os_alloc_msdu_pkt(union recv_frame *prframe, u16 nSubframe_Length, u8 
 	else
 #endif // CONFIG_SKB_COPY
 	{
-		sub_skb = skb_clone(prframe->u.hdr.pkt, GFP_ATOMIC);
+		sub_skb = rtw_skb_clone(prframe->u.hdr.pkt);
 		if(sub_skb)
 		{
 			sub_skb->data = pdata + ETH_HLEN;
@@ -261,7 +269,7 @@ _pkt *rtw_os_alloc_msdu_pkt(union recv_frame *prframe, u16 nSubframe_Length, u8 
 		}
 		else
 		{
-			DBG_871X("%s(): skb_clone() Fail!!!\n",__FUNCTION__);
+			DBG_871X("%s(): rtw_skb_clone() Fail!!!\n",__FUNCTION__);
 			return NULL;
 		}
 	}
@@ -313,7 +321,7 @@ void rtw_os_recv_indicate_pkt(_adapter *padapter, _pkt *pkt, struct rx_pkt_attri
 				if(bmcast)
 				{
 					psta = rtw_get_bcmc_stainfo(padapter);
-					pskb2 = skb_clone(pkt, GFP_ATOMIC);
+					pskb2 = rtw_skb_clone(pkt);
 				} else {
 					psta = rtw_get_stainfo(pstapriv, pattrib->dst);
 				}
@@ -329,8 +337,8 @@ void rtw_os_recv_indicate_pkt(_adapter *padapter, _pkt *pkt, struct rx_pkt_attri
 #if (LINUX_VERSION_CODE>=KERNEL_VERSION(2,6,35))
 					skb_set_queue_mapping(pkt, rtw_recv_select_queue(pkt));
 #endif //LINUX_VERSION_CODE>=KERNEL_VERSION(2,6,35)
-				
-					rtw_xmit_entry(pkt, pnetdev);
+
+					_rtw_xmit_entry(pkt, pnetdev);
 
 					if(bmcast && (pskb2 != NULL) ) {
 						pkt = pskb2;
@@ -367,7 +375,7 @@ void rtw_os_recv_indicate_pkt(_adapter *padapter, _pkt *pkt, struct rx_pkt_attri
 #if 1
 				// bypass this frame to upper layer!!
 #else
-				dev_kfree_skb_any(sub_skb);
+				rtw_skb_free(sub_skb);
 				continue;
 #endif
 			}							
@@ -387,14 +395,14 @@ void rtw_os_recv_indicate_pkt(_adapter *padapter, _pkt *pkt, struct rx_pkt_attri
 		pkt->ip_summed = CHECKSUM_NONE;
 #endif //CONFIG_TCP_CSUM_OFFLOAD_RX
 
-		netif_rx(pkt);
+		rtw_netif_rx(padapter->pnetdev, pkt);
 	}
 }
 
 void rtw_handle_tkip_mic_err(_adapter *padapter,u8 bgroup)
 {
 #ifdef CONFIG_IOCTL_CFG80211
-	enum nl80211_key_type key_type;
+	enum nl80211_key_type key_type = 0;
 #endif
 	union iwreq_data wrqu;
 	struct iw_michaelmicfailure    ev;
@@ -475,7 +483,7 @@ void rtw_hostapd_mlme_rx(_adapter *padapter, union recv_frame *precv_frame)
 	skb->tail = precv_frame->u.hdr.rx_tail;
 	skb->len = precv_frame->u.hdr.len;
 
-	//pskb_copy = skb_copy(skb, GFP_ATOMIC);
+	//pskb_copy = rtw_skb_copy(skb);
 //	if(skb == NULL) goto _exit;
 
 	skb->dev = pmgnt_netdev;
@@ -492,9 +500,9 @@ void rtw_hostapd_mlme_rx(_adapter *padapter, union recv_frame *precv_frame)
        //skb_pull(skb, 24);
        _rtw_memset(skb->cb, 0, sizeof(skb->cb));
 
-	netif_rx(skb);
+	rtw_netif_rx(pmgnt_netdev, skb);
 
-	precv_frame->u.hdr.pkt = NULL; // set pointer to NULL before rtw_free_recvframe() if call netif_rx()
+	precv_frame->u.hdr.pkt = NULL; // set pointer to NULL before rtw_free_recvframe() if call rtw_netif_rx()
 #endif
 }
 
@@ -589,7 +597,7 @@ _func_enter_;
 
 	skb->len = precv_frame->u.hdr.len;
 
-	RT_TRACE(_module_recv_osdep_c_,_drv_info_,("\n skb->head=%p skb->data=%p skb->tail=%p skb->end=%p skb->len=%d\n", skb->head, skb->data, skb->tail, skb->end, skb->len));
+	RT_TRACE(_module_recv_osdep_c_,_drv_info_,("\n skb->head=%p skb->data=%p skb->tail=%p skb->end=%p skb->len=%d\n", skb->head, skb->data, skb_tail_pointer(skb), skb_end_pointer(skb), skb->len));
 
 #ifdef CONFIG_AUTO_AP_MODE	
 #if 1 //for testing
@@ -619,7 +627,7 @@ _recv_indicatepkt_end:
 
 	rtw_free_recvframe(precv_frame, pfree_recv_queue);
 
-	RT_TRACE(_module_recv_osdep_c_,_drv_info_,("\n rtw_recv_indicatepkt :after netif_rx!!!!\n"));
+	RT_TRACE(_module_recv_osdep_c_,_drv_info_,("\n rtw_recv_indicatepkt :after rtw_os_recv_indicate_pkt!!!!\n"));
 
 _func_exit_;
 
@@ -646,7 +654,7 @@ void rtw_os_read_port(_adapter *padapter, struct recv_buf *precvbuf)
 	precvbuf->ref_cnt--;
 
 	//free skb in recv_buf
-	dev_kfree_skb_any(precvbuf->pskb);
+	rtw_skb_free(precvbuf->pskb);
 
 	precvbuf->pskb = NULL;
 	precvbuf->reuse = _FALSE;

@@ -39,13 +39,13 @@
 #elif defined (CONFIG_USB_HCI)
 
 #ifdef CONFIG_USB_TX_AGGREGATION
-#ifdef CONFIG_PLATFORM_ARM_SUNxI
-#define MAX_XMITBUF_SZ (12288)  //12k 1536*8
-	#elif defined (CONFIG_PLATFORM_MSTAR_TITANIA12)
+	#if defined(CONFIG_PLATFORM_ARM_SUNxI) || defined(CONFIG_PLATFORM_ARM_SUN6I) || defined(CONFIG_PLATFORM_ARM_SUN7I) || defined(CONFIG_PLATFORM_ARM_SUN8I)
+		#define MAX_XMITBUF_SZ (12288)  //12k 1536*8
+	#elif defined (CONFIG_PLATFORM_MSTAR)
 		#define MAX_XMITBUF_SZ	7680	// 7.5k
-#else
-#define MAX_XMITBUF_SZ	(20480)	// 20k
-#endif
+	#else
+	#define MAX_XMITBUF_SZ	(20480)	// 20k
+	#endif
 #else
 #define MAX_XMITBUF_SZ	(2048)
 #endif
@@ -66,13 +66,19 @@
 #ifdef CONFIG_PCI_HCI
 #define XMITBUF_ALIGN_SZ 4
 #else
+#ifdef USB_XMITBUF_ALIGN_SZ
+#define XMITBUF_ALIGN_SZ (USB_XMITBUF_ALIGN_SZ)
+#else
 #define XMITBUF_ALIGN_SZ 512
+#endif
 #endif
 #endif
 
 // xmit extension buff defination
 #define MAX_XMIT_EXTBUF_SZ	(1536)
 #define NR_XMIT_EXTBUFF	(32)
+
+#define MAX_CMDBUF_SZ	(4096)
 
 #define MAX_NUMBLKS		(1)
 
@@ -153,13 +159,17 @@ do{\
 #endif
 
 #ifdef CONFIG_USB_HCI
+#ifdef USB_PACKET_OFFSET_SZ
+#define PACKET_OFFSET_SZ (USB_PACKET_OFFSET_SZ)
+#else
 #define PACKET_OFFSET_SZ (8)
+#endif
 #define TXDESC_OFFSET (TXDESC_SIZE + PACKET_OFFSET_SZ)
 #endif
 
 #ifdef CONFIG_PCI_HCI
 #define TXDESC_OFFSET 0
-#define TX_DESC_NEXT_DESC_OFFSET	40
+#define TX_DESC_NEXT_DESC_OFFSET	(TXDESC_SIZE + 8)
 #endif
 
 enum TXDESC_SC{
@@ -342,6 +352,7 @@ struct pkt_attrib
 	//union Keytype	dot11tkiprxmickey;
 	union Keytype	dot118021x_UncstKey;
 
+	u8 icmp_pkt;
 	
 };
 #endif
@@ -405,11 +416,12 @@ enum {
 	RTW_SCTX_DONE_CCX_PKT_FAIL,
 	RTW_SCTX_DONE_DRV_STOP,
 	RTW_SCTX_DONE_DEV_REMOVE,
+	RTW_SCTX_DONE_CMD_ERROR,
 };
 
 
 void rtw_sctx_init(struct submit_ctx *sctx, int timeout_ms);
-int rtw_sctx_wait(struct submit_ctx *sctx);
+int rtw_sctx_wait(struct submit_ctx *sctx, const char *msg);
 void rtw_sctx_done_err(struct submit_ctx **sctx, int status);
 void rtw_sctx_done(struct submit_ctx **sctx);
 
@@ -616,7 +628,6 @@ struct	xmit_priv	{
 	u64	tx_bytes;
 	u64	tx_pkts;
 	u64	tx_drop;
-	u64	last_tx_bytes;
 	u64	last_tx_pkts;
 
 	struct hw_xmit *hwxmits;
@@ -697,13 +708,13 @@ struct	xmit_priv	{
 	int	ack_tx;
 	_mutex ack_tx_mutex;
 	struct submit_ctx ack_tx_ops;
+	u8 seq_no;
 #endif
 	_lock lock_sctx;
 };
 
-extern struct xmit_frame *rtw_alloc_cmdxmitframe(struct xmit_priv *pxmitpriv, u32 buffsize);
-extern void	rtw_free_cmdxmitframe(struct xmit_priv *pxmitpriv, struct xmit_frame *pxmitframe);
-extern struct xmit_buf *rtw_alloc_cmd_xmitbuf(struct xmit_priv *pxmitpriv, u32 buffsize);
+extern struct xmit_frame *rtw_alloc_cmdxmitframe(struct xmit_priv *pxmitpriv);
+extern struct xmit_buf *rtw_alloc_cmd_xmitbuf(struct xmit_priv *pxmitpriv);
 extern s32	rtw_free_cmd_xmitbuf(struct xmit_priv *pxmitpriv);
 
 extern struct xmit_buf *rtw_alloc_xmitbuf_ext(struct xmit_priv *pxmitpriv);
@@ -730,6 +741,9 @@ extern s32 rtw_xmit_classifier(_adapter *padapter, struct xmit_frame *pxmitframe
 extern u32 rtw_calculate_wlan_pkt_size_by_attribue(struct pkt_attrib *pattrib);
 #define rtw_wlan_pkt_size(f) rtw_calculate_wlan_pkt_size_by_attribue(&f->attrib)
 extern s32 rtw_xmitframe_coalesce(_adapter *padapter, _pkt *pkt, struct xmit_frame *pxmitframe);
+#ifdef CONFIG_IEEE80211W
+extern s32 rtw_mgmt_xmitframe_coalesce(_adapter *padapter, _pkt *pkt, struct xmit_frame *pxmitframe);
+#endif //CONFIG_IEEE80211W
 #ifdef CONFIG_TDLS
 s32 rtw_xmit_tdls_coalesce(_adapter *padapter, struct xmit_frame *pxmitframe, u8 action);
 #endif
@@ -758,6 +772,8 @@ void stop_sta_xmit(_adapter *padapter, struct sta_info *psta);
 void wakeup_sta_to_xmit(_adapter *padapter, struct sta_info *psta);
 void xmit_delivery_enabled_frames(_adapter *padapter, struct sta_info *psta);
 #endif
+
+u8	query_ra_short_GI(struct sta_info *psta);
 
 u8	qos_acm(u8 acm_mask, u8 priority);
 

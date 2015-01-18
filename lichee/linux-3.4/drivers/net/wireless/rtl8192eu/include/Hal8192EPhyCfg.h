@@ -87,18 +87,25 @@ int	PHY_RFConfig8192E(IN PADAPTER	Adapter	);
 //
 // BB TX Power R/W
 //
-void	PHY_GetTxPowerLevel8192E(	IN PADAPTER	Adapter, OUT u32*	powerlevel	);
+void	PHY_GetTxPowerLevel8192E(	IN PADAPTER	Adapter, OUT s32*	powerlevel	);
 void	PHY_SetTxPowerLevel8192E(	IN PADAPTER	Adapter, IN u8	channel	);
 BOOLEAN	PHY_UpdateTxPowerDbm8192E( IN PADAPTER	Adapter, IN int	powerInDbm	);
 
 VOID
-PHY_ConvertTxPowerByRateInDbmToRelativeValues_8192E(
-	IN	PADAPTER	pAdapter
+PHY_SetTxPowerIndex_8192E(
+	IN	PADAPTER			Adapter,
+	IN	u32					PowerIndex,
+	IN	u8					RFPath,	
+	IN	u8					Rate
 	);
 
-VOID
-PHY_StoreTxPowerByRateBase_8192E(	
-	IN	PADAPTER	pAdapter
+u8
+PHY_GetTxPowerIndex_8192E(
+	IN	PADAPTER			pAdapter,
+	IN	u8					RFPath,
+	IN	u8					Rate,	
+	IN	CHANNEL_WIDTH		BandWidth,	
+	IN	u8					Channel
 	);
 
 //

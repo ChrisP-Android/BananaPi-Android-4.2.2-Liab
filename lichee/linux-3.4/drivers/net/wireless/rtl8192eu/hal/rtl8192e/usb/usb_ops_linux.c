@@ -253,7 +253,7 @@ void interrupt_handler_8192e(_adapter *padapter,u16 pkt_len,u8 *pbuf)
 
 		//88e's cpwm value only change BIT0, so driver need to add PS_STATE_S2 for LPS flow.		
 		pwr_rpt.state |= PS_STATE_S2;		
-		_set_workitem(&padapter->pwrctrlpriv.cpwm_event);
+		_set_workitem(&(adapter_to_pwrctl(padapter)->cpwm_event));
 	}
 #endif//CONFIG_LPS_LCLK
 
@@ -621,7 +621,7 @@ static int recvbuf2recvframe(
 
 		pattrib = &precvframe->u.hdr.attrib;		
 				
-		if ((pattrib->crc_err) || (pattrib->icv_err))
+		if ( (padapter->registrypriv.mp_mode == 0) && ((pattrib->crc_err) || (pattrib->icv_err)))
 		{
 			DBG_8192C("%s: RX Warning! crc_err=%d icv_err=%d, skip!\n", __FUNCTION__, pattrib->crc_err, pattrib->icv_err);
 
@@ -651,7 +651,7 @@ static int recvbuf2recvframe(
 			) == _FAIL)
 		{
 			rtw_free_recvframe(precvframe, pfree_recv_queue);
-
+			DBG_8192C("##### %s rtw_os_alloc_recvframe failed .....\n",__FUNCTION__);
 			goto _exit_recvbuf2recvframe;
 		}
 
@@ -689,18 +689,8 @@ static int recvbuf2recvframe(
 			if(pattrib->pkt_rpt_type == C2H_PACKET)
 			{
 				//DBG_8192C("rx C2H_PACKET \n");
-				//C2HPacketHandler_8192E(padapter,precvframe->u.hdr.rx_data,pattrib->pkt_len);
-			}		
-			//enqueue recvframe to txrtp queue
-			else if(pattrib->pkt_rpt_type == TX_REPORT1){
-				//DBG_8192C("rx CCX \n");
-				#ifdef CONFIG_XMIT_ACK
-				handle_txrpt_ccx_92e(padapter, precvframe->u.hdr.rx_data);
-				#endif
-			}
-			else if(pattrib->pkt_rpt_type == TX_REPORT2){
-				//DBG_8192C("rx TX RPT \n");
-			}
+				C2HPacketHandler_8192E(padapter,precvframe->u.hdr.rx_data,pattrib->pkt_len);
+			}			
 		/*	
 			else if(pattrib->pkt_rpt_type == HIS_REPORT)
 			{
@@ -782,7 +772,7 @@ static void usb_read_port_complete(struct urb *purb, struct pt_regs *regs)
 		}
 		else 
 		{			
-			rtw_reset_continual_urb_error(adapter_to_dvobj(padapter));
+			rtw_reset_continual_io_error(adapter_to_dvobj(padapter));
 			
 			precvbuf->transfer_len = purb->actual_length;	
 
@@ -798,7 +788,7 @@ static void usb_read_port_complete(struct urb *purb, struct pt_regs *regs)
 	
 		DBG_8192C("###=> usb_read_port_complete => urb status(%d)\n", purb->status);
 
-		if(rtw_inc_and_chk_continual_urb_error(adapter_to_dvobj(padapter)) == _TRUE ){
+		if(rtw_inc_and_chk_continual_io_error(adapter_to_dvobj(padapter)) == _TRUE ){
 			padapter->bSurpriseRemoved = _TRUE;
 		}
 
@@ -850,14 +840,15 @@ static u32 usb_read_port(struct intf_hdl *pintfhdl, u32 addr, u32 cnt, u8 *rmem)
 	struct recv_buf	*precvbuf = (struct recv_buf *)rmem;
 	_adapter		*adapter = pintfhdl->padapter;
 	struct dvobj_priv	*pdvobj = adapter_to_dvobj(adapter);
+	struct pwrctrl_priv *pwrctl = dvobj_to_pwrctl(pdvobj);
 	struct recv_priv	*precvpriv = &adapter->recvpriv;
 	struct usb_device	*pusbd = pdvobj->pusbdev;
 
 _func_enter_;
 	
-	if(adapter->bDriverStopped || adapter->bSurpriseRemoved ||adapter->pwrctrlpriv.pnp_bstop_trx)
+	if(adapter->bDriverStopped || adapter->bSurpriseRemoved ||pwrctl->pnp_bstop_trx)
 	{
-		RT_TRACE(_module_hci_ops_os_c_,_drv_err_,("usb_read_port:( padapter->bDriverStopped ||padapter->bSurpriseRemoved ||adapter->pwrctrlpriv.pnp_bstop_trx)!!!\n"));
+		RT_TRACE(_module_hci_ops_os_c_,_drv_err_,("usb_read_port:( padapter->bDriverStopped ||padapter->bSurpriseRemoved ||pwrctl->pnp_bstop_trx)!!!\n"));
 		return _FAIL;
 	}
 
@@ -917,7 +908,7 @@ void rtl8192eu_recv_tasklet(void *priv)
 		if ((padapter->bDriverStopped == _TRUE)||(padapter->bSurpriseRemoved== _TRUE))
 		{
 			DBG_8192C("recv_tasklet => bDriverStopped or bSurpriseRemoved \n");
-			dev_kfree_skb_any(pskb);
+			rtw_skb_free(pskb);
 			break;
 		}
 	
@@ -932,7 +923,7 @@ void rtl8192eu_recv_tasklet(void *priv)
 		skb_queue_tail(&precvpriv->free_recv_skb_queue, pskb);
 		
 #else
-		dev_kfree_skb_any(pskb);
+		rtw_skb_free(pskb);
 #endif
 				
 	}
@@ -972,7 +963,7 @@ static void usb_read_port_complete(struct urb *purb, struct pt_regs *regs)
 	#else
 		if(precvbuf->pskb){
 			DBG_8192C("==> free skb(%p)\n",precvbuf->pskb);
-			dev_kfree_skb_any(precvbuf->pskb);				
+			rtw_skb_free(precvbuf->pskb);
 		}	
 	#endif
 		DBG_8192C("%s() RX Warning! bDriverStopped(%d) OR bSurpriseRemoved(%d) bReadPortCancel(%d)\n", 
@@ -991,7 +982,7 @@ static void usb_read_port_complete(struct urb *purb, struct pt_regs *regs)
 		}
 		else 
 		{	
-			rtw_reset_continual_urb_error(adapter_to_dvobj(padapter));
+			rtw_reset_continual_io_error(adapter_to_dvobj(padapter));
 			
 			precvbuf->transfer_len = purb->actual_length;			
 			skb_put(precvbuf->pskb, purb->actual_length);	
@@ -1011,7 +1002,7 @@ static void usb_read_port_complete(struct urb *purb, struct pt_regs *regs)
 	
 		DBG_8192C("###=> usb_read_port_complete => urb status(%d)\n", purb->status);
 
-		if(rtw_inc_and_chk_continual_urb_error(adapter_to_dvobj(padapter)) == _TRUE ){
+		if(rtw_inc_and_chk_continual_io_error(adapter_to_dvobj(padapter)) == _TRUE ){
 			padapter->bSurpriseRemoved = _TRUE;
 		}
 
@@ -1067,15 +1058,16 @@ static u32 usb_read_port(struct intf_hdl *pintfhdl, u32 addr, u32 cnt, u8 *rmem)
 	struct recv_buf	*precvbuf = (struct recv_buf *)rmem;
 	_adapter		*adapter = pintfhdl->padapter;
 	struct dvobj_priv	*pdvobj = adapter_to_dvobj(adapter);
+	struct pwrctrl_priv *pwrctl = dvobj_to_pwrctl(pdvobj);
 	struct recv_priv	*precvpriv = &adapter->recvpriv;
 	struct usb_device	*pusbd = pdvobj->pusbdev;
 	
 
 _func_enter_;
 	
-	if(adapter->bDriverStopped || adapter->bSurpriseRemoved ||adapter->pwrctrlpriv.pnp_bstop_trx)
+	if(adapter->bDriverStopped || adapter->bSurpriseRemoved ||pwrctl->pnp_bstop_trx)
 	{
-		RT_TRACE(_module_hci_ops_os_c_,_drv_err_,("usb_read_port:( padapter->bDriverStopped ||padapter->bSurpriseRemoved ||adapter->pwrctrlpriv.pnp_bstop_trx)!!!\n"));
+		RT_TRACE(_module_hci_ops_os_c_,_drv_err_,("usb_read_port:( padapter->bDriverStopped ||padapter->bSurpriseRemoved ||pwrctl->pnp_bstop_trx)!!!\n"));
 		return _FAIL;
 	}
 
@@ -1097,12 +1089,8 @@ _func_enter_;
 		//re-assign for linux based on skb
 		if((precvbuf->reuse == _FALSE) || (precvbuf->pskb == NULL))
 		{
-			//precvbuf->pskb = alloc_skb(MAX_RECVBUF_SZ, GFP_ATOMIC);//don't use this after v2.6.25
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18)) // http://www.mail-archive.com/netdev@vger.kernel.org/msg17214.html
-			precvbuf->pskb = dev_alloc_skb(MAX_RECVBUF_SZ + RECVBUFF_ALIGN_SZ);
-#else			
-			precvbuf->pskb = netdev_alloc_skb(adapter->pnetdev, MAX_RECVBUF_SZ + RECVBUFF_ALIGN_SZ);
-#endif			
+			precvbuf->pskb = rtw_skb_alloc(MAX_RECVBUF_SZ + RECVBUFF_ALIGN_SZ);
+
 			if(precvbuf->pskb == NULL)		
 			{
 				RT_TRACE(_module_hci_ops_os_c_,_drv_err_,("init_recvbuf(): alloc_skb fail!\n"));

@@ -20,7 +20,6 @@
 #ifndef _RTW_MP_H_
 #define _RTW_MP_H_
 
-
 #if 0
 #define MPT_NOOP			0
 #define MPT_READ_MAC_1BYTE		1
@@ -269,6 +268,9 @@ typedef struct _MPT_CONTEXT
 	u8 		backup0x52_RF_A;
 	u8 		backup0x52_RF_B;
 	
+	u4Byte			backup0x58_RF_A;	
+	u4Byte			backup0x58_RF_B;
+	
 	u1Byte			h2cReqNum;
 	u1Byte			c2hBuf[20];
 
@@ -342,6 +344,8 @@ enum {
 	MP_QueryDrvStats,
 	MP_SetBT,
 	CTA_TEST,
+	MP_DISABLE_BT_COEXIST,
+	MP_PwrCtlDM,
 	MP_NULL,
 	MP_GET_TXPOWER_INX,
 };
@@ -365,6 +369,7 @@ struct mp_priv
 	struct mp_tx tx;
 
 	//Rx Section
+	u32 rx_bssidpktcount;
 	u32 rx_pktcount;
 	u32 rx_crcerrpktcount;
 	u32 rx_pktloss;
@@ -391,7 +396,7 @@ struct mp_priv
 
 	u8 bSetTxPower;
 //	uint ForcedDataRate;
-
+	u8 mp_dm;
 	struct wlan_network mp_network;
 	NDIS_802_11_MAC_ADDRESS network_macaddr;
 
@@ -424,8 +429,12 @@ struct mp_priv
 	u8 *pmp_xmtframe_buf;
 	_queue free_mp_xmitqueue;
 	u32 free_mp_xmitframe_cnt;
-
+	BOOLEAN bSetRxBssid;
+	BOOLEAN bTxBufCkFail;
+	
 	MPT_CONTEXT MptCtx;
+
+	u8		*TXradomBuffer;
 };
 
 typedef struct _IOCMD_STRUCT_ {
@@ -444,6 +453,28 @@ struct bb_reg_param {
 	u32 offset;
 	u32 value;
 };
+
+typedef struct _MP_FIRMWARE {
+	FIRMWARE_SOURCE eFWSource;
+#ifdef CONFIG_EMBEDDED_FWIMG
+	u8* 		szFwBuffer;
+#else
+	u8			szFwBuffer[0x8000];
+#endif
+	u32 		ulFwLength;
+
+#ifdef CONFIG_EMBEDDED_FWIMG
+	u8* 		szBTFwBuffer;
+	u8			myBTFwBuffer[0x8000];
+#else
+	u8			szBTFwBuffer[0x8000];
+#endif
+	u32 		ulBTFwLength;
+} RT_MP_FIRMWARE, *PRT_MP_FIRMWARE;
+
+
+
+
 //=======================================================================
 
 #define LOWER 	_TRUE
@@ -496,7 +527,7 @@ extern u8 mpdatarate[NumRates];
 typedef enum _MPT_RATE_INDEX
 {
 	/* CCK rate. */
-	MPT_RATE_1M =1 ,	/* 0 */
+	MPT_RATE_1M =0 ,	/* 0 */
 	MPT_RATE_2M,
 	MPT_RATE_55M,
 	MPT_RATE_11M,	/* 3 */
@@ -608,6 +639,17 @@ typedef enum _RXPHY_BITMASK_
 } RXPHY_BITMASK;
 #endif
 
+#define Mac_OFDM_OK 			0x00000000
+#define Mac_OFDM_Fail			0x10000000
+#define Mac_OFDM_FasleAlarm 	0x20000000
+#define Mac_CCK_OK				0x30000000
+#define Mac_CCK_Fail			0x40000000
+#define Mac_CCK_FasleAlarm		0x50000000
+#define Mac_HT_OK				0x60000000
+#define Mac_HT_Fail 			0x70000000
+#define Mac_HT_FasleAlarm		0x90000000
+#define Mac_DropPacket			0xA0000000
+
 typedef enum _ENCRY_CTRL_STATE_ {
 	HW_CONTROL,		//hw encryption& decryption
 	SW_CONTROL,		//sw encryption& decryption
@@ -615,6 +657,27 @@ typedef enum _ENCRY_CTRL_STATE_ {
 	SW_ENCRY_HW_DECRY	//sw encryption & hw decryption
 }ENCRY_CTRL_STATE;
 
+typedef enum	_MPT_TXPWR_DEF{
+	MPT_CCK,
+	MPT_OFDM, // L and HT OFDM
+	MPT_VHT_OFDM
+}MPT_TXPWR_DEF;
+
+#ifdef CONFIG_RF_GAIN_OFFSET
+
+#if defined(CONFIG_RTL8723A)
+	#define 	REG_RF_BB_GAIN_OFFSET_CCK	0x0d
+	#define 	REG_RF_BB_GAIN_OFFSET_OFDM	0x0e
+	#define 	RF_GAIN_OFFSET_MASK 	0xfffff
+#elif defined(CONFIG_RTL8723B)
+	#define 	REG_RF_BB_GAIN_OFFSET	0x7f
+	#define 	RF_GAIN_OFFSET_MASK 	0xfffff
+#else
+	#define 	REG_RF_BB_GAIN_OFFSET	0x55
+	#define 	RF_GAIN_OFFSET_MASK 	0xfffff
+#endif	//CONFIG_RTL8723A
+
+#endif //CONFIG_RF_GAIN_OFFSET
 
 //=======================================================================
 //extern struct mp_xmit_frame *alloc_mp_xmitframe(struct mp_priv *pmp_priv);
@@ -714,6 +777,8 @@ extern void Hal_ProSetCrystalCap (PADAPTER pAdapter , u32 CrystalCapVal);
 extern void _rtw_mp_xmit_priv(struct xmit_priv *pxmitpriv);
 extern void MP_PHY_SetRFPathSwitch(PADAPTER pAdapter ,BOOLEAN bMain);
 extern ULONG mpt_ProQueryCalTxPower(PADAPTER	pAdapter,u8 RfPath);
+extern void MPT_PwrCtlDM(PADAPTER padapter, u32 bstart);
+extern u8 MptToMgntRate(u32	MptRateIdx);
 
 #endif //_RTW_MP_H_
 

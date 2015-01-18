@@ -22,7 +22,7 @@
 #ifndef __INC_MP_BB_HW_IMG_8192E_H
 #define __INC_MP_BB_HW_IMG_8192E_H
 
-static BOOLEAN CheckCondition(const u4Byte Condition, const u4Byte Hex);
+//static BOOLEAN CheckCondition(const u4Byte Condition, const u4Byte Hex);
 
 /******************************************************************************
 *                           AGC_TAB.TXT
@@ -39,6 +39,15 @@ ODM_ReadAndConfig_MP_8192E_AGC_TAB( // TC: Test Chip, MP: MP Chip
 
 void
 ODM_ReadAndConfig_MP_8192E_PHY_REG( // TC: Test Chip, MP: MP Chip
+	IN   PDM_ODM_T  pDM_Odm
+);
+
+/******************************************************************************
+*                           PHY_REG_PG.TXT
+******************************************************************************/
+
+void
+ODM_ReadAndConfig_MP_8192E_PHY_REG_PG( // TC: Test Chip, MP: MP Chip
 	IN   PDM_ODM_T  pDM_Odm
 );
 

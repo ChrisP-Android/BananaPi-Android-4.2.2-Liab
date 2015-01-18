@@ -33,9 +33,6 @@
 #ifdef CONFIG_PLATFORM_SPRD
 	#include <linux/gpio.h>
 	#include <custom_gpio.h>
-#ifdef CONFIG_RTL8188E
-	#include <mach/ldo.h>
-#endif
 #endif // CONFIG_PLATFORM_SPRD
 #endif
 

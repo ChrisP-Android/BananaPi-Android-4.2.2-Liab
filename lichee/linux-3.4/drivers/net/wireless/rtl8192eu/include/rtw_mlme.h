@@ -108,7 +108,10 @@ enum  _BAND
 	GHZ24_50 = 0,
 	GHZ_50,
 	GHZ_24,
+	GHZ_MAX,
 };
+
+#define rtw_band_valid(band) ((band) >= GHZ24_50 && (band) < GHZ_MAX)
 
 enum DriverInterface {
 	DRIVER_WEXT =  1,
@@ -159,6 +162,9 @@ typedef struct _RT_LINK_DETECT_T{
 	BOOLEAN			bHigherBusyTraffic; // For interrupt migration purpose.
 	BOOLEAN			bHigherBusyRxTraffic; // We may disable Tx interrupt according as Rx traffic.
 	BOOLEAN			bHigherBusyTxTraffic; // We may disable Tx interrupt according as Tx traffic.
+	//u8 TrafficBusyState;
+	u8 TrafficTransitionCount;
+	u32 LowPowerTransitionCount;
 }RT_LINK_DETECT_T, *PRT_LINK_DETECT_T;
 
 struct profile_info {
@@ -236,7 +242,11 @@ struct group_id_info{
 
 struct scan_limit_info{
 	u8					scan_op_ch_only;			//	When this flag is set, the driver should just scan the operation channel
+#ifndef CONFIG_P2P_OP_CHK_SOCIAL_CH
 	u8					operation_ch[2];				//	Store the operation channel of invitation request frame
+#else
+	u8					operation_ch[5];				//	Store additional channel 1,6,11  for Android 4.2 IOT & Nexus 4
+#endif //CONFIG_P2P_OP_CHK_SOCIAL_CH
 };
 
 #ifdef CONFIG_IOCTL_CFG80211
@@ -247,6 +257,8 @@ struct cfg80211_wifidirect_info{
 	enum nl80211_channel_type	remain_on_ch_type;
 	u64						remain_on_ch_cookie;
 	bool is_ro_ch;
+	u32 last_ro_ch_time; /* this will be updated at the beginning and end of ro_ch */
+	u8						chk_invite_ch_list;
 };
 #endif //CONFIG_IOCTL_CFG80211
 
@@ -399,6 +411,12 @@ struct mlme_priv {
 	u8	assoc_bssid[6];
 
 	struct wlan_network	cur_network;
+	struct wlan_network *cur_network_scanned;
+#ifdef CONFIG_ARP_KEEP_ALIVE
+	// for arp offload keep alive
+	u8	gw_mac_addr[6];
+	u8	gw_ip[4];
+#endif
 
 	//uint wireless_mode; no used, remove it
 
@@ -437,11 +455,17 @@ struct mlme_priv {
 #ifdef CONFIG_80211AC_VHT
 	struct vht_priv	vhtpriv;
 #endif
+#ifdef CONFIG_BEAMFORMING
+	struct beamforming_info	beamforming_info;
+#endif
+
+#ifdef CONFIG_DFS
+	u8	handle_dfs;
+#endif //CONFIG_DFS
 
 	RT_LINK_DETECT_T	LinkDetectInfo;
 	_timer	dynamic_chk_timer; //dynamic/periodic check timer
 
- 	u8 	key_mask; //use for ips to set wep key after ips_leave
 	u8	acm_mask; // for wmm acm mask
 	u8	ChannelPlan;
 	RT_SCAN_TYPE 	scan_mode; // active: 1, passive: 0
@@ -556,15 +580,28 @@ struct mlme_priv {
 	u8	channel_idx;
 	u8	group_cnt;	//In WiDi 3.5, they specified another scan algo. for WFD/RDS co-existed
 	u8	sa_ext[L2SDTA_SERVICE_VE_LEN];
+
+	u8	widi_enable;
+	/**
+	 * For WiDi 4; upper layer would set
+	 * p2p_primary_device_type_category_id
+	 * p2p_primary_device_type_sub_category_id
+	 * p2p_secondary_device_type_category_id
+	 * p2p_secondary_device_type_sub_category_id
+	 */
+	u16	p2p_pdt_cid;
+	u16	p2p_pdt_scid;
+	u8	num_p2p_sdt;
+	u16	p2p_sdt_cid[MAX_NUM_P2P_SDT];
+	u16	p2p_sdt_scid[MAX_NUM_P2P_SDT];
+	u8	p2p_reject_disable;	//When starting NL80211 wpa_supplicant/hostapd, it will call netdev_close
+							//such that it will cause p2p disabled. Use this flag to reject.
 #endif // CONFIG_INTEL_WIDI
 
 #ifdef CONFIG_CONCURRENT_MODE
 	u8	scanning_via_buddy_intf;
 #endif
 
-#ifdef CONFIG_FTP_PROTECT
-	u8	ftp_lock_flag;
-#endif //CONFIG_FTP_PROTECT
 };
 
 #ifdef CONFIG_AP_MODE
@@ -606,7 +643,7 @@ extern void rtw_free_mlme_priv (struct mlme_priv *pmlmepriv);
 
 
 extern sint rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv);
-extern sint rtw_set_key(_adapter *adapter,struct security_priv *psecuritypriv,sint keyid, u8 set_tx);
+extern sint rtw_set_key(_adapter *adapter,struct security_priv *psecuritypriv,sint keyid, u8 set_tx, bool enqueue);
 extern sint rtw_set_auth(_adapter *adapter,struct security_priv *psecuritypriv);
 
 __inline static u8 *get_bssid(struct mlme_priv *pmlmepriv)
@@ -688,6 +725,7 @@ __inline static void up_scanned_network(struct mlme_priv *pmlmepriv)
 #ifdef CONFIG_CONCURRENT_MODE
 sint rtw_buddy_adapter_up(_adapter *padapter);
 sint check_buddy_fwstate(_adapter *padapter, sint state);
+u8 rtw_get_buddy_bBusyTraffic(_adapter *padapter);
 #endif //CONFIG_CONCURRENT_MODE
 
 __inline static void down_scanned_network(struct mlme_priv *pmlmepriv)
@@ -779,7 +817,8 @@ u8 *rtw_get_beacon_interval_from_ie(u8 *ie);
 void rtw_joinbss_reset(_adapter *padapter);
 
 #ifdef CONFIG_80211N_HT
-unsigned int rtw_restructure_ht_ie(_adapter *padapter, u8 *in_ie, u8 *out_ie, uint in_len, uint *pout_len);
+void	rtw_ht_use_default_setting(_adapter *padapter);
+unsigned int rtw_restructure_ht_ie(_adapter *padapter, u8 *in_ie, u8 *out_ie, uint in_len, uint *pout_len, u8 channel);
 void rtw_update_ht_cap(_adapter *padapter, u8 *pie, uint ie_len, u8 channel);
 void rtw_issue_addbareq_cmd(_adapter *padapter, struct xmit_frame *pxmitframe);
 #endif
@@ -799,7 +838,7 @@ u8 rtw_to_roaming(_adapter *adapter);
 #define rtw_to_roaming(adapter) 0
 #endif
 
-void rtw_stassoc_hw_rpt(_adapter *adapter,struct sta_info *psta);
+void rtw_sta_media_status_rpt(_adapter *adapter,struct sta_info *psta, u32 mstatus);
 
 #ifdef CONFIG_INTEL_PROXIM
 void rtw_proxim_enable(_adapter *padapter);

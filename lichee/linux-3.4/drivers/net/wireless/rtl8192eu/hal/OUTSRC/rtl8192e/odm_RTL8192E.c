@@ -125,6 +125,12 @@ odm_DynamicPrimaryCCAMP(
        Is40MHz = *(pDM_Odm->pBandWidth);
 	SecCHOffset = *(pDM_Odm->pSecChOffset);		// NIC: 2: sec is below,  1: sec is above
 	//DbgPrint("92E: SecCHOffset = %d\n", SecCHOffset);
+	if(IsAPModeExist(pAdapter)){
+			  CurMFstate = MF_USC_LSC;
+			  odm_Write_Dynamic_CCA(pDM_Odm, CurMFstate);
+			  return;
+	}
+	
 	if(!pDM_Odm->bLinked){
 		return;
 	}

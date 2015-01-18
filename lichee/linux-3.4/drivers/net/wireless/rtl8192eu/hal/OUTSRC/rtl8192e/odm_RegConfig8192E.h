@@ -78,6 +78,21 @@ odm_ConfigBB_PHY_8192E(
     IN 	u4Byte 		Bitmask,
     IN 	u4Byte 		Data
     );
+	
+void
+odm_ConfigBB_TXPWR_LMT_8192E(
+	IN	PDM_ODM_T	pDM_Odm,
+	IN	pu1Byte 	Regulation,
+	IN	pu1Byte 	Band,
+	IN	pu1Byte 	Bandwidth,
+	IN	pu1Byte 	RateSection,
+	IN	pu1Byte 	RfPath,
+	IN	pu1Byte 	Channel,
+	IN	pu1Byte 	PowerLimit
+	);
+	
+	
 #endif
 #endif // end of SUPPORT
+
 

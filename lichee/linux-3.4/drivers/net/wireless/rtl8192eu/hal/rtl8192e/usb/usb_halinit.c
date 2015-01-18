@@ -265,13 +265,15 @@ _InitBurstPktLen_8192EU(IN PADAPTER Adapter)
 #endif	
 }
 
-static u32 _InitPowerOn8192EU(_adapter *padapter)
+static u32 _InitPowerOn_8192EU(_adapter *padapter)
 {
 	u16 value16;
 	u32 value32;
 	// HW Power on sequence
-	HAL_DATA_TYPE	*pHalData	= GET_HAL_DATA(padapter);
-	if(_TRUE == pHalData->bMacPwrCtrlOn)
+	u8 bMacPwrCtrlOn=_FALSE;
+
+	rtw_hal_get_hwreg(padapter, HW_VAR_APFM_ON_MAC, &bMacPwrCtrlOn);
+	if(bMacPwrCtrlOn == _TRUE)	
 		return _SUCCESS;
 
 	DBG_871X("==>%s \n",__FUNCTION__);
@@ -288,7 +290,7 @@ static u32 _InitPowerOn8192EU(_adapter *padapter)
 		//u1Byte	tmp1Byte = PlatformEFIORead1Byte(Adapter,0x16);
 		//PlatformEFIOWrite1Byte(Adapter,0x16,tmp1Byte |BIT4|BIT6);
 		
-		u32 voltage = (rtw_read32(padapter,0x14)& 0xFF0FFFFF )|(0x0101<<20);
+		u32 voltage = (rtw_read32(padapter,0x14)& 0xFF0FFFFF )|(0x05<<20);
 		rtw_write32(padapter,0x14,voltage);
 		
 		rtw_write8(padapter, REG_LDO_SWR_CTRL, 0x83);
@@ -310,7 +312,8 @@ static u32 _InitPowerOn8192EU(_adapter *padapter)
 				| PROTOCOL_EN | SCHEDULE_EN | ENSEC | CALTMR_EN);
 	rtw_write16(padapter, REG_CR, value16);
 
-	pHalData->bMacPwrCtrlOn = _TRUE;
+	bMacPwrCtrlOn = _TRUE;
+	rtw_hal_set_hwreg(padapter, HW_VAR_APFM_ON_MAC, &bMacPwrCtrlOn);
 	 
 	return _SUCCESS;
 }
@@ -562,9 +565,11 @@ _InitHardwareDropIncorrectBulkOut_8192E(
 	IN  PADAPTER Adapter
 	)
 {
+#ifdef ENABLE_USB_DROP_INCORRECT_OUT
 	u32	value32 = rtw_read32(Adapter, REG_TXDMA_OFFSET_CHK);
 	value32 |= DROP_DATA_EN;
 	rtw_write32(Adapter, REG_TXDMA_OFFSET_CHK, value32);
+#endif
 }
 
 
@@ -996,11 +1001,12 @@ HwSuspendModeEnable_8192EU(
 }	// HwSuspendModeEnable92Cu
 rt_rf_power_state RfOnOffDetect(IN	PADAPTER pAdapter )
 {
+	struct pwrctrl_priv *pwrctl = adapter_to_pwrctl(pAdapter);
 	HAL_DATA_TYPE		*pHalData = GET_HAL_DATA(pAdapter);
 	u8	val8;
 	rt_rf_power_state rfpowerstate = rf_off;
 
-	if(pAdapter->pwrctrlpriv.bHWPowerdown)
+	if(pwrctl->bHWPowerdown)
 	{
 		val8 = rtw_read8(pAdapter, REG_HSISR);
 		DBG_8192C("pwrdown, 0x5c(BIT7)=%02x\n", val8);
@@ -1050,7 +1056,7 @@ u32 rtl8192eu_hal_init(PADAPTER Adapter)
 	u8	txpktbuf_bndy;
 	u32	status = _SUCCESS;
 	HAL_DATA_TYPE		*pHalData = GET_HAL_DATA(Adapter);
-	struct pwrctrl_priv		*pwrctrlpriv = &Adapter->pwrctrlpriv;
+	struct pwrctrl_priv		*pwrctrlpriv = adapter_to_pwrctl(Adapter);
 	struct registry_priv	*pregistrypriv = &Adapter->registrypriv;
 	
 	rt_rf_power_state		eRfPowerStateToSet;
@@ -1151,12 +1157,12 @@ HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_BEGIN);
 
 #ifdef CONFIG_WOWLAN
 	
-	Adapter->pwrctrlpriv.wowlan_wake_reason = rtw_read8(Adapter, REG_WOWLAN_WAKE_REASON);
+	pwrctrlpriv->wowlan_wake_reason = rtw_read8(Adapter, REG_WOWLAN_WAKE_REASON);
 	DBG_8192C("%s wowlan_wake_reason: 0x%02x\n", 
-				__func__, Adapter->pwrctrlpriv.wowlan_wake_reason);
+				__func__, pwrctrlpriv->wowlan_wake_reason);
 
 	if(rtw_read8(Adapter, REG_MCUFWDL)&BIT7){ /*&&
-		(Adapter->pwrctrlpriv.wowlan_wake_reason & FWDecisionDisconnect)) {*/
+		(pwrctrlpriv->wowlan_wake_reason & FWDecisionDisconnect)) {*/
 		u8 reg_val=0;
 		DBG_8192C("+Reset Entry+\n");
 		rtw_write8(Adapter, REG_MCUFWDL, 0x00);
@@ -1181,7 +1187,7 @@ HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_BEGIN);
 #endif //CONFIG_WOWLAN
 
 
-	if(Adapter->pwrctrlpriv.bkeepfwalive)
+	if(pwrctrlpriv->bkeepfwalive)
 	{
 		_ps_open_RF(Adapter);
 
@@ -1205,7 +1211,7 @@ HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_BEGIN);
 
 
 HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_INIT_PW_ON);
-	status = _InitPowerOn8192EU(Adapter);
+	status = _InitPowerOn_8192EU(Adapter);
 	if(status == _FAIL){
 		RT_TRACE(_module_hci_hal_init_c_, _drv_err_, ("Failed to init power on!\n"));
 		goto exit;
@@ -1303,9 +1309,7 @@ HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_EFUSE_PATCH);
 		goto exit;
 	}
 
-#if ENABLE_USB_DROP_INCORRECT_OUT
 	_InitHardwareDropIncorrectBulkOut_8192E(Adapter);
-#endif
 
 	if(pHalData->bRDGEnable){
 		_InitRDGSetting_8192E(Adapter);	}
@@ -1606,7 +1610,17 @@ HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_BT_COEXIST);
 HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_MISC31);
 
 	rtw_write8(Adapter, REG_USB_HRPWM, 0);
-
+#ifdef CONFIG_XMIT_ACK
+	//ack for xmit mgmt frames.
+	rtw_write32(Adapter, REG_FWHW_TXQ_CTRL, rtw_read32(Adapter, REG_FWHW_TXQ_CTRL)|BIT(12));
+#endif //CONFIG_XMIT_ACK
+	//Fixed LDPC rx hang issue.
+	{
+		u4Byte	tmp4Byte = PlatformEFIORead4Byte(Adapter, REG_SYS_SWR_CTRL1_8192E);
+		PlatformEFIOWrite1Byte(Adapter,REG_SYS_SWR_CTRL2_8192E,0x75);
+		tmp4Byte=  (tmp4Byte & 0xfff00fff)|(0x7E<<12);
+		PlatformEFIOWrite4Byte(Adapter,REG_SYS_SWR_CTRL1_8192E,tmp4Byte );
+	}
 	//misc
 	{
 		int i;		
@@ -1649,42 +1663,56 @@ _func_exit_;
 }
 
 VOID
-CardDisableRTL8192EU(
+hal_poweroff_8192eu(
 	IN	PADAPTER			Adapter 
 )
 {
 	u8	u1bTmp;
-	u8 	val8;
-	u16	val16;
-	u32	val32;
-	
+	u8 bMacPwrCtrlOn = _FALSE;
 
-	//DBG_871X("CardDisableRTL8188EU\n");
+	rtw_hal_get_hwreg(Adapter, HW_VAR_APFM_ON_MAC, &bMacPwrCtrlOn);
+	if(bMacPwrCtrlOn == _FALSE)	
+		return ;
+	
+	DBG_871X(" %s\n",__FUNCTION__);
 
 	//Stop Tx Report Timer. 0x4EC[Bit1]=b'0
 	u1bTmp = rtw_read8(Adapter, REG_TX_RPT_CTRL);
-	rtw_write8(Adapter, REG_TX_RPT_CTRL, val8&(~BIT1));
+	rtw_write8(Adapter, REG_TX_RPT_CTRL, u1bTmp&(~BIT1));
 
 	// stop rx 
 	rtw_write8(Adapter, REG_CR, 0x0);
 
 	HalPwrSeqCmdParsing(Adapter, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, Rtl8192E_NIC_LPS_ENTER_FLOW);
 
+	// MCUFWDL 0x80[1:0]=0				// reset MCU ready status
+	rtw_write8(Adapter, REG_MCUFWDL, 0x00);
+#if 0	
 	if((rtw_read8(Adapter, REG_MCUFWDL)&RAM_DL_SEL) && 
 		Adapter->bFWReady) //8051 RAM code
 	{
 		_8051Reset8192E(Adapter);
-	}	
-
+	}
+#else
+	// Reset MCU IO Wrapper
+	u1bTmp = rtw_read8(Adapter, REG_RSV_CTRL+1);
+	rtw_write8(Adapter,REG_RSV_CTRL+1, (u1bTmp&(~BIT0)));
+	
 	// Reset MCU. Suggested by Filen. 2011.01.26. by tynli.
 	u1bTmp = rtw_read8(Adapter, REG_SYS_FUNC_EN+1);
 	rtw_write8(Adapter, REG_SYS_FUNC_EN+1, (u1bTmp&(~BIT2)));
 
-	// MCUFWDL 0x80[1:0]=0				// reset MCU ready status
-	rtw_write8(Adapter, REG_MCUFWDL, 0x00);
+	// Enable MCU IO Wrapper , for IPS flow
+	u1bTmp = rtw_read8(Adapter, REG_RSV_CTRL+1);
+	rtw_write8(Adapter, REG_RSV_CTRL+1, u1bTmp|BIT0);	
+#endif
+	
 
 	// Card disable power action flow
 	HalPwrSeqCmdParsing(Adapter, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, Rtl8192E_NIC_DISABLE_FLOW);
+	
+	bMacPwrCtrlOn = _FALSE;
+	rtw_hal_set_hwreg(Adapter, HW_VAR_APFM_ON_MAC, &bMacPwrCtrlOn);	
 }
 
 static void rtl8192e_hw_power_down(_adapter *padapter)
@@ -1699,7 +1727,7 @@ static void rtl8192e_hw_power_down(_adapter *padapter)
 
 u32 rtl8192eu_hal_deinit(PADAPTER Adapter)
  {
-
+	struct pwrctrl_priv *pwrctl = adapter_to_pwrctl(Adapter);
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
    	DBG_8192C("==> %s \n",__FUNCTION__);
 
@@ -1731,20 +1759,20 @@ u32 rtl8192eu_hal_deinit(PADAPTER Adapter)
 	rtw_write32(Adapter, REG_HIMR1_8192E, IMR_DISABLED_8192E);
 
  #ifdef SUPPORT_HW_RFOFF_DETECTED
- 	DBG_8192C("bkeepfwalive(%x)\n",Adapter->pwrctrlpriv.bkeepfwalive);
- 	if(Adapter->pwrctrlpriv.bkeepfwalive)
+ 	DBG_8192C("bkeepfwalive(%x)\n", pwrctl->bkeepfwalive);
+ 	if(pwrctl->bkeepfwalive)
  	{
 		_ps_close_RF(Adapter);		
-		if((Adapter->pwrctrlpriv.bHWPwrPindetect) && (Adapter->pwrctrlpriv.bHWPowerdown))		
+		if((pwrctl->bHWPwrPindetect) && (pwrctl->bHWPowerdown))
 			rtl8192e_hw_power_down(Adapter);
  	}
 	else
 #endif
 	{	
 		if(Adapter->hw_init_completed == _TRUE){
-			CardDisableRTL8192EU(Adapter);
+			hal_poweroff_8192eu(Adapter);
 
-			if((Adapter->pwrctrlpriv.bHWPwrPindetect ) && (Adapter->pwrctrlpriv.bHWPowerdown))		
+			if((pwrctl->bHWPwrPindetect ) && (pwrctl->bHWPowerdown))
 				rtl8192e_hw_power_down(Adapter);
 		}
 		pHalData->bMacPwrCtrlOn = _FALSE;
@@ -2374,7 +2402,9 @@ _func_enter_;
 	//_rtw_memset(padapter->HalData, 0, sizeof(HAL_DATA_TYPE));
 	padapter->hal_data_sz = sizeof(HAL_DATA_TYPE);
 
-	pHalFunc->hal_power_on = _InitPowerOn8192EU;
+	pHalFunc->hal_power_on = _InitPowerOn_8192EU;
+	pHalFunc->hal_power_off = hal_poweroff_8192eu;
+
 	pHalFunc->hal_init = &rtl8192eu_hal_init;
 	pHalFunc->hal_deinit = &rtl8192eu_hal_deinit;
 

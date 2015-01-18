@@ -126,16 +126,6 @@ _PHY_MACSettingCalibration_92E(
 	IN	pu4Byte		MACBackup	
 	);
 
-
-VOID
-_PHY_PathAStandBy(
-#if (DM_ODM_SUPPORT_TYPE & ODM_AP)
-	IN PDM_ODM_T		pDM_Odm
-#else
-	IN	PADAPTER	pAdapter
-#endif
-	);
-
 								
 #endif	// #ifndef __HAL_PHY_RF_8188E_H__								
 

@@ -21,25 +21,6 @@
 #ifndef _RTW_IO_H_
 #define _RTW_IO_H_
 
-
-#ifdef PLATFORM_LINUX
-
-#ifdef CONFIG_USB_HCI
-
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
-#define rtw_usb_buffer_alloc(dev, size, dma) usb_alloc_coherent((dev), (size), (in_interrupt() ? GFP_ATOMIC : GFP_KERNEL), (dma))
-#define rtw_usb_buffer_free(dev, size, addr, dma) usb_free_coherent((dev), (size), (addr), (dma))
-#else
-#define rtw_usb_buffer_alloc(dev, size, dma) usb_buffer_alloc((dev), (size), (in_interrupt() ? GFP_ATOMIC : GFP_KERNEL), (dma))
-#define rtw_usb_buffer_free(dev, size, addr, dma) usb_buffer_free((dev), (size), (addr), (dma))
-#endif
-
-
-#endif //CONFIG_USB_HCI
-
-#endif //PLATFORM_LINUX
-
-
 #define NUM_IOREQ		8
 
 #ifdef PLATFORM_WINDOWS
@@ -142,6 +123,10 @@ struct _io_ops
 
 		void (*_read_port_cancel)(struct intf_hdl *pintfhdl);
 		void (*_write_port_cancel)(struct intf_hdl *pintfhdl);
+
+#ifdef CONFIG_SDIO_HCI
+		u8 (*_sd_f0_read8)(struct intf_hdl *pintfhdl, u32 addr);
+#endif
 		
 };
 
@@ -314,8 +299,22 @@ struct reg_protocol_wt {
 #endif
 
 };
+#ifdef CONFIG_PCI_HCI
+#define MAX_CONTINUAL_IO_ERR 4
+#endif
+
+#ifdef CONFIG_USB_HCI
+#define MAX_CONTINUAL_IO_ERR 4
+#endif
+
+#ifdef CONFIG_SDIO_HCI
+#define SD_IO_TRY_CNT (8)
+#define MAX_CONTINUAL_IO_ERR SD_IO_TRY_CNT
+#endif
 
 
+int rtw_inc_and_chk_continual_io_error(struct dvobj_priv *dvobj);
+void rtw_reset_continual_io_error(struct dvobj_priv *dvobj);
 
 /*
 Below is the data structure used by _io_handler
@@ -366,6 +365,8 @@ extern int _rtw_write8(_adapter *adapter, u32 addr, u8 val);
 extern int _rtw_write16(_adapter *adapter, u32 addr, u16 val);
 extern int _rtw_write32(_adapter *adapter, u32 addr, u32 val);
 extern int _rtw_writeN(_adapter *adapter, u32 addr, u32 length, u8 *pdata);
+
+extern u8 _rtw_sd_f0_read8(_adapter *adapter, u32 addr);
 
 extern int _rtw_write8_async(_adapter *adapter, u32 addr, u8 val);
 extern int _rtw_write16_async(_adapter *adapter, u32 addr, u16 val);
@@ -431,6 +432,8 @@ extern int dbg_rtw_writeN(_adapter *adapter, u32 addr ,u32 length , u8 *data, co
 #define rtw_write_port_and_wait(adapter, addr, cnt, mem, timeout_ms) _rtw_write_port_and_wait((adapter), (addr), (cnt), (mem), (timeout_ms))
 #define rtw_write_port_cancel(adapter) _rtw_write_port_cancel((adapter))
 #endif //DBG_IO
+
+#define rtw_sd_f0_read8(adapter, addr) _rtw_sd_f0_read8((adapter), (addr))
 
 extern void rtw_write_scsi(_adapter *adapter, u32 cnt, u8 *pmem);
 

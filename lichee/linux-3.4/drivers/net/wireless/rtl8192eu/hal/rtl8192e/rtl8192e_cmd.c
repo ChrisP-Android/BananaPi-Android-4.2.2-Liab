@@ -201,6 +201,8 @@ void rtl8192e_set_raid_cmd(PADAPTER padapter, u32 bitmap, u8* arg)
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(padapter);
 	struct dm_priv	*pdmpriv = &pHalData->dmpriv;
 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
+	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
+	struct sta_info	*psta;
 	u8 macid, init_rate, raid, shortGIrate=_FALSE;
 
 _func_enter_;
@@ -210,13 +212,19 @@ _func_enter_;
 	shortGIrate = arg[2];
 	init_rate = arg[3];
 
+	psta = pmlmeinfo->FW_sta_info[macid].psta;
+	if(psta == NULL)
+	{
+		return;
+	}
+
 	if(pHalData->fw_ractrl == _TRUE)
 	{
 		u8	H2CCommand[7] ={0};
 	
 		H2CCommand[0] = macid;
 		H2CCommand[1] = (raid & 0x1F) | (shortGIrate?0x80:0x00) ;
-		H2CCommand[2] = (pmlmeext->cur_bwmode & 0x3); // need to do for  VHT
+		H2CCommand[2] = (psta->bw_mode & 0x3); // need to do for  VHT
 
 		H2CCommand[3] = (u8)(bitmap & 0x000000ff);
 		H2CCommand[4] = (u8)((bitmap & 0x0000ff00) >>8);
@@ -246,10 +254,8 @@ void rtl8192e_Add_RateATid(PADAPTER pAdapter, u32 bitmap, u8* arg, u8 rssi_level
 
 	macid = arg[0];
 
-#ifdef CONFIG_ODM_REFRESH_RAMASK
 	if(rssi_level != DM_RATR_STA_INIT)
 		bitmap = ODM_Get_Rate_Bitmap(&pHalData->odmpriv, macid, bitmap, rssi_level);
-#endif //CONFIG_ODM_REFRESH_RAMASK
 
 	rtl8192e_set_raid_cmd(pAdapter, bitmap, arg);
 }
@@ -257,7 +263,7 @@ void rtl8192e_Add_RateATid(PADAPTER pAdapter, u32 bitmap, u8* arg, u8 rssi_level
 void rtl8192e_set_FwPwrMode_cmd(PADAPTER padapter, u8 PSMode)
 {
 	u8	u1H2CSetPwrMode[6]={0};
-	struct pwrctrl_priv *pwrpriv = &padapter->pwrctrlpriv;
+	struct pwrctrl_priv *pwrpriv = adapter_to_pwrctl(padapter);
 	u8	Mode = 0, RLBM = 0, PowerState = 0, LPSAwakeIntvl = 1;
 
 _func_enter_;
@@ -664,7 +670,7 @@ static void SetFwRsvdPagePkt(PADAPTER padapter, BOOLEAN bDLFinished)
 	pmlmeext = &padapter->mlmeextpriv;
 	pmlmeinfo = &pmlmeext->mlmext_info;
 
-	pcmdframe = rtw_alloc_cmdxmitframe(pxmitpriv, RSVD_PKT_LEN_92E);
+	pcmdframe = rtw_alloc_cmdxmitframe(pxmitpriv);
 	if (pcmdframe == NULL) {
 		return;
 	}
@@ -784,12 +790,10 @@ static void SetFwRsvdPagePkt(PADAPTER padapter, BOOLEAN bDLFinished)
 
 	FillH2CCmd_8192E(padapter, H2C_8192E_RSVDPAGE, sizeof(RsvdPageLoc), (u8*)&RsvdPageLoc);
 
-	rtw_free_cmd_xmitbuf(pxmitpriv);
-
 	return;
 
 error:
-	rtw_free_cmdxmitframe(pxmitpriv, pcmdframe);
+	rtw_free_xmitframe(pxmitpriv, pcmdframe);
 }
 
 void rtl8192e_set_FwJoinBssReport_cmd(PADAPTER padapter, u8 mstatus)
@@ -866,9 +870,14 @@ _func_enter_;
 		{
 		}
 		else if(!bcn_valid)
-			DBG_871X("%s: 1 Download RSVD page failed! DLBcnCount:%u, poll:%u\n", __FUNCTION__ ,DLBcnCount, poll);
-		else
-			DBG_871X("%s: 1 Download RSVD success! DLBcnCount:%u, poll:%u\n", __FUNCTION__, DLBcnCount, poll);
+			DBG_871X(ADPT_FMT": 1 DL RSVD page failed! DLBcnCount:%u, poll:%u\n",
+				ADPT_ARG(padapter) ,DLBcnCount, poll);
+		else {
+			struct pwrctrl_priv *pwrctl = adapter_to_pwrctl(padapter);
+			pwrctl->fw_psmode_iface_id = padapter->iface_id;
+			DBG_871X(ADPT_FMT": 1 DL RSVD page success! DLBcnCount:%u, poll:%u\n",
+				ADPT_ARG(padapter), DLBcnCount, poll);
+		}
 		//
 		// We just can send the reserved page twice during the time that Tx thread is stopped (e.g. pnpsetpower)
 		// becuase we need to free the Tx BCN Desc which is used by the first reserved page packet.
@@ -946,7 +955,7 @@ _func_enter_;
 		}
 	}
 #ifdef CONFIG_WOWLAN
-	if (padapter->pwrctrlpriv.wowlan_mode){
+	if (adapter_to_pwrctl(padapter)->wowlan_mode){
 		JoinBssRptParm.OpMode = mstatus;
 		JoinBssRptParm.MacID = 0;
 		FillH2CCmd_8192E(padapter, H2C_8192E_MSRRPT, sizeof(JoinBssRptParm), (u8 *)&JoinBssRptParm);
@@ -972,7 +981,7 @@ void rtl8192e_set_p2p_ctw_period_cmd(_adapter* padapter, u8 ctwindow)
 void rtl8192e_set_p2p_ps_offload_cmd(_adapter* padapter, u8 p2p_ps_state)
 {
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(padapter);
-	struct pwrctrl_priv		*pwrpriv = &padapter->pwrctrlpriv;
+	struct pwrctrl_priv		*pwrpriv = adapter_to_pwrctl(padapter);
 	struct wifidirect_info	*pwdinfo = &( padapter->wdinfo );
 	u8	*p2p_ps_offload = &pHalData->p2p_ps_offload;
 		
@@ -1121,7 +1130,7 @@ void rtl8192e_set_wowlan_cmd(_adapter* padapter, u8 enable)
 	u32		test=0;
 	struct recv_priv	*precvpriv = &padapter->recvpriv;
 	SETWOWLAN_PARM		pwowlan_parm;
-	struct pwrctrl_priv	*pwrpriv=&padapter->pwrctrlpriv;
+	struct pwrctrl_priv	*pwrpriv = adapter_to_pwrctl(padapter);
 
 _func_enter_;
 		DBG_871X_LEVEL(_drv_always_, "+%s+\n", __func__);
@@ -1151,7 +1160,7 @@ _func_enter_;
 				DBG_871X_LEVEL(_drv_info_, "%s 4.pwowlan_parm.mode=0x%x \n",__FUNCTION__,pwowlan_parm.mode );
 			}
 
-			if(!(padapter->pwrctrlpriv.wowlan_wake_reason & FWDecisionDisconnect))
+			if(!(pwrpriv->wowlan_wake_reason & FWDecisionDisconnect))
 				rtl8812a_set_FwJoinBssReport_cmd(padapter, 1);
 			else
 				DBG_871X_LEVEL(_drv_always_, "%s, disconnected, no FwJoinBssReport\n",__FUNCTION__);	
@@ -1204,7 +1213,201 @@ _func_exit_;
 }
 #endif  //CONFIG_WOWLAN
 
+#if 0
+u1Byte
+HwRateToMRate(
+	IN 	u1Byte		rate
+	)
+{
+	u1Byte	ret_rate = MGN_1M;
 
+	switch(rate)
+	{
+	
+		case DESC_RATE1M:		    ret_rate = MGN_1M;		break;
+		case DESC_RATE2M:		    ret_rate = MGN_2M;		break;
+		case DESC_RATE5_5M:	        ret_rate = MGN_5_5M;	break;
+		case DESC_RATE11M:		    ret_rate = MGN_11M;		break;
+		case DESC_RATE6M:		    ret_rate = MGN_6M;		break;
+		case DESC_RATE9M:		    ret_rate = MGN_9M;		break;
+		case DESC_RATE12M:		    ret_rate = MGN_12M;		break;
+		case DESC_RATE18M:		    ret_rate = MGN_18M;		break;
+		case DESC_RATE24M:		    ret_rate = MGN_24M;		break;
+		case DESC_RATE36M:		    ret_rate = MGN_36M;		break;
+		case DESC_RATE48M:		    ret_rate = MGN_48M;		break;
+		case DESC_RATE54M:		    ret_rate = MGN_54M;		break;			
+		case DESC_RATEMCS0:	        ret_rate = MGN_MCS0;	break;
+		case DESC_RATEMCS1:	        ret_rate = MGN_MCS1;	break;
+		case DESC_RATEMCS2:	        ret_rate = MGN_MCS2;	break;
+		case DESC_RATEMCS3:	        ret_rate = MGN_MCS3;	break;
+		case DESC_RATEMCS4:	        ret_rate = MGN_MCS4;	break;
+		case DESC_RATEMCS5:	        ret_rate = MGN_MCS5;	break;
+		case DESC_RATEMCS6:	        ret_rate = MGN_MCS6;	break;
+		case DESC_RATEMCS7:	        ret_rate = MGN_MCS7;	break;
+		case DESC_RATEMCS8:	        ret_rate = MGN_MCS8;	break;
+		case DESC_RATEMCS9:	        ret_rate = MGN_MCS9;	break;
+		case DESC_RATEMCS10:	    ret_rate = MGN_MCS10;	break;
+		case DESC_RATEMCS11:	    ret_rate = MGN_MCS11;	break;
+		case DESC_RATEMCS12:	    ret_rate = MGN_MCS12;	break;
+		case DESC_RATEMCS13:	    ret_rate = MGN_MCS13;	break;
+		case DESC_RATEMCS14:	    ret_rate = MGN_MCS14;	break;
+		case DESC_RATEMCS15:	    ret_rate = MGN_MCS15;	break;
+		case DESC_RATEMCS16:	    ret_rate = MGN_MCS16;	break;
+		case DESC_RATEMCS17:	    ret_rate = MGN_MCS17;	break;
+		case DESC_RATEMCS18:	    ret_rate = MGN_MCS18;	break;
+		case DESC_RATEMCS19:	    ret_rate = MGN_MCS19;	break;
+		case DESC_RATEMCS20:	    ret_rate = MGN_MCS20;	break;
+		case DESC_RATEMCS21:	    ret_rate = MGN_MCS21;	break;
+		case DESC_RATEMCS22:	    ret_rate = MGN_MCS22;	break;
+		case DESC_RATEMCS23:	    ret_rate = MGN_MCS23;	break;
+		case DESC_RATEMCS24:	    ret_rate = MGN_MCS24;	break;
+		case DESC_RATEMCS25:	    ret_rate = MGN_MCS25;	break;
+		case DESC_RATEMCS26:	    ret_rate = MGN_MCS26;	break;
+		case DESC_RATEMCS27:	    ret_rate = MGN_MCS27;	break;
+		case DESC_RATEMCS28:	    ret_rate = MGN_MCS28;	break;
+		case DESC_RATEMCS29:	    ret_rate = MGN_MCS29;	break;
+		case DESC_RATEMCS30:	    ret_rate = MGN_MCS30;	break;
+		case DESC_RATEMCS31:	    ret_rate = MGN_MCS31;	break;
+		case DESC_RATEVHTSS1MCS0:	ret_rate = MGN_VHT1SS_MCS0;		break;
+		case DESC_RATEVHTSS1MCS1:	ret_rate = MGN_VHT1SS_MCS1;		break;
+		case DESC_RATEVHTSS1MCS2:	ret_rate = MGN_VHT1SS_MCS2;		break;
+		case DESC_RATEVHTSS1MCS3:	ret_rate = MGN_VHT1SS_MCS3;		break;
+		case DESC_RATEVHTSS1MCS4:	ret_rate = MGN_VHT1SS_MCS4;		break;
+		case DESC_RATEVHTSS1MCS5:	ret_rate = MGN_VHT1SS_MCS5;		break;
+		case DESC_RATEVHTSS1MCS6:	ret_rate = MGN_VHT1SS_MCS6;		break;
+		case DESC_RATEVHTSS1MCS7:	ret_rate = MGN_VHT1SS_MCS7;		break;
+		case DESC_RATEVHTSS1MCS8:	ret_rate = MGN_VHT1SS_MCS8;		break;
+		case DESC_RATEVHTSS1MCS9:	ret_rate = MGN_VHT1SS_MCS9;		break;
+		case DESC_RATEVHTSS2MCS0:	ret_rate = MGN_VHT2SS_MCS0;		break;
+		case DESC_RATEVHTSS2MCS1:	ret_rate = MGN_VHT2SS_MCS1;		break;
+		case DESC_RATEVHTSS2MCS2:	ret_rate = MGN_VHT2SS_MCS2;		break;
+		case DESC_RATEVHTSS2MCS3:	ret_rate = MGN_VHT2SS_MCS3;		break;
+		case DESC_RATEVHTSS2MCS4:	ret_rate = MGN_VHT2SS_MCS4;		break;
+		case DESC_RATEVHTSS2MCS5:	ret_rate = MGN_VHT2SS_MCS5;		break;
+		case DESC_RATEVHTSS2MCS6:	ret_rate = MGN_VHT2SS_MCS6;		break;
+		case DESC_RATEVHTSS2MCS7:	ret_rate = MGN_VHT2SS_MCS7;		break;
+		case DESC_RATEVHTSS2MCS8:	ret_rate = MGN_VHT2SS_MCS8;		break;
+		case DESC_RATEVHTSS2MCS9:	ret_rate = MGN_VHT2SS_MCS9;		break;				
+		case DESC_RATEVHTSS3MCS0:	ret_rate = MGN_VHT3SS_MCS0;		break;
+		case DESC_RATEVHTSS3MCS1:	ret_rate = MGN_VHT3SS_MCS1;		break;
+		case DESC_RATEVHTSS3MCS2:	ret_rate = MGN_VHT3SS_MCS2;		break;
+		case DESC_RATEVHTSS3MCS3:	ret_rate = MGN_VHT3SS_MCS3;		break;
+		case DESC_RATEVHTSS3MCS4:	ret_rate = MGN_VHT3SS_MCS4;		break;
+		case DESC_RATEVHTSS3MCS5:	ret_rate = MGN_VHT3SS_MCS5;		break;
+		case DESC_RATEVHTSS3MCS6:	ret_rate = MGN_VHT3SS_MCS6;		break;
+		case DESC_RATEVHTSS3MCS7:	ret_rate = MGN_VHT3SS_MCS7;		break;
+		case DESC_RATEVHTSS3MCS8:	ret_rate = MGN_VHT3SS_MCS8;		break;
+		case DESC_RATEVHTSS3MCS9:	ret_rate = MGN_VHT3SS_MCS9;		break;				
+		case DESC_RATEVHTSS4MCS0:	ret_rate = MGN_VHT4SS_MCS0;		break;
+		case DESC_RATEVHTSS4MCS1:	ret_rate = MGN_VHT4SS_MCS1;		break;
+		case DESC_RATEVHTSS4MCS2:	ret_rate = MGN_VHT4SS_MCS2;		break;
+		case DESC_RATEVHTSS4MCS3:	ret_rate = MGN_VHT4SS_MCS3;		break;
+		case DESC_RATEVHTSS4MCS4:	ret_rate = MGN_VHT4SS_MCS4;		break;
+		case DESC_RATEVHTSS4MCS5:	ret_rate = MGN_VHT4SS_MCS5;		break;
+		case DESC_RATEVHTSS4MCS6:	ret_rate = MGN_VHT4SS_MCS6;		break;
+		case DESC_RATEVHTSS4MCS7:	ret_rate = MGN_VHT4SS_MCS7;		break;
+		case DESC_RATEVHTSS4MCS8:	ret_rate = MGN_VHT4SS_MCS8;		break;
+		case DESC_RATEVHTSS4MCS9:	ret_rate = MGN_VHT4SS_MCS9;		break;				
+		
+		default:							
+			RT_TRACE(COMP_RECV, DBG_LOUD, ("HwRateToMRate(): Non supported Rate [%x]!!!\n",rate ));
+			break;
+	}	
+	return ret_rate;
+}
+
+#endif
+
+VOID
+C2HRaReportHandler_8192E(
+	IN	PADAPTER	Adapter,
+	IN	u8*			CmdBuf,
+	IN	u8			CmdLen
+)
+{
+	u8 	Rate = CmdBuf[0] & 0x3F;
+	u8	MacId = CmdBuf[1];
+	BOOLEAN	bLDPC = CmdBuf[2] & BIT0;
+	BOOLEAN	bTxBF = (CmdBuf[2] & BIT1) >> 1;
+	BOOLEAN Collision_State = CmdBuf[3] & BIT0;
+	HAL_DATA_TYPE *pHalData = GET_HAL_DATA(Adapter);
+	//ODM_DynamicARFBSelect(&pHalData->odmpriv, Rate, Collision_State);
+
+	// pHalData->CurrentRARate = HwRateToMRate(Rate);
+	ODM_UpdateInitRate(&pHalData->odmpriv, Rate);//For advance feature:ODM_TxPwrTrackSetPwr92E
+}
+
+void dump_txrpt_ccx_92e(IN	u8 *CmdBuf)
+{
+	u8 MacID,Unicast,LifeTimeOver,RetryOver,DataRetryCount,QueueTimeUs,FinalDataRateIndex;
+		
+	DBG_871X("============= %s ===========\n",__FUNCTION__);
+	switch(GET_8192E_C2H_TX_RPT_QUEUE_SELECT(CmdBuf))
+	{
+		// AC Queue -------------------
+		case 0x01: case 0x02:
+			DBG_871X("QSEL: BK_QUEUE ");
+			break;
+		case 0x00: case 0x03:
+			DBG_871X("QSEL: BE_QUEUE ");
+			break;
+		case 0x04: case 0x05:
+			DBG_871X("QSEL:VI_QUEUE ");
+			break;
+		case 0x06: case 0x07:
+			DBG_871X("QSEL:VO_QUEUE ");
+			break;
+		// ---------------------------
+		case QSLT_BEACON:
+			DBG_871X("QSEL:BEACON_QUEUE ");
+			break;			
+		case QSLT_HIGH:
+			DBG_871X("QSEL: HIGH_QUEUE ");
+			break;			
+		case QSLT_MGNT:
+			DBG_871X("QSEL:MGNT_QUEUE ");
+			break;			
+		case QSLT_CMD:
+			DBG_871X("QSEL:TXCMD_QUEUE ");
+			break;
+			
+		default:
+			DBG_871X("QSEL:Invalid Queue Select ID !");
+	}
+
+	MacID = GET_8192E_C2H_TX_RPT_MAC_ID(CmdBuf);
+	Unicast = GET_8192E_C2H_TX_RPT_PKT_BROCAST(CmdBuf);
+	LifeTimeOver = GET_8192E_C2H_TX_RPT_LIFE_TIME_OVER(CmdBuf);
+	RetryOver = GET_8192E_C2H_TX_RPT_RETRY_OVER(CmdBuf);
+	DataRetryCount  = GET_8192E_C2H_TX_RPT_DATA_RETRY_CNT(CmdBuf);
+	QueueTimeUs = GET_8192E_C2H_TX_RPT_QUEUE_TIME(CmdBuf) * USEC_UNIT_FOR_8192E_C2H_TX_RPT_QUEUE_TIME;
+	FinalDataRateIndex = GET_8192E_C2H_TX_RPT_FINAL_DATA_RATE(CmdBuf);
+
+	DBG_871X("MacID:%u,Unicast:%u,LifeTimeOver:%u,RetryOver:%u,DataRetryCount:%u,QueueTimeUs:%u,FinalDataRateIndex:%u"
+			,MacID,Unicast,LifeTimeOver,RetryOver,DataRetryCount,QueueTimeUs,FinalDataRateIndex);
+
+	
+}
+
+static VOID
+C2HTxFeedbackHandler_8192E(
+	IN	PADAPTER	Adapter,
+	IN	u8			*CmdBuf,
+	IN	u8			CmdLen
+)
+{
+#ifdef CONFIG_XMIT_ACK
+	if (GET_8192E_C2H_TX_RPT_RETRY_OVER(CmdBuf) | GET_8192E_C2H_TX_RPT_LIFE_TIME_OVER(CmdBuf)) {
+		rtw_ack_tx_done(&Adapter->xmitpriv, RTW_SCTX_DONE_CCX_PKT_FAIL);
+	} else {
+		rtw_ack_tx_done(&Adapter->xmitpriv, RTW_SCTX_DONE_SUCCESS);
+	}
+#endif
+#ifdef DBG_CCX
+	dump_txrpt_ccx_92e(CmdBuf);
+#endif
+	
+}
 
 VOID
 C2HContentParsing8192E(
@@ -1224,11 +1427,11 @@ C2HContentParsing8192E(
 	case C2H_8192E_TXBF:
 		DBG_871X("[C2H], C2H_8192E_TXBF!!\n");
 		//C2HTxBeamformingHandler_8192E(Adapter, tmpBuf, c2hCmdLen);
-		break;
+		break;	
 
 	case C2H_8192E_TX_REPORT:
 		DBG_871X("[C2H], C2H_8192E_TX_REPORT!!\n");
-		//C2HTxFeedbackHandler_8192E(Adapter, tmpBuf, c2hCmdLen);
+		C2HTxFeedbackHandler_8192E(Adapter, tmpBuf, c2hCmdLen);
 		break;
 
 	case C2H_8192E_BT_INFO:
@@ -1237,18 +1440,18 @@ C2HContentParsing8192E(
 		break;
 
 	case C2H_8192E_BT_MP:
-		DBG_871X("[C2H], C2H_8192E_BT_MP!!\n");		
-/*	
+		DBG_871X("[C2H], C2H_8192E_BT_MP!!\n");
 #if(MP_DRIVER == 1)
-		MPTBT_FwC2hBtMpCtrl(Adapter, tmpBuf, c2hCmdLen);
+		//MPTBT_FwC2hBtMpCtrl(Adapter, tmpBuf, c2hCmdLen);
 #else
-		NDBG_FwC2hBtControl(Adapter, tmpBuf, c2hCmdLen);
+		//NDBG_FwC2hBtControl(Adapter, tmpBuf, c2hCmdLen);
 #endif
-*/
 		break;
+
 	case C2H_8192E_RA_RPT:
-		DBG_871X("[C2H], C2H_8192E_RA_RPT RateID(0x%02x)!!\n",tmpBuf[0]);
+		C2HRaReportHandler_8192E(Adapter, tmpBuf, c2hCmdLen); //for tx power tracking
 		break;
+	
 	default:
 		break;
 	}

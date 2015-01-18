@@ -225,9 +225,9 @@ s32 update_tdls_attrib(_adapter *padapter, struct pkt_attrib *pattrib)
 	pattrib->qos_en = psta->qos_option;
 	pattrib->ht_en = psta->htpriv.ht_option;
 	pattrib->raid = psta->raid;
-	pattrib->bwmode = psta->htpriv.bwmode;
+	pattrib->bwmode = psta->bw_mode;
 	pattrib->ch_offset = psta->htpriv.ch_offset;
-	pattrib->sgi= psta->htpriv.sgi;
+	pattrib->sgi= query_ra_short_GI(psta);
 	pattrib->ampdu_en = _FALSE;
 	
 	//if(pattrib->ht_en && psta->htpriv.ampdu_enable)
@@ -260,7 +260,7 @@ void free_tdls_sta(_adapter *padapter, struct sta_info *ptdls_sta)
 	//ready to clear cam
 	if(ptdls_sta->mac_id!=0){
 		ptdlsinfo->clear_cam=ptdls_sta->mac_id;
-		rtw_setstakey_cmd(padapter, (u8 *)ptdls_sta, _TRUE);
+		rtw_setstakey_cmd(padapter, (u8 *)ptdls_sta, _TRUE, _TRUE);
 	}
 
 	if(ptdlsinfo->sta_cnt==0){
@@ -291,7 +291,7 @@ void rtw_tdls_set_key(_adapter *adapter, struct rx_pkt_attrib *prx_pkt_attrib, s
 	if(prx_pkt_attrib->encrypt)
 	{
 		ptdls_sta->dot118021XPrivacy=_AES_;
-		rtw_setstakey_cmd(adapter, (u8*)ptdls_sta, _TRUE);
+		rtw_setstakey_cmd(adapter, (u8*)ptdls_sta, _TRUE, _TRUE);
 	}
 }
 
@@ -330,16 +330,22 @@ void rtw_tdls_process_ht_cap(_adapter *adapter, struct sta_info *ptdls_sta, u8 *
 		if(adapter->registrypriv.ampdu_enable==1)
 			ptdls_sta->htpriv.ampdu_enable = _TRUE;
 
-		//check if sta support s Short GI
-		if(ptdls_sta->htpriv.ht_cap.cap_info & cpu_to_le16(IEEE80211_HT_CAP_SGI_20|IEEE80211_HT_CAP_SGI_40))
+		//check if sta support s Short GI 20M
+		if(ptdls_sta->htpriv.ht_cap.cap_info & cpu_to_le16(IEEE80211_HT_CAP_SGI_20))
 		{
-			ptdls_sta->htpriv.sgi = _TRUE;
+			ptdls_sta->htpriv.sgi_20m = _TRUE;
+		}
+		//check if sta support s Short GI 40M
+		if(ptdls_sta->htpriv.ht_cap.cap_info & cpu_to_le16(IEEE80211_HT_CAP_SGI_40))
+		{
+			ptdls_sta->htpriv.sgi_40m = _TRUE;
 		}
 
 		// bwmode would still followed AP's setting
 		if(ptdls_sta->htpriv.ht_cap.cap_info & cpu_to_le16(IEEE80211_HT_CAP_SUP_WIDTH))
 		{
-			ptdls_sta->htpriv.bwmode = adapter->mlmeextpriv.cur_bwmode;
+			if (adapter->mlmeextpriv.cur_bwmode >= CHANNEL_WIDTH_40)
+				ptdls_sta->bw_mode = CHANNEL_WIDTH_40;
 			ptdls_sta->htpriv.ch_offset = adapter->mlmeextpriv.cur_ch_offset;
 		}
 	}
@@ -358,7 +364,9 @@ u8 *rtw_tdls_set_ht_cap(_adapter *padapter, u8 *pframe, struct pkt_attrib *pattr
 
 	{
 		u32 rx_packet_offset, max_recvbuf_sz;
+		rx_packet_offset = 0;
 		padapter->HalFunc.GetHalDefVarHandler(padapter, HAL_DEF_RX_PACKET_OFFSET, &rx_packet_offset);
+		max_recvbuf_sz = 0;
 		padapter->HalFunc.GetHalDefVarHandler(padapter, HAL_DEF_MAX_RECVBUF_SZ, &max_recvbuf_sz);
 		if(max_recvbuf_sz-rx_packet_offset>(8191-256))
 			ht_capie.cap_info = ht_capie.cap_info |IEEE80211_HT_CAP_MAX_AMSDU;
@@ -1088,7 +1096,7 @@ sint On_TDLS_Setup_Req(_adapter *adapter, union recv_frame *precv_frame)
 	u8 ccmp_have=0, rsnie_have=0;
 	u16 j;
 	u8 SNonce[32];
-	u32 *timeout_interval;
+	u32 *timeout_interval=NULL;
 	sint parsing_length;	//frame body length, without icv_len
 	PNDIS_802_11_VARIABLE_IEs	pIE;
 	u8 FIXED_IE = 5;
@@ -1304,7 +1312,7 @@ sint On_TDLS_Setup_Rsp(_adapter *adapter, union recv_frame *precv_frame)
 	sint parsing_length;	//frame body length, without icv_len
 	PNDIS_802_11_VARIABLE_IEs	pIE;
 	u8 FIXED_IE =7;
-	u8  *pftie, *ptimeout_ie, *plinkid_ie, *prsnie, *pftie_mic, *ppairwise_cipher;
+	u8  *pftie=NULL, *ptimeout_ie=NULL, *plinkid_ie=NULL, *prsnie=NULL, *pftie_mic=NULL, *ppairwise_cipher=NULL;
 	u16 pairwise_count, j, k;
 	u8 verify_ccmp=0;
 	unsigned char		supportRate[16];
@@ -1479,7 +1487,7 @@ sint On_TDLS_Setup_Cfm(_adapter *adapter, union recv_frame *precv_frame)
 	sint parsing_length;
 	PNDIS_802_11_VARIABLE_IEs	pIE;
 	u8 FIXED_IE =5;
-	u8  *pftie, *ptimeout_ie, *plinkid_ie, *prsnie, *pftie_mic, *ppairwise_cipher;
+	u8  *pftie=NULL, *ptimeout_ie=NULL, *plinkid_ie=NULL, *prsnie=NULL, *pftie_mic=NULL, *ppairwise_cipher=NULL;
 	u16 j, pairwise_count;
 
 	psa = get_sa(ptr);
@@ -2145,7 +2153,7 @@ void rtw_build_tdls_setup_rsp_ies(_adapter * padapter, struct xmit_frame * pxmit
 	u8 timeout_itvl[5];	//setup response timeout interval will copy from request
 	u8 ANonce[32];	//maybe it can put in ontdls_req
 	u8 k;		//for random ANonce
-	u8  *pftie, *ptimeout_ie, *plinkid_ie, *prsnie, *pftie_mic;
+	u8  *pftie=NULL, *ptimeout_ie=NULL, *plinkid_ie=NULL, *prsnie=NULL, *pftie_mic=NULL;
 	u32 time;
 
 	ptdls_sta = rtw_get_stainfo( &(padapter->stapriv) , pattrib->dst);
@@ -2289,7 +2297,7 @@ void rtw_build_tdls_setup_cfm_ies(_adapter * padapter, struct xmit_frame * pxmit
 	u8 timeout_itvl[5];	//set timeout interval to maximum value
 	struct mlme_priv 		*pmlmepriv = &padapter->mlmepriv;
 	u8	link_id_addr[18] = {0};
-	u8  *pftie, *ptimeout_ie, *plinkid_ie, *prsnie, *pftie_mic;
+	u8  *pftie=NULL, *ptimeout_ie=NULL, *plinkid_ie=NULL, *prsnie=NULL, *pftie_mic=NULL;
 
 	//payload type
 	pframe = rtw_set_fixed_ie(pframe, 1, &(payload_type), &(pattrib->pktlen));
@@ -2857,52 +2865,20 @@ void init_tdls_alive_timer(_adapter *padapter, struct sta_info *psta)
 	_init_timer(&psta->alive_timer2, padapter->pnetdev, _tdls_alive_timer_phase2_hdl, psta);
 }
 
-int update_sgi_tdls(_adapter *padapter, struct sta_info *psta)
+u8	update_sgi_tdls(_adapter *padapter, struct sta_info *psta)
 {
-	struct ht_priv	*psta_ht = NULL;
-	psta_ht = &psta->htpriv;
-
-	if(psta_ht->ht_option)
-	{
-		return psta_ht->sgi;
-	}
-	else
-		return _FALSE;
+	return query_ra_short_GI(psta);
 }
 
 u32 update_mask_tdls(_adapter *padapter, struct sta_info *psta)
 {
-	int i;
-	u8 rf_type, id;
 	unsigned char sta_band = 0;
-	unsigned char limit;	
 	unsigned int tx_ra_bitmap=0;
-	struct ht_priv	*psta_ht = NULL;
 	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
 	WLAN_BSSID_EX *pcur_network = (WLAN_BSSID_EX *)&pmlmepriv->cur_network.network;
 
-	psta_ht = &psta->htpriv;
-	//b/g mode ra_bitmap  
-	for (i=0; i<sizeof(psta->bssrateset); i++)
-	{
-		if (psta->bssrateset[i])
-			tx_ra_bitmap |= rtw_get_bit_value_from_ieee_value(psta->bssrateset[i]&0x7f);
-	}
-
-	//n mode ra_bitmap
-	if(psta_ht->ht_option) 
-	{
-		padapter->HalFunc.GetHwRegHandler(padapter, HW_VAR_RF_TYPE, (u8 *)(&rf_type));
-		if(rf_type == RF_2T2R)
-			limit=16;// 2R
-		else
-			limit=8;//  1R
-
-		for (i=0; i<limit; i++) {
-			if (psta_ht->ht_cap.supp_mcs_set[i/8] & BIT(i%8))
-				tx_ra_bitmap |= BIT(i+12);
-		}
-	}
+	rtw_hal_update_sta_rate_mask(padapter, psta);
+	tx_ra_bitmap = psta->ra_mask;
 
 	if ( pcur_network->Configuration.DSConfig > 14 ) {
 		// 5G band
@@ -2919,9 +2895,10 @@ u32 update_mask_tdls(_adapter *padapter, struct sta_info *psta)
 			sta_band |= WIRELESS_11B;
 	}
 
-	//id = networktype_to_raid(sta_band);
-	id = rtw_hal_networktype_to_raid(padapter,sta_band);
-	tx_ra_bitmap |= ((id<<28)&0xf0000000);
+	psta->wireless_mode = sta_band;
+
+	psta->raid = rtw_hal_networktype_to_raid(padapter,psta);
+	tx_ra_bitmap |= ((psta->raid<<28)&0xf0000000);
 	return tx_ra_bitmap;
 }
 
