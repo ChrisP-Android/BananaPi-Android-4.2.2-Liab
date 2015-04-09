@@ -424,10 +424,10 @@ nand_p1 			= 0x01eeeeee
 ;-------------------------------------------------------------------------------
 [disp_init]
 disp_init_enable        = 1
-disp_mode               = 4
+disp_mode               = 0
 
 screen0_output_type     = 3
-screen0_output_mode     = 5
+screen0_output_mode     = 10
 
 screen1_output_type     = 1
 screen1_output_mode     = 4
