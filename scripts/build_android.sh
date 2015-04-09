@@ -2,7 +2,7 @@ set -e
 
 cd ../android
 source build/envsetup.sh
-lunch sugar_lemaker-eng
+$LUNCHCHOICE
 extract-bsp
 
 make -j`nproc`

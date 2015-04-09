@@ -12,8 +12,12 @@ cp build-bpi.prop ../android/out/target/product/sugar-bpi/system/build.prop
 cp build-lemaker.prop ../android/out/target/product/sugar-lemaker/system/build.prop
 cp -r app/* ../android/out/target/product/sugar-bpi/system/app
 cp -r app/* ../android/out/target/product/sugar-lemaker/system/app
+cp -r preinstall/* ../android/out/target/product/sugar-bpi/system/preinstall
+cp -r preinstall/* ../android/out/target/product/sugar-lemaker/system/preinstall
 cp -r etc/* ../android/out/target/product/sugar-bpi/system/etc
 cp -r etc/* ../android/out/target/product/sugar-lemaker/system/etc
 cp -r lib/* ../android/out/target/product/sugar-bpi/system/lib
 cp -r lib/* ../android/out/target/product/sugar-lemaker/system/lib
+cp -r config/* ../lichee/tools/pack/chips/sun7i/configs/android
+
 exit
