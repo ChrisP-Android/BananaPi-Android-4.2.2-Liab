@@ -1,0 +1,41 @@
+#auto, copy it to /system/xbin
+#Examples for android start commands
+#am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity
+#am start -a android.intent.action.MAIN -n com.android.settings/.Settings
+#am start -a android.intent.action.MAIN -n com.ubicoo.shutdown/.Shutdown
+#am start -a android.intent.action.MAIN -n cx.hoohol.silanoid/.Silanoid
+end()
+{
+#With the app Ausschalten this program can be stopped, during booting android and after shutdown Kodi manually
+sleep $1
+ps | grep -q "com.ubicoo.shutdown"
+if [ $? = 0 ]; then
+killall -9 com.ubicoo.shutdown
+exit
+fi
+return
+}
+main()
+{
+while [ true ]; do
+ps | grep -q org.xbmc.kodi
+if [ $? != 0 ]; then
+end 10
+am start -a android.intent.action.MAIN -n org.xbmc.kodi/.Splash
+fi
+end 30
+done
+return
+}
+echo "########## auto started, but wait for android ##########"
+while [ true ]; do
+ps | grep -q com.google.android.gm
+if [ $? = 0 ]; then
+break
+fi
+sleep 5
+done
+echo "########## auto is active ##########"
+end 20
+main
+exit

@@ -158,8 +158,9 @@ static inline bool sourcesMatchMask(uint32_t sources, uint32_t sourceMask) {
 // button states.  This determines whether the event is reported as a touch event.
 static bool isPointerDown(int32_t buttonState) {
     return buttonState &
-            (AMOTION_EVENT_BUTTON_PRIMARY | AMOTION_EVENT_BUTTON_SECONDARY
-                    | AMOTION_EVENT_BUTTON_TERTIARY);
+            (AMOTION_EVENT_BUTTON_PRIMARY);
+//	    | AMOTION_EVENT_BUTTON_SECONDARY
+//                    | AMOTION_EVENT_BUTTON_TERTIARY);
 }
 
 static float calculateCommonVector(float a, float b) {
@@ -198,6 +199,15 @@ static void synthesizeButtonKeys(InputReaderContext* context, int32_t action,
     synthesizeButtonKey(context, action, when, deviceId, source, policyFlags,
             lastButtonState, currentButtonState,
             AMOTION_EVENT_BUTTON_FORWARD, AKEYCODE_FORWARD);
+    synthesizeButtonKey(context, action, when, deviceId, source, policyFlags,
+            lastButtonState, currentButtonState,
+            AMOTION_EVENT_BUTTON_TERTIARY, AKEYCODE_MENU);
+    synthesizeButtonKey(context, action, when, deviceId, source, policyFlags,
+            lastButtonState, currentButtonState,
+            AMOTION_EVENT_BUTTON_SECONDARY, AKEYCODE_MUTE);
+    synthesizeButtonKey(context, action, when, deviceId, source, policyFlags,
+            lastButtonState, currentButtonState,
+            AMOTION_EVENT_BUTTON_FOURTH, AKEYCODE_HOME);
 }
 
 
@@ -1154,17 +1164,23 @@ uint32_t CursorButtonAccumulator::getButtonState() const {
     if (mBtnLeft) {
         result |= AMOTION_EVENT_BUTTON_PRIMARY;
     }
-    if (mBtnRight) {
-        result |= AMOTION_EVENT_BUTTON_SECONDARY;
-    }
+//    if (mBtnRight) {
+//        result |= AMOTION_EVENT_BUTTON_SECONDARY;
+//    }
     if (mBtnMiddle) {
         result |= AMOTION_EVENT_BUTTON_TERTIARY;
     }
-    if (mBtnBack || mBtnSide) {
+    if (mBtnBack) {
         result |= AMOTION_EVENT_BUTTON_BACK;
     }
-    if (mBtnForward || mBtnExtra) {
+    if (mBtnSide) {
+        result |= AMOTION_EVENT_BUTTON_SECONDARY;
+    }
+    if (mBtnForward) {
         result |= AMOTION_EVENT_BUTTON_FORWARD;
+    }
+    if (mBtnExtra) {
+        result |= AMOTION_EVENT_BUTTON_FOURTH;
     }
     return result;
 }

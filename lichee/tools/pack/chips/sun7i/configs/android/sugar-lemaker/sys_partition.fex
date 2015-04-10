@@ -36,7 +36,7 @@ size = 16384
 ;------------------------------>mmcblk0p2/nanda
 [partition]
     name         = bootloader
-    size	     = 32768
+    size         = 32768
     downloadfile = "bootloader.fex"
 
 ;------------------------------>mmcblk0p5/nandb
@@ -60,9 +60,9 @@ size = 16384
 
 ;------------------------------>mmcblk0p8/nande
 [partition]
-	name         = data
+    name         = data
     size         = 4194304
-	user_type    = 0x1
+    user_type    = 0x1
 
 ;------------------------------>mmcblk0p9/nandf
 [partition]
@@ -80,15 +80,18 @@ size = 16384
     name         = cache
     size         = 655360
     user_type    = 0x1
+
 ;------------------------------>nandi, private partition
 [partition]
     name         = private
     size         = 32768
     keydata      = 1
+
 ;------------------------------>nandj, data image backup
 [partition]
     name         = databk
     size         = 524288
+
 ;------------------------------>nandk, system image backup
 ;[partition]
 ;    name         = sysrecovery

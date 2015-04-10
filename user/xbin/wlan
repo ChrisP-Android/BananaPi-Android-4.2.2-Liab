@@ -1,0 +1,42 @@
+echo "###### Change default WLAN-Chip ######"
+#Dateien libhardware_legacy.so lesen und nummeriert anzeigen
+pfad="/system/lib/libhardware_legacy"
+driv=$(strings /system/lib/libhardware_legacy.so | grep "vendor/modules/" | cut -d "/" -f5 | cut -d "." -f1)
+echo 'Folder of libhardware_legacy.so is: '$pfad
+echo 'Actually used WLAN driver is: '$driv
+i=0
+ls -d "$pfad"/* | while read line
+do
+i=`expr $i + 1`
+lin=$(echo $line | cut -d "/" -f5)
+echo $i $lin
+done
+#Datei libhardware_legacy.so auswählen
+echo "Enter the number of the file: "
+read y
+i=0
+ls -d "$pfad"/* | while read line
+do
+i=`expr $i + 1`
+if [ "$i" = "$y" ] ; then
+mount -o remount,rw,barrier=1 /system
+echo "Make partition sdx7 writable"
+mv system/lib/libhardware_legacy.so system/lib/libhardware_legacy/libhardware_legacy-"$driv".so
+mv $line system/lib/libhardware_legacy.so
+driv1=$(strings /system/lib/libhardware_legacy.so | grep "vendor/modules/" | cut -d "/" -f5 | cut -d "." -f1)
+mount -o remount,ro,barrier=1 /system
+echo "Make partition sdx7 read only"
+echo 'WLAN driver switched from' $driv 'to' $driv1
+echo 'To have an effect, reboot is necessary!'
+echo 'For reboot type y!'
+break
+fi
+done
+driv1=$(strings /system/lib/libhardware_legacy.so | grep "vendor/modules/" | cut -d "/" -f5 | cut -d "." -f1)
+if [ "$driv" != "$driv1" ]; then
+read y
+if [ "$y" = "y" ]; then
+reboot -n
+fi; fi
+echo 'Ready!'
+exit

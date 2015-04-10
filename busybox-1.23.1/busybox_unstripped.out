@@ -1,0 +1,1575 @@
+Output of:
+arm-linux-gnueabi-gcc -Wall -Wshadow -Wwrite-strings -Wundef -Wstrict-prototypes -Wunused -Wunused-parameter -Wunused-function -Wunused-value -Wmissing-prototypes -Wmissing-declarations -Wno-format-security -Wdeclaration-after-statement -Wold-style-definition -fno-builtin-strlen -finline-limit=0 -fomit-frame-pointer -ffunction-sections -fdata-sections -fno-guess-branch-probability -funsigned-char -static-libgcc -falign-functions=1 -falign-jumps=1 -falign-labels=1 -falign-loops=1 -fno-unwind-tables -fno-asynchronous-unwind-tables -Os -static -o busybox_unstripped -Wl,--sort-common -Wl,--sort-section,alignment -Wl,--start-group applets/built-in.o archival/lib.a archival/libarchive/lib.a console-tools/lib.a coreutils/lib.a coreutils/libcoreutils/lib.a debianutils/lib.a e2fsprogs/lib.a editors/lib.a findutils/lib.a init/lib.a libbb/lib.a libpwdgrp/lib.a loginutils/lib.a mailutils/lib.a miscutils/lib.a modutils/lib.a networking/lib.a networking/libiproute/lib.a networking/udhcp/lib.a printutils/lib.a procps/lib.a runit/lib.a selinux/lib.a shell/lib.a sysklogd/lib.a util-linux/lib.a util-linux/volume_id/lib.a archival/built-in.o archival/libarchive/built-in.o console-tools/built-in.o coreutils/built-in.o coreutils/libcoreutils/built-in.o debianutils/built-in.o e2fsprogs/built-in.o editors/built-in.o findutils/built-in.o init/built-in.o libbb/built-in.o libpwdgrp/built-in.o loginutils/built-in.o mailutils/built-in.o miscutils/built-in.o modutils/built-in.o networking/built-in.o networking/libiproute/built-in.o networking/udhcp/built-in.o printutils/built-in.o procps/built-in.o runit/built-in.o selinux/built-in.o shell/built-in.o sysklogd/built-in.o util-linux/built-in.o util-linux/volume_id/built-in.o -Wl,--end-group -Wl,--start-group -lm -Wl,--end-group -Wl,--warn-common -Wl,-Map,busybox_unstripped.map -Wl,--verbose
+==========
+GNU ld (crosstool-NG linaro-1.13.1-2012.02-20120222 - Linaro GCC 2012.02) 2.22
+  Supported emulations:
+   armelf_linux_eabi
+   armelfb_linux_eabi
+using internal linker script:
+==================================================
+/* Script for -z combreloc: combine and sort reloc sections */
+OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm",
+	      "elf32-littlearm")
+OUTPUT_ARCH(arm)
+ENTRY(_start)
+SEARCH_DIR("=/usr/local/lib/arm-linux-gnueabi"); SEARCH_DIR("=/usr/local/lib"); SEARCH_DIR("=/lib/arm-linux-gnueabi"); SEARCH_DIR("=/lib"); SEARCH_DIR("=/usr/lib/arm-linux-gnueabi"); SEARCH_DIR("=/usr/lib");
+SECTIONS
+{
+  /* Read-only sections, merged into text segment: */
+  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x00008000)); . = SEGMENT_START("text-segment", 0x00008000) + SIZEOF_HEADERS;
+  .interp         : { *(.interp) }
+  .note.gnu.build-id : { *(.note.gnu.build-id) }
+  .hash           : { *(.hash) }
+  .gnu.hash       : { *(.gnu.hash) }
+  .dynsym         : { *(.dynsym) }
+  .dynstr         : { *(.dynstr) }
+  .gnu.version    : { *(.gnu.version) }
+  .gnu.version_d  : { *(.gnu.version_d) }
+  .gnu.version_r  : { *(.gnu.version_r) }
+  .rel.dyn        :
+    {
+      *(.rel.init)
+      *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*)
+      *(.rel.fini)
+      *(.rel.rodata .rel.rodata.* .rel.gnu.linkonce.r.*)
+      *(.rel.data.rel.ro* .rel.gnu.linkonce.d.rel.ro.*)
+      *(.rel.data .rel.data.* .rel.gnu.linkonce.d.*)
+      *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*)
+      *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*)
+      *(.rel.ctors)
+      *(.rel.dtors)
+      *(.rel.got)
+      *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*)
+      PROVIDE_HIDDEN (__rel_iplt_start = .);
+      *(.rel.iplt)
+      PROVIDE_HIDDEN (__rel_iplt_end = .);
+      PROVIDE_HIDDEN (__rela_iplt_start = .);
+      PROVIDE_HIDDEN (__rela_iplt_end = .);
+    }
+  .rela.dyn       :
+    {
+      *(.rela.init)
+      *(.rela.text .rela.text.* .rela.gnu.linkonce.t.*)
+      *(.rela.fini)
+      *(.rela.rodata .rela.rodata.* .rela.gnu.linkonce.r.*)
+      *(.rela.data .rela.data.* .rela.gnu.linkonce.d.*)
+      *(.rela.tdata .rela.tdata.* .rela.gnu.linkonce.td.*)
+      *(.rela.tbss .rela.tbss.* .rela.gnu.linkonce.tb.*)
+      *(.rela.ctors)
+      *(.rela.dtors)
+      *(.rela.got)
+      *(.rela.bss .rela.bss.* .rela.gnu.linkonce.b.*)
+      PROVIDE_HIDDEN (__rel_iplt_start = .);
+      PROVIDE_HIDDEN (__rel_iplt_end = .);
+      PROVIDE_HIDDEN (__rela_iplt_start = .);
+      *(.rela.iplt)
+      PROVIDE_HIDDEN (__rela_iplt_end = .);
+    }
+  .rel.plt        :
+    {
+      *(.rel.plt)
+    }
+  .rela.plt       :
+    {
+      *(.rela.plt)
+    }
+  .init           :
+  {
+    KEEP (*(.init))
+  } =0
+  .plt            : { *(.plt) }
+  .iplt           : { *(.iplt) }
+  .text           :
+  {
+    *(.text.unlikely .text.*_unlikely)
+    *(.text.exit .text.exit.*)
+    *(.text.startup .text.startup.*)
+    *(.text.hot .text.hot.*)
+    *(.text .stub .text.* .gnu.linkonce.t.*)
+    /* .gnu.warning sections are handled specially by elf32.em.  */
+    *(.gnu.warning)
+    *(.glue_7t) *(.glue_7) *(.vfp11_veneer) *(.v4_bx)
+  } =0
+  .fini           :
+  {
+    KEEP (*(.fini))
+  } =0
+  PROVIDE (__etext = .);
+  PROVIDE (_etext = .);
+  PROVIDE (etext = .);
+  .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
+  .rodata1        : { *(.rodata1) }
+  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) }
+   PROVIDE_HIDDEN (__exidx_start = .);
+  .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) }
+   PROVIDE_HIDDEN (__exidx_end = .);
+  .eh_frame_hdr : { *(.eh_frame_hdr) }
+  .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) }
+  .gcc_except_table   : ONLY_IF_RO { *(.gcc_except_table
+  .gcc_except_table.*) }
+  /* These sections are generated by the Sun/Oracle C++ compiler.  */
+  .exception_ranges   : ONLY_IF_RO { *(.exception_ranges
+  .exception_ranges*) }
+  /* Adjust the address for the data segment.  We want to adjust up to
+     the same address within the page on the next page up.  */
+  . = ALIGN (CONSTANT (MAXPAGESIZE)) - ((CONSTANT (MAXPAGESIZE) - .) & (CONSTANT (MAXPAGESIZE) - 1)); . = DATA_SEGMENT_ALIGN (CONSTANT (MAXPAGESIZE), CONSTANT (COMMONPAGESIZE));
+  /* Exception handling  */
+  .eh_frame       : ONLY_IF_RW { KEEP (*(.eh_frame)) }
+  .gcc_except_table   : ONLY_IF_RW { *(.gcc_except_table .gcc_except_table.*) }
+  .exception_ranges   : ONLY_IF_RW { *(.exception_ranges .exception_ranges*) }
+  /* Thread Local Storage sections  */
+  .tdata	  : { *(.tdata .tdata.* .gnu.linkonce.td.*) }
+  .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) }
+  .preinit_array     :
+  {
+    PROVIDE_HIDDEN (__preinit_array_start = .);
+    KEEP (*(.preinit_array))
+    PROVIDE_HIDDEN (__preinit_array_end = .);
+  }
+  .init_array     :
+  {
+    PROVIDE_HIDDEN (__init_array_start = .);
+    KEEP (*(SORT(.init_array.*)))
+    KEEP (*(.init_array))
+    PROVIDE_HIDDEN (__init_array_end = .);
+  }
+  .fini_array     :
+  {
+    PROVIDE_HIDDEN (__fini_array_start = .);
+    KEEP (*(SORT(.fini_array.*)))
+    KEEP (*(.fini_array))
+    PROVIDE_HIDDEN (__fini_array_end = .);
+  }
+  .ctors          :
+  {
+    /* gcc uses crtbegin.o to find the start of
+       the constructors, so we make sure it is
+       first.  Because this is a wildcard, it
+       doesn't matter if the user does not
+       actually link against crtbegin.o; the
+       linker won't look for a file to match a
+       wildcard.  The wildcard also means that it
+       doesn't matter which directory crtbegin.o
+       is in.  */
+    KEEP (*crtbegin.o(.ctors))
+    KEEP (*crtbegin?.o(.ctors))
+    /* We don't want to include the .ctor section from
+       the crtend.o file until after the sorted ctors.
+       The .ctor section from the crtend file contains the
+       end of ctors marker and it must be last */
+    KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
+    KEEP (*(SORT(.ctors.*)))
+    KEEP (*(.ctors))
+  }
+  .dtors          :
+  {
+    KEEP (*crtbegin.o(.dtors))
+    KEEP (*crtbegin?.o(.dtors))
+    KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
+    KEEP (*(SORT(.dtors.*)))
+    KEEP (*(.dtors))
+  }
+  .jcr            : { KEEP (*(.jcr)) }
+  .data.rel.ro : { *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*) *(.data.rel.ro* .gnu.linkonce.d.rel.ro.*) }
+  .dynamic        : { *(.dynamic) }
+  . = DATA_SEGMENT_RELRO_END (0, .);
+  .got            : { *(.got.plt) *(.igot.plt) *(.got) *(.igot) }
+  .data           :
+  {
+    PROVIDE (__data_start = .);
+    *(.data .data.* .gnu.linkonce.d.*)
+    SORT(CONSTRUCTORS)
+  }
+  .data1          : { *(.data1) }
+  _edata = .; PROVIDE (edata = .);
+  __bss_start = .;
+  __bss_start__ = .;
+  .bss            :
+  {
+   *(.dynbss)
+   *(.bss .bss.* .gnu.linkonce.b.*)
+   *(COMMON)
+   /* Align here to ensure that the .bss section occupies space up to
+      _end.  Align after .bss to ensure correct alignment even if the
+      .bss section disappears because there are no input sections.
+      FIXME: Why do we need it? When there is no .bss section, we don't
+      pad the .data section.  */
+   . = ALIGN(. != 0 ? 32 / 8 : 1);
+  }
+  _bss_end__ = . ; __bss_end__ = . ;
+  . = ALIGN(32 / 8);
+  . = ALIGN(32 / 8);
+  __end__ = . ;
+  _end = .; PROVIDE (end = .);
+  . = DATA_SEGMENT_END (.);
+  /* Stabs debugging sections.  */
+  .stab          0 : { *(.stab) }
+  .stabstr       0 : { *(.stabstr) }
+  .stab.excl     0 : { *(.stab.excl) }
+  .stab.exclstr  0 : { *(.stab.exclstr) }
+  .stab.index    0 : { *(.stab.index) }
+  .stab.indexstr 0 : { *(.stab.indexstr) }
+  .comment       0 : { *(.comment) }
+  /* DWARF debug sections.
+     Symbols in the DWARF debugging sections are relative to the beginning
+     of the section so we begin them at 0.  */
+  /* DWARF 1 */
+  .debug          0 : { *(.debug) }
+  .line           0 : { *(.line) }
+  /* GNU DWARF 1 extensions */
+  .debug_srcinfo  0 : { *(.debug_srcinfo) }
+  .debug_sfnames  0 : { *(.debug_sfnames) }
+  /* DWARF 1.1 and DWARF 2 */
+  .debug_aranges  0 : { *(.debug_aranges) }
+  .debug_pubnames 0 : { *(.debug_pubnames) }
+  /* DWARF 2 */
+  .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
+  .debug_abbrev   0 : { *(.debug_abbrev) }
+  .debug_line     0 : { *(.debug_line) }
+  .debug_frame    0 : { *(.debug_frame) }
+  .debug_str      0 : { *(.debug_str) }
+  .debug_loc      0 : { *(.debug_loc) }
+  .debug_macinfo  0 : { *(.debug_macinfo) }
+  /* SGI/MIPS DWARF 2 extensions */
+  .debug_weaknames 0 : { *(.debug_weaknames) }
+  .debug_funcnames 0 : { *(.debug_funcnames) }
+  .debug_typenames 0 : { *(.debug_typenames) }
+  .debug_varnames  0 : { *(.debug_varnames) }
+  /* DWARF 3 */
+  .debug_pubtypes 0 : { *(.debug_pubtypes) }
+  .debug_ranges   0 : { *(.debug_ranges) }
+  .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
+  .note.gnu.arm.ident 0 : { KEEP (*(.note.gnu.arm.ident)) }
+  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) }
+}
+
+
+==================================================
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/crt1.o succeeded
+/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/crt1.o
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/crti.o succeeded
+/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/crti.o
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/crtbeginT.o succeeded
+/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/crtbeginT.o
+attempt to open applets/built-in.o succeeded
+applets/built-in.o
+attempt to open archival/lib.a succeeded
+attempt to open archival/libarchive/lib.a succeeded
+attempt to open console-tools/lib.a succeeded
+attempt to open coreutils/lib.a succeeded
+attempt to open coreutils/libcoreutils/lib.a succeeded
+attempt to open debianutils/lib.a succeeded
+attempt to open e2fsprogs/lib.a succeeded
+attempt to open editors/lib.a succeeded
+attempt to open findutils/lib.a succeeded
+attempt to open init/lib.a succeeded
+attempt to open libbb/lib.a succeeded
+(libbb/lib.a)appletlib.o
+(libbb/lib.a)concat_path_file.o
+(libbb/lib.a)default_error_retval.o
+(libbb/lib.a)get_last_path_component.o
+(libbb/lib.a)last_char_is.o
+(libbb/lib.a)llist.o
+(libbb/lib.a)messages.o
+(libbb/lib.a)perror_msg.o
+(libbb/lib.a)ptr_to_globals.o
+(libbb/lib.a)skip_whitespace.o
+(libbb/lib.a)verror_msg.o
+(libbb/lib.a)wfopen.o
+(libbb/lib.a)xfunc_die.o
+(libbb/lib.a)xfuncs.o
+(libbb/lib.a)xfuncs_printf.o
+(libbb/lib.a)xreadlink.o
+(libbb/lib.a)copyfd.o
+(libbb/lib.a)full_write.o
+(libbb/lib.a)read.o
+(libbb/lib.a)safe_write.o
+(libbb/lib.a)time.o
+(libbb/lib.a)bb_strtonum.o
+attempt to open libpwdgrp/lib.a succeeded
+(libpwdgrp/lib.a)pwd_grp.o
+(libpwdgrp/lib.a)uidgid_get.o
+attempt to open loginutils/lib.a succeeded
+(loginutils/lib.a)add-remove-shell.o
+(loginutils/lib.a)addgroup.o
+(loginutils/lib.a)adduser.o
+(loginutils/lib.a)chpasswd.o
+(loginutils/lib.a)cryptpw.o
+(loginutils/lib.a)deluser.o
+(loginutils/lib.a)getty.o
+(loginutils/lib.a)login.o
+(loginutils/lib.a)passwd.o
+(loginutils/lib.a)su.o
+(loginutils/lib.a)sulogin.o
+(loginutils/lib.a)vlock.o
+attempt to open mailutils/lib.a succeeded
+(mailutils/lib.a)makemime.o
+(mailutils/lib.a)popmaildir.o
+(mailutils/lib.a)reformime.o
+(mailutils/lib.a)sendmail.o
+(mailutils/lib.a)mail.o
+attempt to open miscutils/lib.a succeeded
+(miscutils/lib.a)adjtimex.o
+(miscutils/lib.a)beep.o
+(miscutils/lib.a)chat.o
+(miscutils/lib.a)chrt.o
+(miscutils/lib.a)conspy.o
+(miscutils/lib.a)crond.o
+(miscutils/lib.a)crontab.o
+(miscutils/lib.a)dc.o
+(miscutils/lib.a)devmem.o
+(miscutils/lib.a)eject.o
+(miscutils/lib.a)fbsplash.o
+(miscutils/lib.a)hdparm.o
+(miscutils/lib.a)ionice.o
+(miscutils/lib.a)last_fancy.o
+(miscutils/lib.a)less.o
+(miscutils/lib.a)makedevs.o
+(miscutils/lib.a)man.o
+(miscutils/lib.a)microcom.o
+(miscutils/lib.a)mountpoint.o
+(miscutils/lib.a)mt.o
+(miscutils/lib.a)nandwrite.o
+(miscutils/lib.a)raidautorun.o
+(miscutils/lib.a)readahead.o
+(miscutils/lib.a)runlevel.o
+(miscutils/lib.a)rx.o
+(miscutils/lib.a)setserial.o
+(miscutils/lib.a)setsid.o
+(miscutils/lib.a)strings.o
+(miscutils/lib.a)time.o
+(miscutils/lib.a)timeout.o
+(miscutils/lib.a)ttysize.o
+(miscutils/lib.a)ubi_tools.o
+(miscutils/lib.a)volname.o
+(miscutils/lib.a)wall.o
+(miscutils/lib.a)watchdog.o
+attempt to open modutils/lib.a succeeded
+(modutils/lib.a)modinfo.o
+(modutils/lib.a)modprobe-small.o
+(modutils/lib.a)modutils.o
+attempt to open networking/lib.a succeeded
+(networking/lib.a)arp.o
+(networking/lib.a)arping.o
+(networking/lib.a)brctl.o
+(networking/lib.a)dnsd.o
+(networking/lib.a)ether-wake.o
+(networking/lib.a)ftpd.o
+(networking/lib.a)ftpgetput.o
+(networking/lib.a)hostname.o
+(networking/lib.a)httpd.o
+(networking/lib.a)ifconfig.o
+(networking/lib.a)ifenslave.o
+(networking/lib.a)ifplugd.o
+(networking/lib.a)ifupdown.o
+(networking/lib.a)inetd.o
+(networking/lib.a)interface.o
+(networking/lib.a)ip.o
+(networking/lib.a)ipcalc.o
+(networking/lib.a)isrv_identd.o
+(networking/lib.a)nameif.o
+(networking/lib.a)nbd-client.o
+(networking/lib.a)nc.o
+(networking/lib.a)netstat.o
+(networking/lib.a)nslookup.o
+(networking/lib.a)ntpd.o
+(networking/lib.a)ping.o
+(networking/lib.a)pscan.o
+(networking/lib.a)route.o
+(networking/lib.a)slattach.o
+(networking/lib.a)tcpudp.o
+(networking/lib.a)tcpudp_perhost.o
+(networking/lib.a)telnet.o
+(networking/lib.a)telnetd.o
+(networking/lib.a)tftp.o
+(networking/lib.a)traceroute.o
+(networking/lib.a)tunctl.o
+(networking/lib.a)vconfig.o
+(networking/lib.a)wget.o
+(networking/lib.a)whois.o
+(networking/lib.a)zcip.o
+(networking/lib.a)isrv.o
+attempt to open networking/libiproute/lib.a succeeded
+(networking/libiproute/lib.a)ip_parse_common_args.o
+(networking/libiproute/lib.a)ipaddress.o
+(networking/libiproute/lib.a)iplink.o
+(networking/libiproute/lib.a)iproute.o
+(networking/libiproute/lib.a)iprule.o
+(networking/libiproute/lib.a)iptunnel.o
+(networking/libiproute/lib.a)libnetlink.o
+(networking/libiproute/lib.a)ll_addr.o
+(networking/libiproute/lib.a)ll_map.o
+(networking/libiproute/lib.a)ll_types.o
+(networking/libiproute/lib.a)rt_names.o
+(networking/libiproute/lib.a)rtm_map.o
+(networking/libiproute/lib.a)utils.o
+attempt to open networking/udhcp/lib.a succeeded
+(networking/udhcp/lib.a)dhcpc.o
+(networking/udhcp/lib.a)dhcpd.o
+(networking/udhcp/lib.a)dhcprelay.o
+(networking/udhcp/lib.a)domain_codec.o
+(networking/udhcp/lib.a)dumpleases.o
+(networking/udhcp/lib.a)files.o
+(networking/udhcp/lib.a)leases.o
+(networking/udhcp/lib.a)packet.o
+(networking/udhcp/lib.a)signalpipe.o
+(networking/udhcp/lib.a)socket.o
+(networking/udhcp/lib.a)static_leases.o
+(networking/udhcp/lib.a)arpping.o
+(networking/udhcp/lib.a)common.o
+attempt to open printutils/lib.a succeeded
+(printutils/lib.a)lpd.o
+(printutils/lib.a)lpr.o
+attempt to open procps/lib.a succeeded
+(procps/lib.a)free.o
+(procps/lib.a)fuser.o
+(procps/lib.a)iostat.o
+(procps/lib.a)kill.o
+(procps/lib.a)lsof.o
+(procps/lib.a)mpstat.o
+(procps/lib.a)nmeter.o
+(procps/lib.a)pgrep.o
+(procps/lib.a)pidof.o
+(procps/lib.a)pmap.o
+(procps/lib.a)powertop.o
+(procps/lib.a)ps.o
+(procps/lib.a)pstree.o
+(procps/lib.a)pwdx.o
+(procps/lib.a)renice.o
+(procps/lib.a)smemcap.o
+(procps/lib.a)sysctl.o
+(procps/lib.a)top.o
+(procps/lib.a)uptime.o
+(procps/lib.a)watch.o
+attempt to open runit/lib.a succeeded
+(runit/lib.a)chpst.o
+(runit/lib.a)runsv.o
+(runit/lib.a)runsvdir.o
+(runit/lib.a)sv.o
+(runit/lib.a)svlogd.o
+attempt to open selinux/lib.a succeeded
+attempt to open shell/lib.a succeeded
+(shell/lib.a)ash.o
+(shell/lib.a)ash_ptr_hack.o
+(shell/lib.a)cttyhack.o
+(shell/lib.a)hush.o
+(shell/lib.a)match.o
+(shell/lib.a)math.o
+(shell/lib.a)random.o
+(shell/lib.a)shell_common.o
+attempt to open sysklogd/lib.a succeeded
+(sysklogd/lib.a)klogd.o
+(sysklogd/lib.a)logread.o
+(sysklogd/lib.a)syslogd_and_logger.o
+attempt to open util-linux/lib.a succeeded
+(util-linux/lib.a)acpid.o
+(util-linux/lib.a)blkid.o
+(util-linux/lib.a)blockdev.o
+(util-linux/lib.a)dmesg.o
+(util-linux/lib.a)fatattr.o
+(util-linux/lib.a)fbset.o
+(util-linux/lib.a)fdformat.o
+(util-linux/lib.a)fdisk.o
+(util-linux/lib.a)findfs.o
+(util-linux/lib.a)flock.o
+(util-linux/lib.a)freeramdisk.o
+(util-linux/lib.a)fsck_minix.o
+(util-linux/lib.a)fstrim.o
+(util-linux/lib.a)getopt.o
+(util-linux/lib.a)hexdump.o
+(util-linux/lib.a)hwclock.o
+(util-linux/lib.a)ipcrm.o
+(util-linux/lib.a)ipcs.o
+(util-linux/lib.a)losetup.o
+(util-linux/lib.a)lspci.o
+(util-linux/lib.a)lsusb.o
+(util-linux/lib.a)mdev.o
+(util-linux/lib.a)mkfs_ext2.o
+(util-linux/lib.a)mkfs_minix.o
+(util-linux/lib.a)mkfs_vfat.o
+(util-linux/lib.a)mkswap.o
+(util-linux/lib.a)more.o
+(util-linux/lib.a)mount.o
+(util-linux/lib.a)pivot_root.o
+(util-linux/lib.a)rdate.o
+(util-linux/lib.a)rdev.o
+(util-linux/lib.a)readprofile.o
+(util-linux/lib.a)rev.o
+(util-linux/lib.a)rtcwake.o
+(util-linux/lib.a)script.o
+(util-linux/lib.a)scriptreplay.o
+(util-linux/lib.a)setarch.o
+(util-linux/lib.a)swaponoff.o
+(util-linux/lib.a)switch_root.o
+(util-linux/lib.a)umount.o
+attempt to open util-linux/volume_id/lib.a succeeded
+(util-linux/volume_id/lib.a)get_devname.o
+(util-linux/volume_id/lib.a)volume_id.o
+(util-linux/volume_id/lib.a)xfs.o
+(util-linux/volume_id/lib.a)btrfs.o
+(util-linux/volume_id/lib.a)cramfs.o
+(util-linux/volume_id/lib.a)exfat.o
+(util-linux/volume_id/lib.a)ext.o
+(util-linux/volume_id/lib.a)f2fs.o
+(util-linux/volume_id/lib.a)fat.o
+(util-linux/volume_id/lib.a)hfs.o
+(util-linux/volume_id/lib.a)iso9660.o
+(util-linux/volume_id/lib.a)jfs.o
+(util-linux/volume_id/lib.a)linux_raid.o
+(util-linux/volume_id/lib.a)linux_swap.o
+(util-linux/volume_id/lib.a)luks.o
+(util-linux/volume_id/lib.a)nilfs.o
+(util-linux/volume_id/lib.a)ntfs.o
+(util-linux/volume_id/lib.a)ocfs2.o
+(util-linux/volume_id/lib.a)reiserfs.o
+(util-linux/volume_id/lib.a)romfs.o
+(util-linux/volume_id/lib.a)sysv.o
+(util-linux/volume_id/lib.a)udf.o
+(util-linux/volume_id/lib.a)util.o
+attempt to open archival/built-in.o succeeded
+attempt to open archival/libarchive/built-in.o succeeded
+attempt to open console-tools/built-in.o succeeded
+attempt to open coreutils/built-in.o succeeded
+attempt to open coreutils/libcoreutils/built-in.o succeeded
+attempt to open debianutils/built-in.o succeeded
+attempt to open e2fsprogs/built-in.o succeeded
+attempt to open editors/built-in.o succeeded
+attempt to open findutils/built-in.o succeeded
+attempt to open init/built-in.o succeeded
+attempt to open libbb/built-in.o succeeded
+attempt to open libpwdgrp/built-in.o succeeded
+attempt to open loginutils/built-in.o succeeded
+attempt to open mailutils/built-in.o succeeded
+attempt to open miscutils/built-in.o succeeded
+attempt to open modutils/built-in.o succeeded
+attempt to open networking/built-in.o succeeded
+attempt to open networking/libiproute/built-in.o succeeded
+attempt to open networking/udhcp/built-in.o succeeded
+attempt to open printutils/built-in.o succeeded
+attempt to open procps/built-in.o succeeded
+attempt to open runit/built-in.o succeeded
+attempt to open selinux/built-in.o succeeded
+attempt to open shell/built-in.o succeeded
+attempt to open sysklogd/built-in.o succeeded
+attempt to open util-linux/built-in.o succeeded
+attempt to open util-linux/volume_id/built-in.o succeeded
+(archival/lib.a)bbunzip.o
+(archival/lib.a)bzip2.o
+(archival/lib.a)cpio.o
+(archival/lib.a)gzip.o
+(archival/lib.a)lzop.o
+(archival/lib.a)rpm.o
+(archival/lib.a)rpm2cpio.o
+(archival/lib.a)tar.o
+(archival/lib.a)unzip.o
+(archival/libarchive/lib.a)data_extract_all.o
+(archival/libarchive/lib.a)data_extract_to_command.o
+(archival/libarchive/lib.a)data_extract_to_stdout.o
+(archival/libarchive/lib.a)data_skip.o
+(archival/libarchive/lib.a)decompress_bunzip2.o
+(archival/libarchive/lib.a)decompress_gunzip.o
+(archival/libarchive/lib.a)decompress_unlzma.o
+(archival/libarchive/lib.a)decompress_unxz.o
+(archival/libarchive/lib.a)filter_accept_list.o
+(archival/libarchive/lib.a)filter_accept_reject_list.o
+(archival/libarchive/lib.a)find_list_entry.o
+(archival/libarchive/lib.a)get_header_cpio.o
+(archival/libarchive/lib.a)get_header_tar.o
+(archival/libarchive/lib.a)header_list.o
+(archival/libarchive/lib.a)header_verbose_list.o
+(archival/libarchive/lib.a)init_handle.o
+(archival/libarchive/lib.a)lzo1x_1.o
+(archival/libarchive/lib.a)lzo1x_1o.o
+(archival/libarchive/lib.a)lzo1x_d.o
+(archival/libarchive/lib.a)open_transformer.o
+(archival/libarchive/lib.a)seek_by_jump.o
+(archival/libarchive/lib.a)seek_by_read.o
+(archival/libarchive/lib.a)data_align.o
+(archival/libarchive/lib.a)filter_accept_all.o
+(archival/libarchive/lib.a)header_skip.o
+(console-tools/lib.a)chvt.o
+(console-tools/lib.a)clear.o
+(console-tools/lib.a)deallocvt.o
+(console-tools/lib.a)dumpkmap.o
+(console-tools/lib.a)fgconsole.o
+(console-tools/lib.a)kbd_mode.o
+(console-tools/lib.a)loadfont.o
+(console-tools/lib.a)loadkmap.o
+(console-tools/lib.a)openvt.o
+(console-tools/lib.a)reset.o
+(console-tools/lib.a)resize.o
+(console-tools/lib.a)setconsole.o
+(console-tools/lib.a)setkeycodes.o
+(console-tools/lib.a)setlogcons.o
+(console-tools/lib.a)showkey.o
+(coreutils/lib.a)basename.o
+(coreutils/lib.a)cal.o
+(coreutils/lib.a)cat.o
+(coreutils/lib.a)catv.o
+(coreutils/lib.a)chgrp.o
+(coreutils/lib.a)chmod.o
+(coreutils/lib.a)chown.o
+(coreutils/lib.a)chroot.o
+(coreutils/lib.a)cksum.o
+(coreutils/lib.a)comm.o
+(coreutils/lib.a)cp.o
+(coreutils/lib.a)cut.o
+(coreutils/lib.a)date.o
+(coreutils/lib.a)dd.o
+(coreutils/lib.a)df.o
+(coreutils/lib.a)dirname.o
+(coreutils/lib.a)dos2unix.o
+(coreutils/lib.a)du.o
+(coreutils/lib.a)echo.o
+(coreutils/lib.a)env.o
+(coreutils/lib.a)expand.o
+(coreutils/lib.a)expr.o
+(coreutils/lib.a)false.o
+(coreutils/lib.a)fold.o
+(coreutils/lib.a)fsync.o
+(coreutils/lib.a)head.o
+(coreutils/lib.a)hostid.o
+(coreutils/lib.a)id.o
+(coreutils/lib.a)install.o
+(coreutils/lib.a)ln.o
+(coreutils/lib.a)logname.o
+(coreutils/lib.a)ls.o
+(coreutils/lib.a)md5_sha1_sum.o
+(coreutils/lib.a)mkdir.o
+(coreutils/lib.a)mkfifo.o
+(coreutils/lib.a)mknod.o
+(coreutils/lib.a)mv.o
+(coreutils/lib.a)nice.o
+(coreutils/lib.a)nohup.o
+(coreutils/lib.a)od.o
+(coreutils/lib.a)printenv.o
+(coreutils/lib.a)printf.o
+(coreutils/lib.a)pwd.o
+(coreutils/lib.a)readlink.o
+(coreutils/lib.a)realpath.o
+(coreutils/lib.a)rm.o
+(coreutils/lib.a)rmdir.o
+(coreutils/lib.a)seq.o
+(coreutils/lib.a)shuf.o
+(coreutils/lib.a)sleep.o
+(coreutils/lib.a)sort.o
+(coreutils/lib.a)split.o
+(coreutils/lib.a)stat.o
+(coreutils/lib.a)stty.o
+(coreutils/lib.a)sum.o
+(coreutils/lib.a)sync.o
+(coreutils/lib.a)tac.o
+(coreutils/lib.a)tail.o
+(coreutils/lib.a)tee.o
+(coreutils/lib.a)test.o
+(coreutils/lib.a)test_ptr_hack.o
+(coreutils/lib.a)touch.o
+(coreutils/lib.a)tr.o
+(coreutils/lib.a)true.o
+(coreutils/lib.a)tty.o
+(coreutils/lib.a)uname.o
+(coreutils/lib.a)uniq.o
+(coreutils/lib.a)unlink.o
+(coreutils/lib.a)usleep.o
+(coreutils/lib.a)uudecode.o
+(coreutils/lib.a)uuencode.o
+(coreutils/lib.a)wc.o
+(coreutils/lib.a)who.o
+(coreutils/lib.a)whoami.o
+(coreutils/lib.a)yes.o
+(coreutils/libcoreutils/lib.a)cp_mv_stat.o
+(coreutils/libcoreutils/lib.a)getopt_mk_fifo_nod.o
+(debianutils/lib.a)mktemp.o
+(debianutils/lib.a)pipe_progress.o
+(debianutils/lib.a)run_parts.o
+(debianutils/lib.a)start_stop_daemon.o
+(debianutils/lib.a)which.o
+(e2fsprogs/lib.a)chattr.o
+(e2fsprogs/lib.a)e2fs_lib.o
+(e2fsprogs/lib.a)fsck.o
+(e2fsprogs/lib.a)lsattr.o
+(editors/lib.a)awk.o
+(editors/lib.a)cmp.o
+(editors/lib.a)diff.o
+(editors/lib.a)ed.o
+(editors/lib.a)patch.o
+(editors/lib.a)sed.o
+(editors/lib.a)vi.o
+(findutils/lib.a)find.o
+(findutils/lib.a)grep.o
+(findutils/lib.a)xargs.o
+(init/lib.a)bootchartd.o
+(init/lib.a)halt.o
+(init/lib.a)init.o
+(init/lib.a)mesg.o
+(libbb/lib.a)ask_confirmation.o
+(libbb/lib.a)bb_askpass.o
+(libbb/lib.a)bb_bswap_64.o
+(libbb/lib.a)bb_do_delay.o
+(libbb/lib.a)bb_pwd.o
+(libbb/lib.a)bb_qsort.o
+(libbb/lib.a)change_identity.o
+(libbb/lib.a)chomp.o
+(libbb/lib.a)compare_string_array.o
+(libbb/lib.a)concat_subpath_file.o
+(libbb/lib.a)copy_file.o
+(libbb/lib.a)correct_password.o
+(libbb/lib.a)crc32.o
+(libbb/lib.a)device_open.o
+(libbb/lib.a)dump.o
+(libbb/lib.a)endofname.o
+(libbb/lib.a)executable.o
+(libbb/lib.a)fclose_nonstdin.o
+(libbb/lib.a)fflush_stdout_and_exit.o
+(libbb/lib.a)fgets_str.o
+(libbb/lib.a)find_mount_point.o
+(libbb/lib.a)find_pid_by_name.o
+(libbb/lib.a)find_root_device.o
+(libbb/lib.a)get_console.o
+(libbb/lib.a)get_cpu_count.o
+(libbb/lib.a)get_line_from_file.o
+(libbb/lib.a)get_shell_name.o
+(libbb/lib.a)get_volsize.o
+(libbb/lib.a)getopt32.o
+(libbb/lib.a)getpty.o
+(libbb/lib.a)hash_md5_sha.o
+(libbb/lib.a)herror_msg.o
+(libbb/lib.a)human_readable.o
+(libbb/lib.a)in_ether.o
+(libbb/lib.a)inet_cksum.o
+(libbb/lib.a)inet_common.o
+(libbb/lib.a)info_msg.o
+(libbb/lib.a)inode_hash.o
+(libbb/lib.a)isdirectory.o
+(libbb/lib.a)kernel_version.o
+(libbb/lib.a)lineedit.o
+(libbb/lib.a)lineedit_ptr_hack.o
+(libbb/lib.a)logenv.o
+(libbb/lib.a)login.o
+(libbb/lib.a)loop.o
+(libbb/lib.a)make_directory.o
+(libbb/lib.a)makedev.o
+(libbb/lib.a)match_fstype.o
+(libbb/lib.a)mode_string.o
+(libbb/lib.a)nuke_str.o
+(libbb/lib.a)obscure.o
+(libbb/lib.a)parse_config.o
+(libbb/lib.a)parse_mode.o
+(libbb/lib.a)percent_decode.o
+(libbb/lib.a)perror_nomsg_and_die.o
+(libbb/lib.a)pidfile.o
+(libbb/lib.a)print_flags.o
+(libbb/lib.a)printable.o
+(libbb/lib.a)printable_string.o
+(libbb/lib.a)process_escape_sequence.o
+(libbb/lib.a)procps.o
+(libbb/lib.a)progress.o
+(libbb/lib.a)pw_encrypt.o
+(libbb/lib.a)read_key.o
+(libbb/lib.a)read_printf.o
+(libbb/lib.a)recursive_action.o
+(libbb/lib.a)remove_file.o
+(libbb/lib.a)replace.o
+(libbb/lib.a)rtc.o
+(libbb/lib.a)run_shell.o
+(libbb/lib.a)safe_gethostname.o
+(libbb/lib.a)safe_poll.o
+(libbb/lib.a)safe_strncpy.o
+(libbb/lib.a)setup_environment.o
+(libbb/lib.a)signals.o
+(libbb/lib.a)simplify_path.o
+(libbb/lib.a)single_argv.o
+(libbb/lib.a)speed_table.o
+(libbb/lib.a)str_tolower.o
+(libbb/lib.a)strrstr.o
+(libbb/lib.a)sysconf.o
+(libbb/lib.a)systemd_support.o
+(libbb/lib.a)trim.o
+(libbb/lib.a)u_signal_names.o
+(libbb/lib.a)udp_io.o
+(libbb/lib.a)unicode.o
+(libbb/lib.a)update_passwd.o
+(libbb/lib.a)utmp.o
+(libbb/lib.a)uuencode.o
+(libbb/lib.a)vfork_daemon_rexec.o
+(libbb/lib.a)warn_ignoring_args.o
+(libbb/lib.a)wfopen_input.o
+(libbb/lib.a)write.o
+(libbb/lib.a)xatonum.o
+(libbb/lib.a)xconnect.o
+(libbb/lib.a)xgetcwd.o
+(libbb/lib.a)xgethostbyname.o
+(libbb/lib.a)xrealloc_vector.o
+(libbb/lib.a)xregcomp.o
+(libbb/lib.a)perror_nomsg.o
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libm.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/libm.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/libm.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/../../../../arm-linux-gnueabi/lib/libm.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/lib/arm-linux-gnueabi/libm.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/lib/libm.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a succeeded
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)s_sin.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)w_atan2.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)w_exp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)w_log.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)w_pow.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)w_sqrt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)m_isnan.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)m_finite.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)m_signbit.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)branred.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)dosincos.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)sincos32.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)k_standard.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)s_lib_version.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)s_matherr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)e_atan2.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)e_exp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)e_log.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)e_pow.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)e_sqrt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)s_rint.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)mpa.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)mpatan2.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)mpatan.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)mplog.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)mpsqrt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)slowexp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)slowpow.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)halfulp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libm.a)mpexp.o
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a succeeded
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_udivsi3.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_divsi3.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_lshrdi3.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_ashrdi3.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_ashldi3.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_arm_addsubdf3.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_aeabi_ldivmod.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_aeabi_uldivmod.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_dvmd_lnx.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_fixdfdi.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_fixunsdfdi.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)bpabi.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_divdi3.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc.a)_udivdi3.o
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc_eh.a succeeded
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc_eh.a)unwind-arm.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc_eh.a)libunwind.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc_eh.a)pr-support.o
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libc.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/libc.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/libc.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/../../../../arm-linux-gnueabi/lib/libc.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/lib/arm-linux-gnueabi/libc.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/lib/libc.a failed
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a succeeded
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)libc-start.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)check_fds.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)libc-tls.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)elf-init.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)errno.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)libc-do-syscall.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)errno-loc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)assert.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dcgettext.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dcigettext.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)finddomain.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)loadmsgcat.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)localealias.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)l10nflist.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)explodename.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)plural.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)plural-exp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)hash-string.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setjmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigjmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)bsd-_setjmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)longjmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)__longjmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)jmp-unwind.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)signal.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)raise.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)killpg.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigaction.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigprocmask.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)kill.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigsuspend.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigempty.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigfillset.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigaddset.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigdelset.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigismem.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigisempty.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigtimedwait.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sigrestorer.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)atof.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)atoi.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)abort.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)bsearch.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)msort.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getenv.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)putenv.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setenv.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)exit.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)atexit.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)cxa_atexit.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)div.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)random.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)random_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)rand.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtol.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtoul.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtoll.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtoull.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtol_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtoul_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtoll_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtoull_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtod.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtod_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)system.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)canonicalize.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)grouping.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tens_in_limb.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fpioconst.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)vfprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)vprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)printf_fp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)reg-printf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)printf_fphex.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)reg-modifier.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)reg-type.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)printf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)snprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)asprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fscanf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)scanf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sscanf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getline.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)rename.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)funlockfile.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)printf-parsemb.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fxprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofclose.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofdopen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofflush.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofopen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofputs.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofread.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofwrite.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iogetdelim.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iopadn.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iopopen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ioputs.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iosetvbuf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ioungetc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iovsprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iovsscanf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofopen64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)putchar.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)putchar_u.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)clearerr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)feof.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ferror.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fileno.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fputc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)pclose.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)rewind.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setbuf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setlinebuf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)vasprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iovdprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)vsnprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fcloseall.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)freopen64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fseeko64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ftello64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)libc_fatal.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getc_u.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getchar_u.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)putc_u.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofgets_u.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofputs_u.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iowpadn.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wgenops.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wfileops.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fileops.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)genops.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)stdfiles.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)stdio.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strops.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)malloc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)morecore.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strcat.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strchr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strcmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strcpy.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strcspn.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strverscmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strdup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strerror.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)_strerror.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strlen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strnlen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strncmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strncpy.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strrchr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strpbrk.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strsignal.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strspn.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strstr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtok.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtok_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)memchr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)memcmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)memmove.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)memset.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mempcpy.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)stpcpy.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strcasecmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strncase.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strncase_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)memcpy.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wordcopy.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strsep.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strcasestr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)rawmemchr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strchrnul.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)argz-count.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)argz-stringify.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)memrchr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wmemcpy.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wmemset.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wmemmove.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wmempcpy.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcrtomb.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcsrtombs.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mbsnrtowcs.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcsnlen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcsmbsload.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ctime.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gmtime.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)localtime.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mktime.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)time.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gettimeofday.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)settimeofday.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tzset.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tzfile.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)stime.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strptime.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strptime_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strftime.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strftime_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)alt_digit.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)era.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lc-time-cleanup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)opendir.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)closedir.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)readdir64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setgroups.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)uname.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)times.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wait.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)waitpid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wait3.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wait4.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)alarm.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sleep.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)pause.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)nanosleep.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fork.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)vfork.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)_exit.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)execve.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)execv.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)execle.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)execl.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)execvp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)execlp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)execvpe.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getpid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getppid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getuid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)geteuid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getgid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getegid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getgroups.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setuid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setgid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setpgid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getpgrp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setpgrp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getsid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setsid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setresuid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setresgid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sysconf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)glob64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fnmatch.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)confstr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getopt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getopt1.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sched_getp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sched_sets.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sched_gets.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sched_yield.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sched_primax.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sched_primin.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)pread64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)get_child_max.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getaddrinfo.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)regex.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getlogin_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)environ.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)exit-thread.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mkfifo.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)stat64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fstat64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lstat64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)xstat64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fxstat64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lxstat64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mknod.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)xmknod.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fxstatat64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)statfs64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)umask.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)chmod.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fchmod.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mkdir.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)open.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)open64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)openat.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)close.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)read.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)write.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)access.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fcntl.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)flock.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dup2.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)pipe.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)pipe2.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)creat64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)chdir.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fchdir.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getcwd.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)chown.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fchown.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lchown.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ttyname_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)isatty.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)link.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)symlink.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)readlink.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)unlink.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)rmdir.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)poll.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sendfile64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)have_o_cloexec.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)speed.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)cfsetspeed.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tcsetattr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tcgetattr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tcgetpgrp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tcsetpgrp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tcdrain.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tcflush.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tcsendbrk.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)cfmakeraw.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tcgetsid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getrlimit.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getrlimit64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setrlimit64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getpriority.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setpriority.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)nice.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sbrk.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ioctl.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)seteuid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setegid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getpagesize.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getdtsz.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sethostname.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)select.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)acct.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)chroot.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fsync.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sync.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fdatasync.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)reboot.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gethostid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)swapon.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)swapoff.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mktemp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mkstemp64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mkdtemp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)usleep.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mntent.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mntent_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)utimes.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lutimes.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ftruncate64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getusershell.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)syslog.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)syscall.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)daemon.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mmap.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mmap64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)munmap.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mprotect.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)madvise.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mlock.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)munlock.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tsearch.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getsysstats.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dirname.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getclktck.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)init-misc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)llseek.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)umount.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)umount2.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)readahead.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)makedev.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)adjtimex.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)delete_module.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)init_module.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)klogctl.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mount.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mremap.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)personality.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)pivot_root.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sysinfo.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)accept.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)bind.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)connect.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getpeername.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getsockname.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getsockopt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)listen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)recv.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)recvfrom.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)recvmsg.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)send.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sendmsg.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sendto.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setsockopt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)shutdown.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)socket.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)socketpair.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)have_sock_cloexec.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)cmsg_nxthdr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)msgget.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)msgctl.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)semop.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)semget.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)semctl.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)shmat.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)shmdt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)shmget.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)shmctl.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wctrans.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)towctrans.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcfuncs.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wctype.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iswctype.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)alloca_cutoff.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)libc-lowlevellock.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)libc-cancellation.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)register-atfork.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)libc_multiple_threads.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)herror.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)inet_addr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)inet_ntop.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)inet_pton.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)res_hconf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)res_libc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)res-state.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)nsswitch.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)hosts-lookup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)vfprintf_chk.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)readonly-area.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fortify_fail.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)backtrace.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)backtracesymsfd.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)idn-stub.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)inet_ntoa.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)herrno.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)herrno-loc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gethstbyad.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gethstbyad_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gethstbynm.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gethstbynm2_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gethstbynm_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getsrvbynm.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getsrvbynm_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getsrvbypt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getsrvbypt_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getrpcbyname.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getrpcbyname_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ether_aton_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ether_hton.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ether_ntoa.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ether_ntoa_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)in6_addr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getnameinfo.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)if_index.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ifaddrs.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)check_pf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)check_native.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ifreq.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)bindrsvprt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)pmap_clnt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)pmap_prot.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)xdr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)nscd_getpw_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)nscd_getgr_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)nscd_gethst_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)nscd_getai.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)nscd_getserv_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)nscd_helper.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)grantpt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)unlockpt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ptsname.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getutent.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getutent_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)utmp_file.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)utmpname.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)updwtmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-support.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-addr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)enbl-secure.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-profstub.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-libc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-sysdep.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)init-first.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sysdep.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gconv_open.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gconv.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gconv_close.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gconv_db.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gconv_conf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gconv_builtin.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gconv_simple.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gconv_trans.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gconv_cache.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gconv_dl.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)catnames.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setlocale.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)findlocale.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)loadlocale.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)loadarchive.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-ctype.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-time.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)SYS_libc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C_name.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)xlocale.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)global-locale.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)coll-lookup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lc-ctype.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lc-monetary.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lc-numeric.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lc-collate.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-messages.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-monetary.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-numeric.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-paper.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-name.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-address.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-telephone.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-measurement.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-identification.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)C-collate.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)localename.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ctype-info.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)s_isinf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setfpucw.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fpu_control.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)allocrtsig.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)add_n.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)cmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)divrem.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lshift.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)rshift.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mul.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mul_1.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mul_n.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sub_n.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)submul_1.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dbl2mpn.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mpn2dbl.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)qsort.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)secure-getenv.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)_itoa.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)_itowa.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)itoa-digits.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)itoa-udigits.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)itowa-digits.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)vfscanf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)perror.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)tempname.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)vfwprintf.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)errlist.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)siglist.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)printf-parsewc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)filedoalloc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ioftell.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iogetline.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ioseekoff.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iosetbuffer.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofwide.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)fseek.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)memstream.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ftello.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)iofread_u.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wfiledoalloc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sdlerror.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sdladdr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sdladdr1.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sdlinfo.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sdlmopen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strcoll.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strndup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)stpncpy.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strcasecmp_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)argz-ctsep.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)argz-addsep.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)basename.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strcoll_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcscat.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcschr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcslen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wmemchr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)btowc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mbrlen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mbrtowc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mbsrtowcs.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcschrnul.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcscoll.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcscoll_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mbsrtowcs_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)offtime.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)asctime.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setitimer.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getdents64.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getgrnam_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getpwnam_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getpwuid_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)glob.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)xstat.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)xstatconv.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)setrlimit.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)brk.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)readv.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)writev.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)gethostname.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)opensock.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)res_init.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)grp-lookup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)pwd-lookup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)service-lookup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)rpc-lookup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)ethers-lookup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)digits_dots.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)inet_mkadr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)clnt_perr.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)clnt_udp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)pm_getport.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)rpc_prot.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)rpc_common.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)rpc_thread.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)svc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)svc_auth.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)svc_authux.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)xdr_mem.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)key_call.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)key_prot.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)svcauth_des.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)create_xid.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)des_crypt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)des_impl.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)nis_hash.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getpt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-load.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-cache.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-lookup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-object.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-reloc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-error.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-debug.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-misc.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-profile.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-tls.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-origin.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-scope.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-execstack.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-open.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-close.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-trampoline.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-tsd.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)addmul_1.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lrand48_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)nrand48_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)srand48_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)drand48-iter.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtof.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtold.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtof_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)strtold_l.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sdlopen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sdlclose.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sdlsym.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)sdlvsym.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)wcscmp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)statfs.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)lseek.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)profil.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)prof-freq.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)auth_none.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)auth_unix.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)authuxprot.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)clnt_gen.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)clnt_simp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)clnt_tcp.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)rpc_dtable.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)xdr_array.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)xdr_rec.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)publickey.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)netname.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)clnt_unix.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-deps.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-runtime.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-init.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-fini.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-version.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)dl-sym.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)mpn2flt.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getdomain.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)key-lookup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)getprtname_r.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/libc.a)proto-lookup.o
+(/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/libgcc_eh.a)unwind-c.o
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/crtend.o succeeded
+/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../lib/gcc/arm-linux-gnueabi/4.6.3/crtend.o
+attempt to open /home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/crtn.o succeeded
+/home/wbail/bananapi/ANDROID/lichee/out/android/common/buildroot/external-toolchain/bin/../arm-linux-gnueabi/libc/usr/lib/arm-linux-gnueabi/crtn.onetworking/lib.a(nslookup.o): In function `print_host':
+nslookup.c:(.text.print_host+0x24): warning: Using 'getaddrinfo' in statically linked applications requires at runtime the shared libraries from the glibc version used for linking
+debianutils/lib.a(mktemp.o): In function `mktemp_main':
+mktemp.c:(.text.mktemp_main+0x54): warning: the use of `mktemp' is dangerous, better use `mkstemp' or `mkdtemp'
+networking/lib.a(ipcalc.o): In function `ipcalc_main':
+ipcalc.c:(.text.ipcalc_main+0x154): warning: Using 'gethostbyaddr' in statically linked applications requires at runtime the shared libraries from the glibc version used for linking
+libbb/lib.a(inet_common.o): In function `INET_resolve':
+inet_common.c:(.text.INET_resolve+0x32): warning: Using 'gethostbyname' in statically linked applications requires at runtime the shared libraries from the glibc version used for linking
+networking/lib.a(inetd.o): In function `reread_config_file':
+inetd.c:(.text.reread_config_file+0x544): warning: Using 'getservbyname' in statically linked applications requires at runtime the shared libraries from the glibc version used for linking
+networking/lib.a(netstat.o): In function `ip_port_str':
+netstat.c:(.text.ip_port_str+0x28): warning: Using 'getservbyport' in statically linked applications requires at runtime the shared libraries from the glibc version used for linking
+networking/lib.a(inetd.o): In function `reread_config_file':
+inetd.c:(.text.reread_config_file+0x4e4): warning: Using 'getrpcbyname' in statically linked applications requires at runtime the shared libraries from the glibc version used for linking
+

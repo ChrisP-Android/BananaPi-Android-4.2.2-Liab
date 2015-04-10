@@ -1,0 +1,288 @@
+------------------------How to build the image by liab--------------------------
+
+Have a look to here:
+http://forum.lemaker.org/thread-12552-2-1-2.html
+
+Unchanged this build works with the Realtek WLAN chips RTL8192CU and RTL8192EU
+as default. May be you must adjust the USB-ID in the file /etc/mkshrc to switch
+between the two WLAN chips.
+
+SATA will realise NTFS and EXT4 HDD's. Attention with NTFS write per ftp is not
+possible, only with smb. The reason for this is the mount option fuseblk with
+the folder /mnt/sata/8_1. You also can mount with the option ntfs, like
+mount -o rw -t ntfs /dev/block/sda1 /mnt/sata, but only read is possible!
+NTFS is mounted by vold.fstab, ext4 by command in the mkscrc.
+
+The input device can handle a mouse with five buttons. Left button ok/forward,
+middle button menu, right button back, side left 1 home and side left 2 mute.
+
+You must have a Linux 64 Bit OS. Best is k/ubuntu 12.04 64 Bit.
+See in the folder scripts install_12.04.sh what programme's are necessary.
+
+In the folder scripts are three important build files
+
+- build_kernel.sh	build the kernel
+- build_android.sh	build android and pack it to a image
+- build_pack.sh		pack it again, better only use build_android.sh
+
+--------------------------------------------------------------------------------
+
+1. Preparations for the kernel build
+
+1.1 Adjust the file .config. It's in /ANDROID/lichee/linux-3.4/.config,
+it's a hidden file! It looks so:
+
+#
+# Automatically generated file; DO NOT EDIT.
+# Linux/arm 3.4.39 Kernel Configuration
+#
+CONFIG_ARM=y
+CONFIG_SYS_SUPPORTS_APM_EMULATION=y
+CONFIG_GENERIC_GPIO=y
+
+Important for WLAN:
+
+# CONFIG_MWIFIEX is not set
+CONFIG_RTL8192CU_SW=m
+CONFIG_RTL8192EU=m
+CONFIG_RTL8188EU=m
+CONFIG_RTL8189ES=m
+CONFIG_RTL8723AS=m
+CONFIG_RTL8723AU=m
+
+Use "m" for module build, "y" is for integrate it in the kernel.
+For WLAN "m" is better! Otherwise you have to start the module with insmod.
+
+Important for keyboard and mouse:
+
+# Special HID drivers
+#
+CONFIG_HID_A4TECH=y
+# CONFIG_HID_ACRUX is not set
+CONFIG_HID_APPLE=y
+CONFIG_HID_BELKIN=y
+CONFIG_HID_CHERRY=y
+CONFIG_HID_CHICONY=y
+...
+CONFIG_HID_SUNPLUS=y, this is for the Medion wireless keyboard and 5 button
+mouse. Here "y" is better as "m"! Change this part adapted to your hardware.
+
+If there are no .config file, you can get it from:
+/ANDROID/lichee/linux-3.4/arch/arm/configs/
+bpi_defconfig and sun7i_bpi_android_defconfig are the same files like my
+standard .config.
+
+1.2 Build the kernel
+
+Goto the folder scripts, open a console and type:
+  time ./build_kernel.sh
+
+If it is ready, you will see:
+********************************************************************************
+INFO: build u-boot OK.
+INFO: build rootfs ...
+INFO: skip make rootfs for android
+INFO: build rootfs OK.
+INFO: build lichee OK.
+********************************************************************************
+
+Have a look to /ANDROID/lichee/out/android/common/lib/modules/3.4/
+Here are the driver modules, with my standard .config 65 files.
+
+--------------------------------------------------------------------------------
+
+2. Build Busybox
+
+The bulid use the toolchain from lichee.
+
+Goto the folder scripts, open a console and type:
+  time ./build_busybox.sh
+
+Or manually:
+
+Export path to where the cross-compiler is located on the host.
+
+  export PATH=$PATH:../lichee/out/android/common/buildroot/external-toolchain/bin/
+
+Configure
+
+  cd ../busybox-1.23.1
+
+  make menuconfig
+
+In menuconfig set the following options
+
+Busybox Settings
+Build Options
+Build Busybox as a static binary (no shared libs) : Enable this option by pressing “Y”
+Cross compiler prefix – Set this option equal to “arm-linux-gnueabi-“
+General Configuration
+Don’t use /usr – Enable this option by pressing “Y”
+
+Build
+
+  make
+
+  cp busybox ../android/device/softwinner/common/bin
+  cp busybox ../android/device/softwinner/wing-common
+
+--------------------------------------------------------------------------------
+
+3. Build Android
+
+3.1 WLAN
+
+The standard are Realtek 8192cu and 8192eu. If you have another, goto
+/ANDROID/android/device/softwinner/sugar-bpi/
+open BoardConfig.mk and look to your WLAN-Stick and activate it.
+Activate only one stick! If your chip is not listed, buy the right one.
+
+# 1. Wifi Configuration
+BOARD_WIFI_VENDOR := realtek
+#BOARD_WIFI_VENDOR := broadcom
+
+# 1.1 realtek wifi support
+ifeq ($(BOARD_WIFI_VENDOR), realtek)
+    WPA_SUPPLICANT_VERSION := VER_0_8_X
+    BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+    BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_rtl
+    BOARD_HOSTAPD_DRIVER        := NL80211
+    BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_rtl
+    
+    SW_BOARD_USR_WIFI := rtl8192cu
+    BOARD_WLAN_DEVICE := rtl8192cu
+
+Another Realtek WLAN-Stick may work, if you have the driver sources, build
+the kernel new with it, adjust the BoardConfig.mk and very important adapt in
+/android/hardware/libhardware_legacy/wifi the mk and c file. And then hope that
+the wpa_supplicant will work with it.
+  
+You must know the difference in the image compiled with several WLAN-Sticks is
+the file libhardware_legacy.so. So it's possible to compile android behind one
+another for every stick and only change the libhardware_legacy.so for the used
+stick.
+
+3.2 Audio output HDMI or CODEC as default
+
+Default AUDIO_CODEC nothing is to do!
+
+For default AUDIO_HDMI, open the file user.sh and change
+
+#touch ../android/out/target/product/sugar-bpi/system/audio_hdmi
+to
+touch ../android/out/target/product/sugar-bpi/system/audio_hdmi
+and
+#touch ../android/out/target/product/sugar-lemaker/system/audio_hdmi
+to
+touch ../android/out/target/product/sugar-lemaker/system/audio_hdmi
+
+Don't start user.sh manually, it's only for the build!
+
+You must know the difference in the image compiled for sound HDMI or jack are
+the files in /android/out/target/product/sugar-bpi/system/lib/hw.
+
+3.3 Folder user
+
+Here you can insert or change what you want, for example to change the .prop's.
+But only do it, if you know what you do. The folder contains the apps shutdown,
+screenoff and su.
+
+What's to do with the content of the folder user, makes the script user.sh in
+the folder scripts. Don't start user.sh manually, it's for the build, started
+by mkuserimg.sh before packing the image! But you can adapt it with own wishes.
+
+3.4 Autostart kodi
+
+You can enable it in the mkshrc with
+#auto
+auto
+
+The script starts Kodi automatically after reboot the bpi. It's enough time to
+stop the autostart with the app Shutdown, only by klick the app and wait until
+the info window closed. If Kodi is finished manually, it's also time to stop the
+new autostart by the app Shutdown and wait until the info window closed.
+
+3.5 Build Android
+
+Goto the folder scripts, open a console and type:
+  time ./build_android.sh
+
+For the first build, make clean ist not necessary - but for all builds after
+changing sources! Then use not ENTER, but any letter key.
+
+Choose 15 but 17 is possible too. I use 15. The difference is only another
+startscreen and another mk and fex folder. Who want, can play with it.
+
+After 30 - 100 minutes it ends with:
+********************************************************************************
+pack finish
+/bananapi/ANDROID/android
+
+---------------------- Build Complete ----------------------
+You will find the new 'android.img' in /lichee/tools/pack
+Burn this image to an SD card using PhoenixCard
+------------------------------------------------------------
+********************************************************************************
+
+With Kubuntu 12.04 after finished it will 1 minute beep and after 10 minutes
+shutdown the pc, both interruptible by a key!
+
+--------------------------------------------------------------------------------
+
+4. Important folders with changes
+
+/ANDROID/lichee/linux-3.4/
+/ANDROID/lichee/linux-3.4/drivers/
+/ANDROID/lichee/tools/pack/chips/sun7i/
+/ANDROID/android/device/softwinner/
+/ANDROID/android/hardware/
+/ANDROID/android/frameworks/
+/ANDROID/android/frameworks/base/core/res/res/drawable-nodpi/
+
+--------------------------------------------------------------------------------
+
+5. Special commands
+5.1 Busybox
+
+There are two command boxes:
+/sbin/busybox, the original build busybox, BusyBox v1.23.1
+/system/bin/busybox is a link to /sbin/busybox
+/system/bin/toolbox is the original Android toolbox, some apps need it!
+/system/xbin/busybox, here are the applets from the BusyBox v1.23.1
+
+Try the difference between:
+ifconfig
+ifconfig wlan0
+/system/xbin/busybox ifconfig or the same is /system/xbin/ifconfig
+
+5.2 Some selfbuild commands in /system/xbin
+
+audio - switch the default audio output
+root@android:/ # audio
+###### Default Audio Output ######
+## h=AUDIO_HDMI / c=AUDIO-CODEC ##
+###### or audio h / audio c ######
+
+auto - kodi autostart by the mkshrc during booting and start kodi new, if unwanted finished,
+or manually
+root@android:/ # auto
+########## auto started, but wait for android ##########
+########## auto is active ##########
+
+sdx - switch the partition sdx7 to read/write and read only
+root@android:/ # sdx
+###### Partition sdx7 ######
+## w=write / r=read only ##
+#### or sdx7 w / sdx7 r ####
+
+wlan - switch to several WLAN cards, default is the Realtek 8192cu
+root@android:/ # wlan
+###### Change default WLAN-Chip ######
+Folder of libhardware_legacy.so is: /system/lib/libhardware_legacy
+Actually used WLAN driver is: 8192cu
+1 libhardware_legacy-8188eu.so
+2 libhardware_legacy-8189es.so
+3 libhardware_legacy-8192eu.so
+4 libhardware_legacy-8723as.so
+5 libhardware_legacy-8723au.so
+Enter the number of the file: 

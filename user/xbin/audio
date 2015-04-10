@@ -1,0 +1,18 @@
+echo "###### Default Audio Output ######"
+echo "## h=AUDIO_HDMI / c=AUDIO-CODEC ##"
+echo "###### or audio h / audio c ######"
+if [ "$1" = "" ]; then
+read y
+fi
+mount -o remount,rw,barrier=1 /system
+if [ "$y" = "h" ] || [ "$1" = "h" ]; then
+rm -f /system/audio_codec
+touch /system/audio_hdmi
+echo "Default is AUDIO_HDMI"
+else
+rm -f /system/audio_hdmi
+touch /system/audio_codec
+echo "Default is AUDIO_CODEC"
+fi
+mount -o remount,ro,barrier=1 /system
+exit

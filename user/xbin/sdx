@@ -1,0 +1,14 @@
+echo "###### Partition sdx7 ######"
+echo "## w=write / r=read only ##"
+echo "#### or sdx7 w / sdx7 r ####"
+if [ "$1" = "" ]; then
+read y
+fi
+if [ "$y" = "w" ] || [ "$1" = "w" ]; then
+mount -o remount,rw,barrier=1 /system
+echo "Partition sdx7 is writable"
+else
+mount -o remount,ro,barrier=1 /system
+echo "Partition sdx7 is read only"
+fi
+exit

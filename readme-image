@@ -1,0 +1,114 @@
+After flashing the SD-Card and setting your google account
+please install SambaDroid and Terminal Emulator.
+
+##### Default WLAN Chip #####
+
+Default WLAN is Realtek 8192cu. You can switch to another Realtek chip
+8188eu
+8189es
+8192eu
+8723as
+8723au
+
+You only use a pc and a serial cable or do it on the bpi with the app Terminal
+Emulator. Type:
+
+root@android:/ # wlan
+###### Change default WLAN-Chip ######
+Folder of libhardware_legacy.so is: /system/lib/libhardware_legacy
+Actually used WLAN driver is: 8192cu
+1 libhardware_legacy-8188eu.so
+2 libhardware_legacy-8189es.so
+3 libhardware_legacy-8192eu.so
+4 libhardware_legacy-8723as.so
+5 libhardware_legacy-8723au.so
+Enter the number of the file: 
+3
+Make partition sdx7 writable
+Make partition sdx7 read only
+WLAN driver switched from 8192cu to 8192eu
+To have an effect, reboot is necessary!
+For reboot type y!
+
+Ready!
+root@android:/ #
+
+With the app Terminal Emulator you first must type su for root rights!
+
+##### Default Audio Output Mode #####
+
+Like WLAN but type:
+
+root@android:/ # audio
+###### Default Audio Output ######
+## h=AUDIO_HDMI / c=AUDIO-CODEC ##
+###### or audio h / audio c ######
+h
+Default is AUDIO_HDMI
+root@android:/ #
+
+After changing reboot is necessary!
+
+With the app SambaDroid you can control all! How it works, have a look to /system/etc/mkshrc!
+
+##### SATA #####
+A sata hdd formatted in ext4 will automatically mounted in /mnt/sata.
+
+##### Keyboard and mouse #####
+
+The input device can handle a mouse with five buttons. Left button ok/forward,
+middle button menu, right button back, side left 1 home and side left 2 mute.
+Tested with the Medion wireless keyboard / 5 button mouse and with the Logilink
+wireless keyboard / 5 button mouse. The Logitech K400 I can't test, but the driver LOGITECH_DJ
+is compiled within the kernel.
+
+##### Busybox #####
+
+There are two command boxes:
+/sbin/busybox, the original build busybox, BusyBox v1.23.1
+/system/bin/busybox is a link to /sbin/busybox
+/system/bin/toolbox is the original Android toolbox, some apps need it!
+/system/xbin/busybox, here are the applets from the BusyBox v1.23.1
+
+Try the difference between:
+ifconfig
+ifconfig wlan0
+/system/xbin/busybox ifconfig or the same is /system/xbin/ifconfig
+
+##### Special Commands #####
+
+There are some useful commands in the folder /system/xbin
+
+## audio ## Audio mode
+
+## auto ##  Kodi autostart by the mkshrc during booting and start kodi new, if unwanted finished,
+or manually
+
+root@android:/ # auto
+########## auto started, but wait for android ##########
+########## auto is active ##########
+Starting: Intent { act=android.intent.action.MAIN cmp=org.xbmc.kodi/.Splash }
+
+To stop it during booting use the app ShutDown and wait until the info message is closed,
+you have 30 sec time, or after closed kodi also use ShutDown and wait until the info message is closed.
+
+## sdx ## Makes the system partition sdx7 writable or only read
+
+root@android:/ # sdx
+###### Partition sdx7 ######
+## w=write / r=read only ##
+#### or sdx7 w / sdx7 r ####
+w
+Partition sdx7 is writable
+root@android:/ #
+
+root@android:/ # sdx r
+###### Partition sdx7 ######
+## w=write / r=read only ##
+#### or sdx7 w / sdx7 r ####
+Partition sdx7 is read only
+root@android:/ #
+
+## wlan ##
+
+liab, 05.03.2015
