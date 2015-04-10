@@ -11,6 +11,7 @@ apt-get install git #Install git if required
 git clone https://github.com/ChrisP-Android/BananaPi-Android-4.2.2-Liab android
 
   #Get svox PicoTTs from google to avoid DMCA notification on this repo!
+  
 cd android/android/external
 git clone https://android.googlesource.com/platform/external/svox
 
